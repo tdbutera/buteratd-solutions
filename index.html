@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,12 +38,12 @@ const KCO = [
 
 // Extensive 3-way attribute comparison. e = where the edge sits, stated plainly.
 const ATTRS = [
-  {a:"Network platform", c:"WatchGuard M290 firewall, Extreme APs, consumer switch", s:"Cisco Meraki — MX firewall, switches, APs", b:"UniFi — gateway, switching, access points", e:"—"},
+  {a:"Network platform", c:"WatchGuard M290 firewall, Extreme APs, consumer switch", s:"Cisco Meraki — MX firewall, switches, APs", b:"UniFi — gateway, switching, access points", e:"Reference"},
   {a:"Hardware ownership", c:"Mixed; firewall ownership not confirmed", s:"Spectrum-owned; returned or disabled at contract end", b:"Church owns every piece permanently", e:"ButeraNet"},
   {a:"Licensing model", c:"WatchGuard security subscription required", s:"Cisco Meraki per-device licensing required", b:"None — UniFi has no per-device or per-feature licensing", e:"ButeraNet"},
   {a:"If the license / subscription lapses", c:"7-day grace, then security services (IPS, antivirus, filtering) disabled", s:"30-day grace, then devices become non-operational", b:"Nothing to lapse — hardware keeps running", e:"ButeraNet"},
   {a:"If the relationship ends", c:"Per contract; security tied to the subscription", s:"Hardware reclaimed or disabled", b:"Church keeps everything; no recurring fee; it keeps working", e:"ButeraNet"},
-  {a:"Recurring cost structure", c:"Security subscription + service fee", s:"Per-device licensing + managed-service fee (quote-based)", b:"Managed-services fee + shared tooling; no licensing", e:"ButeraNet"},
+  {a:"Recurring cost structure", c:"Security subscription + service fee", s:"Per-device licensing + managed-service fee (quote-based)", b:"Managed-services fee + shared tooling; no device licensing", e:"ButeraNet"},
   {a:"Internet circuit", c:"Separate", s:"Included — Spectrum is the carrier", b:"Separate", e:"Spectrum"},
   {a:"24/7 support / NOC", c:"Business hours, informal", s:"24/7 staffed network operations center", b:"Business hours + emergency response; solo operator", e:"Spectrum"},
   {a:"SLA with financial penalties", c:"None documented", s:"Uptime SLA with financial penalties", b:"Defined response times; no financial penalty", e:"Spectrum"},
@@ -52,9 +52,9 @@ const ATTRS = [
   {a:"Endpoint management (workstations)", c:"None observed", s:"Not offered", b:"Included — monitoring and patching on every device", e:"ButeraNet"},
   {a:"Documentation handed to the church", c:"None", s:"None", b:"Full handover — diagrams, inventory, SOPs, credentials", e:"ButeraNet"},
   {a:"Network segmentation", c:"Flat network observed", s:"VLANs supported; client must configure", b:"Standardized 7-segment design, built in", e:"ButeraNet"},
-  {a:"Local / on-site presence", c:"Local", s:"National; on-site is a dispatch", b:"Local, same-island", e:"—"},
+  {a:"Local / on-site presence", c:"Local", s:"National; on-site is a dispatch", b:"Local, same-island", e:"Even — HG & ButeraNet"},
   {a:"Change control", c:"No documented policy", s:"Zero-day patches pushed without advance notice", b:"Patches in maintenance windows around services", e:"ButeraNet"},
-  {a:"Multi-site standardization", c:"Per-site, varies", s:"Meraki dashboard manages multiple sites", b:"One standard, replicable to every location", e:"—"},
+  {a:"Multi-site standardization", c:"Per-site, varies", s:"Meraki dashboard manages multiple sites", b:"One standard, replicable to every location", e:"Even — Spectrum & ButeraNet"},
 ];
 
 const NEXT = [
@@ -71,12 +71,13 @@ function App() {
   const [curCost, setCurCost] = useState(0);
   const [hiddenOn, setHiddenOn] = useState(false);
   const [hiddenHrs, setHiddenHrs] = useState(5);
+  const [hRate, setHRate] = useState(35);
 
   const TOOLING = 206;   // Atera Growth $179 + Hudu $27 — published, fleet-wide
   const HRATE = 35;      // stated, conservative value of informal staff IT time
   const sc = Math.max(1, sites);
   const bnMo = fee + Math.round(TOOLING / sc);
-  const hiddenMo = hiddenOn ? Math.round(hiddenHrs * 4.33 * HRATE) : 0;
+  const hiddenMo = hiddenOn ? Math.round(hiddenHrs * 4.33 * hRate) : 0;
   const curMo = (curCost || 0) + hiddenMo;
   const usd = (n) => "$" + Math.round(n).toLocaleString();
 
@@ -94,7 +95,7 @@ function App() {
         <div style={wrap}>
           <div style={{...eyebrow, color:"#7FB3D9"}}>An IT Proposal &middot; Kings Cathedral Maui</div>
           <h1 style={{fontSize:38, fontWeight:900, lineHeight:1.16, margin:"14px 0 16px", letterSpacing:-0.8}}>
-            A standardized IT foundation for Kings Cathedral.
+            A standardized IT foundation for Kings Cathedral Maui.
           </h1>
           <p style={{fontSize:17, color:"#CBD5E1", maxWidth:730}}>
             This page is prepared for Kings Cathedral leadership to compare options side by side. It documents the
@@ -191,7 +192,7 @@ function App() {
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>ButeraNet fee / site / month</div>
                 <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{usd(fee)}</div>
-                <input type="range" min={150} max={600} step={25} value={fee} onChange={e=>setFee(+e.target.value)} style={{width:190, accentColor:C.blue}}/>
+                <input type="range" min={200} max={600} step={25} value={fee} onChange={e=>setFee(+e.target.value)} style={{width:190, accentColor:C.blue}}/>
                 <div style={{fontSize:11, color:C.muted}}>Managed-services fee. Hardware is separate, at actual cost.</div>
               </div>
               <div>
@@ -203,7 +204,8 @@ function App() {
                 {hiddenOn && (
                   <div>
                     <input type="range" min={1} max={20} value={hiddenHrs} onChange={e=>setHiddenHrs(+e.target.value)} style={{width:190, accentColor:C.amber}}/>
-                    <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${HRATE}/hr (stated assumption) = {usd(hiddenMo)}/mo</div>
+                    <input type="range" min={25} max={50} step={5} value={hRate} onChange={e=>setHRate(+e.target.value)} style={{width:190, accentColor:C.amber, display:"block", marginTop:4}}/>
+                    <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${hRate}/hr = {usd(hiddenMo)}/mo &mdash; adjust both to your own estimate</div>
                   </div>
                 )}
               </div>
@@ -297,10 +299,42 @@ function App() {
           </div>
           <div style={{...card, marginTop:18, background:C.lblue, border:"none"}}>
             <div style={{fontSize:14, color:C.navy}}>
-              <strong>What ButeraNet offers instead:</strong> full ownership of the hardware, no licensing of any kind,
+              <strong>What ButeraNet offers instead:</strong> full ownership of the hardware, no required network-device licensing,
               and no recurring fee owed if Kings Cathedral ever chooses to move on &mdash; the equipment, the
               documentation, and the credentials remain the church&rsquo;s, and everything keeps working. The relationship
               is held by service, not by a license that can be switched off.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SELF-SUFFICIENCY */}
+      <div style={{padding:"54px 0", background:C.white, borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}}>
+        <div style={wrap}>
+          <div style={eyebrow}>Self-Sufficiency by Design</div>
+          <h2 style={h2}>You are never locked in &mdash; not even to ButeraNet</h2>
+          <p style={{color:C.muted, maxWidth:740, marginBottom:20}}>
+            The largest risk in the current setup is that IT knowledge lives with the provider, not with the church.
+            If that provider leaves, the organization is stranded. Every ButeraNet engagement is built to remove that
+            risk: the environment is documented and handed to Kings Cathedral as it is built.
+          </p>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16}}>
+            {[
+              {h:"Credentials", t:"Every login — firewall, switches, server, Microsoft 365, ISP account — documented and handed to the church, stored securely."},
+              {h:"Procedures", t:"Written SOPs for routine tasks, so staff can handle day-to-day work without calling anyone."},
+              {h:"Documentation", t:"Network diagrams, device inventory, and a disaster-recovery plan — the full map of the environment, owned by Kings Cathedral."},
+            ].map((x,i)=>(
+              <div key={i} style={{...card, borderTop:`3px solid ${C.green}`}}>
+                <div style={{fontSize:12, fontWeight:800, color:C.green, marginBottom:6}}>{x.h}</div>
+                <div style={{fontSize:13.5}}>{x.t}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{...card, marginTop:18, background:C.lblue, border:"none"}}>
+            <div style={{fontSize:14, color:C.navy}}>
+              The test of a good IT partner is whether you could replace them without disruption. With ButeraNet you
+              always could &mdash; the hardware, the credentials, and the documentation are the church&rsquo;s. The
+              relationship continues on the strength of the service, not on dependency.
             </div>
           </div>
         </div>
@@ -314,13 +348,13 @@ function App() {
           <p style={{fontSize:16, color:"#CBD5E1", maxWidth:750, marginBottom:22}}>
             ButeraNet builds every site from one standardized design, engineered for minimally-manned and
             zero-manned facilities where no IT staff sit on site. The standard is deployed and proven at Maui HQ
-            first. Once it works there, the identical build is replicable to every Kings Cathedral location &mdash; on
-            the order of 900 sites &mdash; at actual hardware cost, with no per-site redesign and no licensing.
+            first. Once it works there, the identical build is replicable across a large multi-site organization,
+            if leadership chooses to standardize beyond Maui HQ &mdash; at actual hardware cost, with no per-site redesign and no required network-device licensing.
           </p>
           <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16}}>
             {[
               {h:"Minimally manned", t:"Designed to run reliably with no IT person on site — monitored and managed remotely."},
-              {h:"Low cost, by design", t:"No licensing and no markup. Hardware at cost, owned by the church; tooling shared across the fleet."},
+              {h:"Low cost, by design", t:"No required network-device licensing and no markup. Hardware at cost, owned by the church; tooling shared across the fleet."},
               {h:"Replicable", t:"Prove it at Maui HQ, then roll the identical standard to each location — parameterized, never improvised."},
             ].map((x,i)=>(
               <div key={i} style={{background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:12, padding:20}}>
@@ -341,7 +375,7 @@ function App() {
             <p style={{fontSize:14}}>
               Spectrum&rsquo;s representative verbally described 1 Gbps symmetric service. Spectrum&rsquo;s published Business
               Internet specifications list asymmetric plans &mdash; not symmetric. True symmetric service is provided
-              through Spectrum Dedicated Fiber at roughly $1,000/month, and that fiber infrastructure is not yet
+              through Spectrum Dedicated Fiber &mdash; a premium product at a substantially higher monthly cost &mdash; and that fiber infrastructure is not yet
               available at this location. This is stated so leadership can confirm it directly against spectrum.com
               before relying on a verbal figure &mdash; a point of fact, not a criticism.
             </p>
@@ -373,7 +407,7 @@ function App() {
         <div style={wrap}>
           <div style={{fontWeight:900, fontSize:17, color:C.white}}>ButeraNet Solutions</div>
           <div style={{marginTop:6}}>Managed IT for churches and ministries &middot; Hawaii</div>
-          <div style={{marginTop:8}}>buteranet.com &nbsp;&middot;&nbsp; tdbutera@proton.me</div>
+          <div style={{marginTop:8}}>buteranet.com &nbsp;&middot;&nbsp; travis@buteranet.com</div>
           <div style={{marginTop:16, fontSize:11, color:"#64748B", lineHeight:1.6, maxWidth:850}}>
             Prepared for Kings Cathedral leadership. ButeraNet costs reflect published vendor pricing (UniFi, Atera,
             Hudu &mdash; May 2026); the managed-services fee is adjustable above. Higher Ground&rsquo;s monthly cost is
