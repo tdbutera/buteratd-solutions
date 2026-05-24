@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ButeraNet Solutions — Managed IT, Built for Ministry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F4E79; --navy2:#0B1F3A; --blue:#2E75B6; --lblue:#D5E8F0;
+    --ink:#1E293B; --muted:#64748B; --line:#E2E8F0; --bg:#F8FAFC; --white:#FFFFFF;
+    --green:#0F7B55;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:var(--blue);text-decoration:none;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);}
+
+  /* NAV */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  nav{display:flex;align-items:center;justify-content:space-between;height:62px;}
+  .brand{font-weight:900;font-size:18px;color:var(--navy);letter-spacing:-0.3px;}
+  .brand span{color:var(--blue);}
+  .navlinks{display:flex;gap:26px;}
+  .navlinks a{color:var(--ink);font-size:14px;font-weight:600;}
+  .navlinks a:hover{color:var(--blue);}
+  @media(max-width:760px){.navlinks{display:none;}}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--navy2),var(--navy));color:var(--white);padding:84px 0 76px;}
+  .hero .eyebrow{color:#7FB3D9;}
+  .hero h1{font-size:46px;font-weight:900;line-height:1.12;margin:14px 0 18px;letter-spacing:-1px;}
+  .hero p{font-size:18px;color:#CBD5E1;max-width:680px;}
+  .hero .cta{display:inline-block;margin-top:28px;background:var(--blue);color:var(--white);font-weight:700;font-size:15px;padding:13px 26px;border-radius:8px;}
+  @media(max-width:620px){.hero h1{font-size:33px;}}
+
+  /* SECTIONS */
+  section{padding:70px 0;}
+  section:nth-of-type(even){background:var(--white);}
+  .sechead{max-width:640px;margin-bottom:38px;}
+  .sechead h2{font-size:31px;font-weight:800;color:var(--navy);margin:8px 0 10px;letter-spacing:-0.5px;}
+  .sechead p{color:var(--muted);font-size:16px;}
+
+  .grid{display:grid;gap:20px;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g2{grid-template-columns:repeat(2,1fr);}
+  .g4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:860px){.g3,.g4{grid-template-columns:1fr 1fr;}}
+  @media(max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:24px;}
+  section:nth-of-type(even) .card{background:var(--bg);}
+  .card h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:7px;}
+  .card p{font-size:14px;color:var(--muted);}
+  .card .big{font-size:13px;font-weight:800;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;}
+
+  /* TIER TABLE */
+  .tiers{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--white);}
+  .tier{display:grid;grid-template-columns:200px 1fr;gap:0;border-bottom:1px solid var(--line);}
+  .tier:last-child{border-bottom:none;}
+  .tier .tname{background:var(--lblue);padding:18px 20px;}
+  .tier .tname b{display:block;color:var(--navy);font-size:15px;font-weight:800;}
+  .tier .tname span{font-size:12px;color:var(--muted);}
+  .tier .tbody{padding:18px 20px;font-size:14px;color:var(--ink);}
+  .tier.base .tname{background:var(--navy);}
+  .tier.base .tname b{color:var(--white);}
+  .tier.base .tname span{color:#9DBBD6;}
+  @media(max-width:560px){.tier{grid-template-columns:1fr;}}
+
+  .pricerow{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .pricerow b{font-size:26px;font-weight:900;color:var(--navy);}
+  .pricerow span{font-size:13px;color:var(--muted);}
+
+  ul.clean{list-style:none;}
+  ul.clean li{font-size:14px;color:var(--ink);padding:7px 0 7px 24px;position:relative;border-bottom:1px solid var(--line);}
+  ul.clean li:last-child{border-bottom:none;}
+  ul.clean li:before{content:"";position:absolute;left:2px;top:14px;width:8px;height:8px;border-radius:2px;background:var(--blue);}
+
+  .note{background:var(--lblue);border-radius:10px;padding:16px 18px;font-size:13px;color:var(--navy);}
+
+  footer{background:var(--navy2);color:#CBD5E1;padding:46px 0;font-size:13px;}
+  footer .brand{color:var(--white);font-size:17px;margin-bottom:8px;}
+  footer a{color:#7FB3D9;}
+  .disc{font-size:11px;color:#64748B;margin-top:18px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand">Butera<span>Net</span> Solutions</div>
+      <div class="navlinks">
+        <a href="#model">Model</a>
+        <a href="#stack">Stack</a>
+        <a href="#tiers">Tiers</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#approach">Approach</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Managed IT for Churches &amp; Ministries &middot; Hawaii</div>
+    <h1>Managed IT, built for ministry.</h1>
+    <p>Standardized, transparent, full-stack technology for churches and ministries across Hawaii &mdash; delivered through the ButeraNet Community Partnership Program. One proven build, scaled to every site, with nothing hidden in the quote.</p>
+    <a class="cta" href="#contact">Start a conversation</a>
+  </div>
+</div>
+
+<!-- MODEL -->
+<section id="model">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">The Model</div>
+      <h2>The Community Partnership Program</h2>
+      <p>ButeraNet exists to put real, modern IT within reach of ministries that could never carry a commercial managed-services contract.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="big">Labor</div>
+        <h3>Permanently donated</h3>
+        <p>Every hour of engineering &mdash; assessment, design, installation, configuration, and ongoing management &mdash; is donated. $0 invoiced, ever.</p>
+      </div>
+      <div class="card">
+        <div class="big">Hardware</div>
+        <h3>At actual cost</h3>
+        <p>Equipment is passed through at the real distributor price. Zero markup. The church owns every piece outright.</p>
+      </div>
+      <div class="card">
+        <div class="big">Method</div>
+        <h3>One standard, every site</h3>
+        <p>Every church is built from the same Golden Site Standard &mdash; parameterized to its size, never improvised, always documented.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">The Standardized Stack</div>
+      <h2>One build, proven and repeatable</h2>
+      <p>Every ButeraNet site runs the same technology stack, scaled by size. Standardization is what keeps a multi-site ministry manageable, affordable, and reliable.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Network</h3>
+        <p>Full UniFi &mdash; gateway, switching, and wireless &mdash; with the model scaled to each site. No per-device or per-feature licensing, ever. The church owns the hardware permanently.</p>
+      </div>
+      <div class="card">
+        <h3>Management</h3>
+        <p>One free pane (UniFi Site Manager) for the network across every site; Atera for the endpoints &mdash; patching, monitoring, and remote support from a single console.</p>
+      </div>
+      <div class="card">
+        <h3>Server &amp; identity</h3>
+        <p>At campus scale and above: an on-prem server with Active Directory and a NAS for large media, with documents and email in Microsoft 365.</p>
+      </div>
+      <div class="card">
+        <h3>Security baseline</h3>
+        <p>On every site: VLAN segmentation, endpoint protection, MFA and conditional access, backup, and documented credentials &mdash; non-negotiable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIERS -->
+<section id="tiers">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">The Client Tier Model</div>
+      <h2>A baseline for every site, scaled by size</h2>
+      <p>One universal baseline applies to every church. The tier above it scales hardware and capability with the number of people and devices.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier base">
+        <div class="tname"><b>Baseline</b><span>Every site &mdash; no exceptions</span></div>
+        <div class="tbody">UniFi network stack, VLAN segmentation, endpoint protection, secured remote access, Microsoft 365 security baseline, documentation, credential vault, and cloud backup.</div>
+      </div>
+      <div class="tier">
+        <div class="tname"><b>Tier 1 &mdash; Church Plant</b><span>~1&ndash;15 users</span></div>
+        <div class="tbody">A single space, cloud-only. The baseline, minimally sized &mdash; no on-prem server.</div>
+      </div>
+      <div class="tier">
+        <div class="tname"><b>Tier 2 &mdash; Standard Campus</b><span>~16&ndash;50 users</span></div>
+        <div class="tbody">A multi-zone campus. Full VLAN design, multiple switches and access points, local and cloud backup.</div>
+      </div>
+      <div class="tier">
+        <div class="tname"><b>Tier 3 &mdash; Regional Campus</b><span>~51&ndash;150 users</span></div>
+        <div class="tbody">Multiple buildings with an on-prem server and Active Directory, offsite backup, and power protection.</div>
+      </div>
+      <div class="tier">
+        <div class="tname"><b>Tier 4 &mdash; Organizational HQ</b><span>150+ users</span></div>
+        <div class="tbody">The hub that runs the centralized systems other sites depend on &mdash; redundant core, virtualized servers, and a full disaster-recovery plan.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">What It Costs</div>
+      <h2>Transparent, itemized, nothing hidden</h2>
+      <p>Every figure is a real, published price &mdash; not a bundled mystery quote. The church sees exactly what it pays for and why.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="big">One-Time Hardware</div>
+        <div class="pricerow"><b>~$436</b><span>Tier 1 example</span></div>
+        <div class="pricerow"><b>~$5,008</b><span>Tier 3 example</span></div>
+        <p>UniFi network hardware at published list price, passed through at actual cost. Server, NAS, and site materials are quoted per site.</p>
+      </div>
+      <div class="card">
+        <div class="big">Recurring &mdash; Fixed</div>
+        <div class="pricerow"><b>$179</b><span>/mo &middot; RMM, whole fleet</span></div>
+        <div class="pricerow"><b>$27</b><span>/mo &middot; documentation</span></div>
+        <p>A small, fixed managed-services tooling cost. UniFi network management is $0 &mdash; no licensing, no cloud fee.</p>
+      </div>
+      <div class="card">
+        <div class="big">No Lock-In</div>
+        <div class="pricerow"><b>$0</b><span>licensing</span></div>
+        <p>UniFi carries no per-device or per-feature licensing. The church owns every piece of hardware, holds its own documentation, and is handed its own credentials.</p>
+      </div>
+    </div>
+    <div class="note" style="margin-top:20px;">
+      The church pays for its internet circuit and its Microsoft 365 licensing &mdash; the same costs under any provider. Beyond that, there is no recurring charge. Hardware prices reflect UniFi published list pricing; per-site equipment is confirmed at the time of quote.
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section id="approach">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">The Approach</div>
+      <h2>Why a standardized partner is different</h2>
+      <p>Most ministry IT is either a carrier-bundled box nobody fully controls, or break-fix help that arrives only after something breaks. ButeraNet is built the opposite way.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Full-stack, not just the network</h3>
+        <p>Endpoints, identity, Microsoft 365, backup, documentation, and security &mdash; all managed, not just the firewall.</p>
+      </div>
+      <div class="card">
+        <h3>You own it</h3>
+        <p>The hardware is yours, the documentation is yours, and the credentials are handed over. No dependency, no provider holding the keys.</p>
+      </div>
+      <div class="card">
+        <h3>Transparent pricing</h3>
+        <p>Every number is itemized and sourced. No bundled quote, no mystery line items, no surprise renewals.</p>
+      </div>
+      <div class="card">
+        <h3>Assessed and documented</h3>
+        <p>Each site is scored against the ButeraNet assessment framework and run through a documented engagement lifecycle &mdash; design, install, manage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="brand">Butera<span style="color:#7FB3D9;">Net</span> Solutions</div>
+    <div>Managed IT for churches and ministries &middot; Hawaii</div>
+    <div style="margin-top:10px;">
+      <a href="https://buteranet.com">buteranet.com</a> &nbsp;&middot;&nbsp;
+      <a href="mailto:tdbutera@proton.me">tdbutera@proton.me</a>
+    </div>
+    <div class="disc">
+      ButeraNet Community Partnership Program &mdash; engineering labor donated, hardware at actual cost. Pricing shown reflects published vendor list pricing as of May 2026; per-site equipment and recurring service costs are confirmed at the time of quote. This page is informational and is not a contract or a binding quote.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
