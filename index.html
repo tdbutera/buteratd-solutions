@@ -80,6 +80,9 @@ function App() {
   const bnMo = fee + Math.round(TOOLING / sc);
   const hiddenMo = hiddenOn ? Math.round(hiddenHrs * 4.33 * hRate) : 0;
   const curMo = (curCost || 0) + hiddenMo;
+  const bnFleet = fee * sc + TOOLING;          // ButeraNet total/mo across all sites (tooling fleet-wide, once)
+  const curFleet = curMo * sc;                  // Higher Ground total/mo across all sites
+  const spFleet = (spCost || 0) * sc;           // Spectrum total/mo across all sites
   const usd = (n) => "$" + Math.round(n).toLocaleString();
 
   const wrap = {maxWidth:1060, margin:"0 auto", padding:"0 24px"};
@@ -167,37 +170,37 @@ function App() {
         <div style={wrap}>
           <div style={eyebrow}>The Cost of the Decision</div>
           <h2 style={h2}>Cost &mdash; and savings &mdash; over one month, one year, five years</h2>
-          <p style={{color:C.muted, maxWidth:760, marginBottom:22}}>
-            Enter the monthly figures you have for Higher Ground IT and for Spectrum &mdash; whatever each one quotes
-            you. ButeraNet&rsquo;s cost is shown in full and updates with the sliders. The table shows each path side by
-            side, and the savings panel shows the difference, in either direction, honestly.
+          <p style={{color:C.muted, maxWidth:770, marginBottom:22}}>
+            Enter Higher Ground IT and Spectrum as a per-site monthly rate. ButeraNet&rsquo;s cost is shown in full.
+            The table and the savings panel both scale to the number of locations on the slider &mdash; one site, fifty,
+            or the whole organization &mdash; and the difference is shown in either direction, honestly.
           </p>
 
           <div style={{...card, marginBottom:18}}>
             <div style={{display:"flex", gap:26, flexWrap:"wrap"}}>
               <div>
-                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.amber}}>Higher Ground IT &mdash; monthly</div>
+                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.amber}}>Higher Ground IT &mdash; $/site/mo</div>
                 <div style={{marginTop:4}}>
                   <span style={{fontSize:20, fontWeight:900, color:C.navy}}>$</span>
                   <input type="number" min={0} value={curCost||""} placeholder="enter" onChange={e=>setCurCost(+e.target.value||0)}
                     style={{fontSize:18, fontWeight:800, color:C.navy, width:110, border:`1px solid ${C.line}`, borderRadius:6, padding:"2px 8px"}}/>
                 </div>
-                <div style={{fontSize:11, color:C.muted}}>Your current spend &mdash; only you have it.</div>
+                <div style={{fontSize:11, color:C.muted}}>Per-site monthly rate &mdash; only you have it.</div>
               </div>
               <div>
-                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.blue}}>Spectrum &mdash; monthly</div>
+                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.blue}}>Spectrum &mdash; $/site/mo</div>
                 <div style={{marginTop:4}}>
                   <span style={{fontSize:20, fontWeight:900, color:C.navy}}>$</span>
                   <input type="number" min={0} value={spCost||""} placeholder="if quoted" onChange={e=>setSpCost(+e.target.value||0)}
                     style={{fontSize:18, fontWeight:800, color:C.navy, width:110, border:`1px solid ${C.line}`, borderRadius:6, padding:"2px 8px"}}/>
                 </div>
-                <div style={{fontSize:11, color:C.muted}}>Enter Spectrum&rsquo;s figure once they provide one.</div>
+                <div style={{fontSize:11, color:C.muted}}>Per-site monthly rate, once Spectrum provides one.</div>
               </div>
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Locations</div>
                 <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{sites}</div>
                 <input type="range" min={1} max={900} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:170, accentColor:C.blue}}/>
-                <div style={{fontSize:11, color:C.muted}}>Fleet tooling amortizes as locations are added.</div>
+                <div style={{fontSize:11, color:C.muted}}>Maui HQ at 1; the whole organization at 900.</div>
               </div>
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.green}}>ButeraNet fee / site / month</div>
@@ -209,17 +212,21 @@ function App() {
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Hidden IT labor</div>
                 <label style={{display:"flex", alignItems:"center", gap:8, cursor:"pointer", margin:"6px 0"}}>
                   <input type="checkbox" checked={hiddenOn} onChange={e=>setHiddenOn(e.target.checked)} style={{width:16, height:16, accentColor:C.blue}}/>
-                  <span style={{fontSize:13}}>Add informal staff IT time to current state</span>
+                  <span style={{fontSize:13}}>Add informal staff IT time, per site</span>
                 </label>
                 {hiddenOn && (
                   <div>
                     <input type="range" min={1} max={20} value={hiddenHrs} onChange={e=>setHiddenHrs(+e.target.value)} style={{width:190, accentColor:C.amber}}/>
                     <input type="range" min={25} max={50} step={5} value={hRate} onChange={e=>setHRate(+e.target.value)} style={{width:190, accentColor:C.amber, display:"block", marginTop:4}}/>
-                    <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${hRate}/hr = {usd(hiddenMo)}/mo &mdash; adjust both to your own estimate</div>
+                    <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${hRate}/hr = {usd(hiddenMo)}/site/mo &mdash; adjust both to your own estimate</div>
                   </div>
                 )}
               </div>
             </div>
+          </div>
+
+          <div style={{fontSize:12.5, fontWeight:700, color:C.navy, marginBottom:8}}>
+            Totals below are for {sites} location{sites>1?"s":""}. Move the Locations slider to rescale.
           </div>
 
           <div style={{border:`1px solid ${C.line}`, borderRadius:12, overflow:"hidden"}}>
@@ -233,18 +240,19 @@ function App() {
                 <div style={{padding:"14px", fontSize:13, fontWeight:800, color:C.navy, background:C.bg}}>{row.label}</div>
                 <div style={{padding:"14px", background:"#FFFBEB"}}>
                   {curCost>0 || hiddenOn
-                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.amber}}>{usd(curMo*row.m)}</div>
-                        <div style={{fontSize:11, color:C.muted}}>{curCost>0?"entered figure":"hidden labor only"}{hiddenOn&&curCost>0?" + hidden labor":""}</div></div>
+                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.amber}}>{usd(curFleet*row.m)}</div>
+                        <div style={{fontSize:11, color:C.muted}}>{usd(curMo)}/site/mo</div></div>
                     : <div style={{fontSize:13, color:C.muted}}>Enter a figure above</div>}
                 </div>
                 <div style={{padding:"14px", background:C.bg}}>
                   {spCost>0
-                    ? <div style={{fontSize:16, fontWeight:800, color:C.blue}}>{usd(spCost*row.m)}</div>
+                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.blue}}>{usd(spFleet*row.m)}</div>
+                        <div style={{fontSize:11, color:C.muted}}>{usd(spCost)}/site/mo</div></div>
                     : <div style={{fontSize:13, color:C.muted}}>Enter a figure above</div>}
                 </div>
                 <div style={{padding:"14px", background:"#F0FDF4"}}>
-                  <div style={{fontSize:18, fontWeight:900, color:C.green}}>{usd(bnMo*row.m)}</div>
-                  <div style={{fontSize:11, color:C.muted}}>per location</div>
+                  <div style={{fontSize:18, fontWeight:900, color:C.green}}>{usd(bnFleet*row.m)}</div>
+                  <div style={{fontSize:11, color:C.muted}}>{usd(bnMo)}/site/mo</div>
                 </div>
               </div>
             ))}
@@ -252,12 +260,13 @@ function App() {
 
           {(curCost>0 || spCost>0) && (
             <div style={{...card, marginTop:18}}>
-              <div style={{fontSize:13, fontWeight:800, color:C.navy, marginBottom:10}}>The difference &mdash; ButeraNet vs. each option</div>
+              <div style={{fontSize:13, fontWeight:800, color:C.navy, marginBottom:4}}>The difference &mdash; ButeraNet vs. each option</div>
+              <div style={{fontSize:11, color:C.muted, marginBottom:8}}>Across {sites} location{sites>1?"s":""}, at the current slider settings.</div>
               {[
-                {name:"vs. Higher Ground IT", base:curMo, on:curCost>0},
-                {name:"vs. Spectrum", base:spCost, on:spCost>0},
+                {name:"vs. Higher Ground IT", base:curFleet, on:curCost>0},
+                {name:"vs. Spectrum", base:spFleet, on:spCost>0},
               ].filter(x=>x.on).map((x,i)=>{
-                var d = x.base - bnMo;
+                var d = x.base - bnFleet;
                 var cheaper = d>=0;
                 return (
                   <div key={i} style={{display:"flex", gap:18, flexWrap:"wrap", alignItems:"baseline", padding:"9px 0", borderTop:i?`1px solid ${C.line}`:"none"}}>
@@ -274,16 +283,16 @@ function App() {
                 );
               })}
               <div style={{fontSize:11, color:C.muted, marginTop:10, fontStyle:"italic"}}>
-                Calculated from the figures entered above. Where ButeraNet costs more, that is shown plainly, not hidden.
+                Calculated from the figures entered, scaled to {sites} location{sites>1?"s":""}. Where ButeraNet costs more, that is shown plainly, not hidden.
               </div>
             </div>
           )}
 
           <div style={{marginTop:12, fontSize:12, color:C.muted}}>
-            ButeraNet figure = managed-services fee + fleet tooling (Atera $179 + Hudu $27, published) divided across
-            locations. One-time hardware is separate, billed at actual distributor cost with no markup, and owned by
-            the church. Internet service is provider-neutral and excluded. Higher Ground and Spectrum figures are
-            whatever you enter; nothing is estimated on their behalf.
+            ButeraNet total = (fee &times; locations) + fleet tooling (Atera $179 + Hudu $27, published, once for the
+            whole fleet). One-time hardware is separate, billed at actual distributor cost with no markup, and owned by
+            the church. Internet service is provider-neutral and excluded. Higher Ground and Spectrum totals are the
+            per-site figures you enter, multiplied by locations; nothing is estimated on their behalf.
           </div>
         </div>
       </div>
