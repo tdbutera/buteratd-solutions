@@ -27,15 +27,34 @@ const C = {
   green:"#0F7B55", red:"#B91C1C", amber:"#B45309",
 };
 
-// KCO before/after — real engagement metrics, verifiable via Ryan Hopkins (KCO Ops POC)
+// KCO — network modernization actually completed. Verifiable with Ryan Hopkins (KCO Ops POC).
 const KCO = [
-  {area:"Documentation", before:"None — no network diagram, no asset inventory, no runbooks", after:"Full documentation: topology, inventory, SOPs, disaster-recovery plan"},
-  {area:"Credentials", before:"Undocumented — held informally; prior provider left with no handoff", after:"Encrypted vault — every login documented and owned by the church"},
   {area:"Firewall firmware", before:"Dead / outdated — running unpatched", after:"Current firmware on managed update windows"},
   {area:"Network performance", before:"5,433 ms bufferbloat under load — video calls unusable", after:"Bufferbloat controlled — stable real-time traffic"},
-  {area:"Segmentation", before:"Flat network — guests, staff, and finance all on one segment", after:"7-segment VLAN architecture — isolated by function"},
+  {area:"Segmentation", before:"Flat network — guests, staff, and finance on one segment", after:"7-segment VLAN architecture, isolated by function"},
   {area:"WiFi reliability", before:"Frequent association failures", after:"91% reduction in association failures"},
   {area:"Remote management", before:"None — every issue required an on-site visit", after:"Secured remote access via Cloudflare Tunnel"},
+];
+
+// Extensive 3-way attribute comparison. e = where the edge sits, stated plainly.
+const ATTRS = [
+  {a:"Network platform", c:"WatchGuard M290 firewall, Extreme APs, consumer switch", s:"Cisco Meraki — MX firewall, switches, APs", b:"UniFi — gateway, switching, access points", e:"—"},
+  {a:"Hardware ownership", c:"Mixed; firewall ownership not confirmed", s:"Spectrum-owned; returned or disabled at contract end", b:"Church owns every piece permanently", e:"ButeraNet"},
+  {a:"Licensing model", c:"WatchGuard security subscription required", s:"Cisco Meraki per-device licensing required", b:"None — UniFi has no per-device or per-feature licensing", e:"ButeraNet"},
+  {a:"If the license / subscription lapses", c:"7-day grace, then security services (IPS, antivirus, filtering) disabled", s:"30-day grace, then devices become non-operational", b:"Nothing to lapse — hardware keeps running", e:"ButeraNet"},
+  {a:"If the relationship ends", c:"Per contract; security tied to the subscription", s:"Hardware reclaimed or disabled", b:"Church keeps everything; no recurring fee; it keeps working", e:"ButeraNet"},
+  {a:"Recurring cost structure", c:"Security subscription + service fee", s:"Per-device licensing + managed-service fee (quote-based)", b:"Managed-services fee + shared tooling; no licensing", e:"ButeraNet"},
+  {a:"Internet circuit", c:"Separate", s:"Included — Spectrum is the carrier", b:"Separate", e:"Spectrum"},
+  {a:"24/7 support / NOC", c:"Business hours, informal", s:"24/7 staffed network operations center", b:"Business hours + emergency response; solo operator", e:"Spectrum"},
+  {a:"SLA with financial penalties", c:"None documented", s:"Uptime SLA with financial penalties", b:"Defined response times; no financial penalty", e:"Spectrum"},
+  {a:"Scale & financial backing", c:"Small local firm", s:"National carrier (Charter Communications)", b:"Solo practice", e:"Spectrum"},
+  {a:"Service scope", c:"Firewall-focused", s:"Network hardware only", b:"Full stack — network, endpoints, Microsoft 365, security, documentation", e:"ButeraNet"},
+  {a:"Endpoint management (workstations)", c:"None observed", s:"Not offered", b:"Included — monitoring and patching on every device", e:"ButeraNet"},
+  {a:"Documentation handed to the church", c:"None", s:"None", b:"Full handover — diagrams, inventory, SOPs, credentials", e:"ButeraNet"},
+  {a:"Network segmentation", c:"Flat network observed", s:"VLANs supported; client must configure", b:"Standardized 7-segment design, built in", e:"ButeraNet"},
+  {a:"Local / on-site presence", c:"Local", s:"National; on-site is a dispatch", b:"Local, same-island", e:"—"},
+  {a:"Change control", c:"No documented policy", s:"Zero-day patches pushed without advance notice", b:"Patches in maintenance windows around services", e:"ButeraNet"},
+  {a:"Multi-site standardization", c:"Per-site, varies", s:"Meraki dashboard manages multiple sites", b:"One standard, replicable to every location", e:"—"},
 ];
 
 const NEXT = [
@@ -49,58 +68,61 @@ const NEXT = [
 function App() {
   const [sites, setSites] = useState(1);
   const [fee, setFee] = useState(250);
+  const [curCost, setCurCost] = useState(0);
   const [hiddenOn, setHiddenOn] = useState(false);
   const [hiddenHrs, setHiddenHrs] = useState(5);
 
-  const TOOLING = 206;      // Atera Growth $179 + Hudu $27 — published, fleet-wide
-  const HRATE = 35;         // stated, conservative value of informal staff IT time
+  const TOOLING = 206;   // Atera Growth $179 + Hudu $27 — published, fleet-wide
+  const HRATE = 35;      // stated, conservative value of informal staff IT time
   const sc = Math.max(1, sites);
-  const bnMo = fee + Math.round(TOOLING / sc);          // ButeraNet per-site / month
+  const bnMo = fee + Math.round(TOOLING / sc);
   const hiddenMo = hiddenOn ? Math.round(hiddenHrs * 4.33 * HRATE) : 0;
-  const usd = (n) => "$" + n.toLocaleString();
+  const curMo = (curCost || 0) + hiddenMo;
+  const usd = (n) => "$" + Math.round(n).toLocaleString();
 
   const wrap = {maxWidth:1060, margin:"0 auto", padding:"0 24px"};
   const eyebrow = {fontSize:12, fontWeight:800, letterSpacing:2.5, textTransform:"uppercase", color:C.blue};
   const h2 = {fontSize:28, fontWeight:800, color:C.navy, margin:"6px 0 10px", letterSpacing:-0.4};
   const card = {background:C.white, border:`1px solid ${C.line}`, borderRadius:12, padding:22};
+  const edgeColor = (e) => e==="ButeraNet"?C.green : e==="Spectrum"?C.blue : C.muted;
 
   return (
     <div style={{fontFamily:"'Inter',Arial,Helvetica,sans-serif", background:C.bg, color:C.ink, lineHeight:1.6}}>
 
       {/* HERO */}
-      <div style={{background:`linear-gradient(135deg,${C.navy2},${C.navy})`, color:C.white, padding:"66px 0 58px"}}>
+      <div style={{background:`linear-gradient(135deg,${C.navy2},${C.navy})`, color:C.white, padding:"64px 0 56px"}}>
         <div style={wrap}>
           <div style={{...eyebrow, color:"#7FB3D9"}}>An IT Proposal &middot; Kings Cathedral Maui</div>
-          <h1 style={{fontSize:40, fontWeight:900, lineHeight:1.14, margin:"14px 0 16px", letterSpacing:-1}}>
-            A standardized IT foundation &mdash; built once, owned by you.
+          <h1 style={{fontSize:38, fontWeight:900, lineHeight:1.16, margin:"14px 0 16px", letterSpacing:-0.8}}>
+            A standardized IT foundation for Kings Cathedral.
           </h1>
-          <p style={{fontSize:17, color:"#CBD5E1", maxWidth:720}}>
-            This page is for Kings Cathedral leadership to make an informed decision. It lays out where Maui HQ
-            stands today, what ButeraNet has already delivered at Kings Central Oahu, the real cost of each path
-            forward, and exactly what happens if you say yes. Every figure here is either a published price or is
-            shown openly as unknown &mdash; nothing is invented.
+          <p style={{fontSize:17, color:"#CBD5E1", maxWidth:730}}>
+            This page is prepared for Kings Cathedral leadership to compare options side by side. It documents the
+            network work ButeraNet has completed at Kings Central Oahu, sets out an extensive three-way comparison,
+            and shows ButeraNet&rsquo;s cost in full. Every figure here is either a published price or is shown openly
+            as unknown. Nothing is estimated for another provider.
           </p>
         </div>
       </div>
 
       {/* CURRENT STANDING */}
-      <div style={{padding:"56px 0"}}>
+      <div style={{padding:"54px 0"}}>
         <div style={wrap}>
-          <div style={eyebrow}>Where You Stand Today</div>
-          <h2 style={h2}>Maui HQ, on the current provider</h2>
-          <p style={{color:C.muted, maxWidth:680, marginBottom:22}}>
-            Kings Cathedral Maui currently runs under Higher Ground IT. From the on-site observations to date, the
-            picture is concerning &mdash; and the true cost of it is not visible.
+          <div style={eyebrow}>Where Maui HQ Stands Today</div>
+          <h2 style={h2}>The current picture</h2>
+          <p style={{color:C.muted, maxWidth:700, marginBottom:22}}>
+            Kings Cathedral Maui currently runs under Higher Ground IT. The notes below are factual observations,
+            for leadership to weigh.
           </p>
           <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16}}>
             {[
-              {h:"Cost", t:"Not disclosed. The current monthly spend was not shared and the contract has not been reviewed — leadership is paying for IT without seeing the number."},
-              {h:"Resilience", t:"WatchGuard firewall with unconfirmed subscription status; Microsoft 365 active but renewal ownership unknown. Single points of quiet failure."},
-              {h:"Knowledge", t:"No documentation, no credential handoff. IT knowledge lives informally with one minister — not with the organization."},
+              {h:"Cost", t:"What Higher Ground IT costs per month is known to Kings Cathedral, not to ButeraNet. The comparison below leaves that figure for you to enter."},
+              {h:"Microsoft 365", t:"Microsoft 365 is current — renewed or renewing — and is administered through Higher Ground IT. It works today; it also means tenant control and staff-account changes depend on the current provider."},
+              {h:"Firewall & knowledge", t:"A WatchGuard M290 firewall, whose security services run on a subscription. IT knowledge is held informally; no documentation has been handed to the organization."},
             ].map((x,i)=>(
-              <div key={i} style={{...card, borderTop:`3px solid ${C.amber}`}}>
-                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.amber, marginBottom:6}}>{x.h}</div>
-                <div style={{fontSize:14, color:C.ink}}>{x.t}</div>
+              <div key={i} style={{...card, borderTop:`3px solid ${C.blue}`}}>
+                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.blue, marginBottom:6}}>{x.h}</div>
+                <div style={{fontSize:14}}>{x.t}</div>
               </div>
             ))}
           </div>
@@ -108,14 +130,15 @@ function App() {
       </div>
 
       {/* KCO PROOF */}
-      <div style={{padding:"56px 0", background:C.white, borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}}>
+      <div style={{padding:"54px 0", background:C.white, borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}}>
         <div style={wrap}>
-          <div style={eyebrow}>Proof of Execution &mdash; Not a Pitch</div>
-          <h2 style={h2}>Kings Central Oahu: before and after ButeraNet</h2>
-          <p style={{color:C.muted, maxWidth:720, marginBottom:20}}>
-            ButeraNet has already done this work, at a Kings Cathedral site. This is a record, not a promise.
-            Dr. Morocco and Ryan Kelly are welcome to verify every line of it directly with Ryan Hopkins, the
-            Kings Central Oahu operations point of contact.
+          <div style={eyebrow}>Proof of Execution</div>
+          <h2 style={h2}>Network modernization completed at Kings Central Oahu</h2>
+          <p style={{color:C.muted, maxWidth:730, marginBottom:20}}>
+            ButeraNet has already done this work at a Kings Cathedral site. The table below is the network work
+            completed and measurable at Kings Central Oahu &mdash; a record, not a projection. Documentation handover
+            and credential transfer are part of ButeraNet&rsquo;s standard process and are described later as part of the
+            offer; they are not claimed as finished here.
           </p>
           <div style={{border:`1px solid ${C.line}`, borderRadius:12, overflow:"hidden"}}>
             <div style={{display:"grid", gridTemplateColumns:"1fr 1.4fr 1.4fr", background:C.navy, color:C.white}}>
@@ -126,7 +149,7 @@ function App() {
             {KCO.map((r,i)=>(
               <div key={i} style={{display:"grid", gridTemplateColumns:"1fr 1.4fr 1.4fr", borderTop:`1px solid ${C.line}`, background:i%2?C.bg:C.white}}>
                 <div style={{padding:"11px 14px", fontSize:13, fontWeight:700, color:C.navy}}>{r.area}</div>
-                <div style={{padding:"11px 14px", fontSize:13, color:C.red}}>{r.before}</div>
+                <div style={{padding:"11px 14px", fontSize:13, color:C.muted}}>{r.before}</div>
                 <div style={{padding:"11px 14px", fontSize:13, color:C.green}}>{r.after}</div>
               </div>
             ))}
@@ -137,41 +160,49 @@ function App() {
         </div>
       </div>
 
-      {/* INTERACTIVE COST */}
-      <div style={{padding:"56px 0"}}>
+      {/* COST */}
+      <div style={{padding:"54px 0"}}>
         <div style={wrap}>
           <div style={eyebrow}>The Cost of the Decision</div>
-          <h2 style={h2}>What each path actually costs</h2>
-          <p style={{color:C.muted, maxWidth:730, marginBottom:22}}>
-            Two of the three options will not show you a price. Higher Ground&rsquo;s cost is undisclosed; Spectrum&rsquo;s
-            representative provided no figures at all. ButeraNet&rsquo;s cost is below, in full &mdash; adjust the inputs and
-            watch it change. Transparency is itself part of the comparison.
+          <h2 style={h2}>Cost over one month, one year, five years</h2>
+          <p style={{color:C.muted, maxWidth:740, marginBottom:22}}>
+            ButeraNet&rsquo;s cost is shown in full and updates as you adjust the inputs. Higher Ground&rsquo;s cost is known
+            to you &mdash; enter it to complete the comparison. Spectrum&rsquo;s representative provided no figures, so that
+            column is left as quote-based rather than estimated.
           </p>
 
-          {/* Controls */}
           <div style={{...card, marginBottom:18}}>
-            <div style={{display:"flex", gap:30, flexWrap:"wrap"}}>
+            <div style={{display:"flex", gap:28, flexWrap:"wrap"}}>
+              <div>
+                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Your current monthly IT spend</div>
+                <div style={{marginTop:4}}>
+                  <span style={{fontSize:22, fontWeight:900, color:C.navy}}>$</span>
+                  <input type="number" min={0} value={curCost||""} placeholder="enter" onChange={e=>setCurCost(+e.target.value||0)}
+                    style={{fontSize:20, fontWeight:800, color:C.navy, width:120, border:`1px solid ${C.line}`, borderRadius:6, padding:"2px 8px"}}/>
+                </div>
+                <div style={{fontSize:11, color:C.muted}}>Higher Ground&rsquo;s monthly figure &mdash; only you have it.</div>
+              </div>
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Locations</div>
-                <div style={{fontSize:26, fontWeight:900, color:C.navy}}>{sites}</div>
-                <input type="range" min={1} max={50} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:200, accentColor:C.blue}}/>
-                <div style={{fontSize:11, color:C.muted}}>Maui HQ first &mdash; fleet tooling amortizes as locations are added.</div>
+                <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{sites}</div>
+                <input type="range" min={1} max={50} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:190, accentColor:C.blue}}/>
+                <div style={{fontSize:11, color:C.muted}}>Fleet tooling amortizes as locations are added.</div>
               </div>
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>ButeraNet fee / site / month</div>
-                <div style={{fontSize:26, fontWeight:900, color:C.navy}}>{usd(fee)}</div>
-                <input type="range" min={150} max={600} step={25} value={fee} onChange={e=>setFee(+e.target.value)} style={{width:200, accentColor:C.blue}}/>
-                <div style={{fontSize:11, color:C.muted}}>Managed-services fee. Hardware is separate, billed at actual cost.</div>
+                <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{usd(fee)}</div>
+                <input type="range" min={150} max={600} step={25} value={fee} onChange={e=>setFee(+e.target.value)} style={{width:190, accentColor:C.blue}}/>
+                <div style={{fontSize:11, color:C.muted}}>Managed-services fee. Hardware is separate, at actual cost.</div>
               </div>
               <div>
-                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Hidden IT labor burden</div>
+                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Hidden IT labor</div>
                 <label style={{display:"flex", alignItems:"center", gap:8, cursor:"pointer", margin:"6px 0"}}>
                   <input type="checkbox" checked={hiddenOn} onChange={e=>setHiddenOn(e.target.checked)} style={{width:16, height:16, accentColor:C.blue}}/>
                   <span style={{fontSize:13}}>Count informal staff IT time</span>
                 </label>
                 {hiddenOn && (
                   <div>
-                    <input type="range" min={1} max={20} value={hiddenHrs} onChange={e=>setHiddenHrs(+e.target.value)} style={{width:200, accentColor:C.amber}}/>
+                    <input type="range" min={1} max={20} value={hiddenHrs} onChange={e=>setHiddenHrs(+e.target.value)} style={{width:190, accentColor:C.amber}}/>
                     <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${HRATE}/hr (stated assumption) = {usd(hiddenMo)}/mo</div>
                   </div>
                 )}
@@ -179,65 +210,118 @@ function App() {
             </div>
           </div>
 
-          {/* Comparison table */}
           <div style={{border:`1px solid ${C.line}`, borderRadius:12, overflow:"hidden"}}>
             <div style={{display:"grid", gridTemplateColumns:"1fr 1.2fr 1.2fr 1.2fr"}}>
-              {[
-                {t:"", b:C.navy},
-                {t:"Current State — Higher Ground", b:C.amber},
-                {t:"Spectrum", b:C.muted},
-                {t:"ButeraNet", b:C.green},
-              ].map((x,i)=>(
-                <div key={i} style={{background:C.navy, color:C.white, padding:"11px 14px", fontSize:12, fontWeight:800}}>{x.t}</div>
+              {["","Current State — Higher Ground","Spectrum","ButeraNet"].map((x,i)=>(
+                <div key={i} style={{background:C.navy, color:C.white, padding:"11px 14px", fontSize:12, fontWeight:800}}>{x}</div>
               ))}
             </div>
-            {[
-              {label:"1 Month", mult:1},
-              {label:"1 Year", mult:12},
-              {label:"5 Years", mult:60},
-            ].map((row,i)=>(
+            {[{label:"1 Month", m:1},{label:"1 Year", m:12},{label:"5 Years", m:60}].map((row,i)=>(
               <div key={i} style={{display:"grid", gridTemplateColumns:"1fr 1.2fr 1.2fr 1.2fr", borderTop:`1px solid ${C.line}`}}>
                 <div style={{padding:"14px", fontSize:13, fontWeight:800, color:C.navy, background:C.bg}}>{row.label}</div>
                 <div style={{padding:"14px", background:"#FFFBEB"}}>
-                  <div style={{fontSize:14, fontWeight:700, color:C.amber}}>Not disclosed</div>
-                  {hiddenOn && <div style={{fontSize:12, color:C.muted, marginTop:3}}>+ {usd(hiddenMo*row.mult)} hidden labor</div>}
+                  {curCost>0 || hiddenOn
+                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.amber}}>{usd(curMo*row.m)}</div>
+                        <div style={{fontSize:11, color:C.muted}}>{curCost>0?"your figure":"hidden labor only"}{hiddenOn&&curCost>0?" + hidden labor":""}</div></div>
+                    : <div style={{fontSize:13, color:C.muted}}>Enter your figure above</div>}
                 </div>
                 <div style={{padding:"14px", background:C.bg}}>
                   <div style={{fontSize:14, fontWeight:700, color:C.muted}}>Quote-based</div>
-                  <div style={{fontSize:12, color:C.muted, marginTop:3}}>No figures provided</div>
+                  <div style={{fontSize:11, color:C.muted}}>no figures provided</div>
                 </div>
                 <div style={{padding:"14px", background:"#F0FDF4"}}>
-                  <div style={{fontSize:18, fontWeight:900, color:C.green}}>{usd(bnMo*row.mult)}</div>
-                  <div style={{fontSize:12, color:C.muted, marginTop:3}}>per location</div>
+                  <div style={{fontSize:18, fontWeight:900, color:C.green}}>{usd(bnMo*row.m)}</div>
+                  <div style={{fontSize:11, color:C.muted}}>per location</div>
                 </div>
               </div>
             ))}
           </div>
           <div style={{marginTop:12, fontSize:12, color:C.muted}}>
-            ButeraNet figure = managed-services fee + fleet tooling (Atera $179 + Hudu $27, published) divided across locations.
-            One-time hardware is separate and billed at actual distributor cost with zero markup &mdash; the church owns it permanently.
-            Internet service is provider-neutral and excluded.
+            ButeraNet figure = managed-services fee + fleet tooling (Atera $179 + Hudu $27, published) divided across
+            locations. One-time hardware is separate, billed at actual distributor cost with no markup, and owned by
+            the church. Internet service is provider-neutral and excluded.
           </div>
         </div>
       </div>
 
-      {/* ONE STANDARD / 900 SITES */}
-      <div style={{padding:"56px 0", background:C.navy, color:C.white}}>
+      {/* 3-WAY COMPARISON */}
+      <div style={{padding:"54px 0", background:C.white, borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}}>
+        <div style={wrap}>
+          <div style={eyebrow}>The Comparison</div>
+          <h2 style={h2}>Three paths, attribute by attribute</h2>
+          <p style={{color:C.muted, maxWidth:740, marginBottom:20}}>
+            An honest side-by-side. ButeraNet holds the advantage on ownership, licensing, and scope; Spectrum holds
+            it on round-the-clock support, contractual SLA, and carrier scale. The &ldquo;Edge&rdquo; column states where each
+            line lands &mdash; including the lines where ButeraNet is not the stronger choice.
+          </p>
+          <div style={{border:`1px solid ${C.line}`, borderRadius:12, overflow:"hidden", fontSize:12.5}}>
+            <div style={{display:"grid", gridTemplateColumns:"1.1fr 1.3fr 1.3fr 1.3fr 0.7fr", background:C.navy, color:C.white}}>
+              {["Attribute","Current State (HG)","Spectrum","ButeraNet","Edge"].map((x,i)=>(
+                <div key={i} style={{padding:"10px 12px", fontWeight:800, fontSize:11}}>{x}</div>
+              ))}
+            </div>
+            {ATTRS.map((r,i)=>(
+              <div key={i} style={{display:"grid", gridTemplateColumns:"1.1fr 1.3fr 1.3fr 1.3fr 0.7fr", borderTop:`1px solid ${C.line}`, background:i%2?C.bg:C.white}}>
+                <div style={{padding:"10px 12px", fontWeight:700, color:C.navy}}>{r.a}</div>
+                <div style={{padding:"10px 12px", color:C.ink}}>{r.c}</div>
+                <div style={{padding:"10px 12px", color:C.ink}}>{r.s}</div>
+                <div style={{padding:"10px 12px", color:C.ink}}>{r.b}</div>
+                <div style={{padding:"10px 12px", fontWeight:800, color:edgeColor(r.e)}}>{r.e}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* LICENSING & OWNERSHIP */}
+      <div style={{padding:"54px 0"}}>
+        <div style={wrap}>
+          <div style={eyebrow}>Licensing &amp; Ownership</div>
+          <h2 style={h2}>What happens if a license is not renewed</h2>
+          <p style={{color:C.muted, maxWidth:740, marginBottom:20}}>
+            This is the single most consequential difference, and it is documented by the vendors themselves &mdash;
+            verifiable, not opinion.
+          </p>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16}}>
+            {[
+              {h:"Current State — WatchGuard", c:C.amber, t:"7-day grace period after the security subscription expires, then antivirus, intrusion prevention, and content filtering are disabled and configuration changes can no longer be saved.", src:"WatchGuard documentation"},
+              {h:"Spectrum — Cisco Meraki", c:C.red, t:"30-day grace period after a license expires, then the network devices shut down and become non-operational until new licensing is purchased.", src:"Cisco Meraki documentation"},
+              {h:"ButeraNet — UniFi", c:C.green, t:"No per-device or per-feature licensing exists. There is nothing to expire. The hardware keeps running indefinitely, and the church owns it outright.", src:"UniFi product model"},
+            ].map((x,i)=>(
+              <div key={i} style={{...card, borderTop:`3px solid ${x.c}`}}>
+                <div style={{fontSize:12, fontWeight:800, color:x.c, marginBottom:6}}>{x.h}</div>
+                <div style={{fontSize:13.5, marginBottom:8}}>{x.t}</div>
+                <div style={{fontSize:11, color:C.muted, fontStyle:"italic"}}>Source: {x.src}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{...card, marginTop:18, background:C.lblue, border:"none"}}>
+            <div style={{fontSize:14, color:C.navy}}>
+              <strong>What ButeraNet offers instead:</strong> full ownership of the hardware, no licensing of any kind,
+              and no recurring fee owed if Kings Cathedral ever chooses to move on &mdash; the equipment, the
+              documentation, and the credentials remain the church&rsquo;s, and everything keeps working. The relationship
+              is held by service, not by a license that can be switched off.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ONE STANDARD */}
+      <div style={{padding:"54px 0", background:C.navy, color:C.white}}>
         <div style={wrap}>
           <div style={{...eyebrow, color:"#7FB3D9"}}>The Long-Term Value</div>
           <h2 style={{...h2, color:C.white}}>One standard, every site</h2>
-          <p style={{fontSize:16, color:"#CBD5E1", maxWidth:740, marginBottom:22}}>
-            ButeraNet builds every site from one standardized design &mdash; engineered for minimally-manned and
-            zero-manned facilities, where no IT staff sit on site. The standard is deployed and proven at Maui HQ
-            first. Once it works there, it is replicable to every Kings Cathedral location &mdash; on the order of
-            900 sites &mdash; at actual hardware cost, with no per-site redesign and no licensing. That is a value
-            proposition no carrier or break-fix provider can match.
+          <p style={{fontSize:16, color:"#CBD5E1", maxWidth:750, marginBottom:22}}>
+            ButeraNet builds every site from one standardized design, engineered for minimally-manned and
+            zero-manned facilities where no IT staff sit on site. The standard is deployed and proven at Maui HQ
+            first. Once it works there, the identical build is replicable to every Kings Cathedral location &mdash; on
+            the order of 900 sites &mdash; at actual hardware cost, with no per-site redesign and no licensing.
           </p>
           <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16}}>
             {[
               {h:"Minimally manned", t:"Designed to run reliably with no IT person on site — monitored and managed remotely."},
-              {h:"Low cost, by design", t:"No licensing, no markup. Hardware at cost, owned by the church; tooling shared across the fleet."},
-              {h:"Replicable", t:"Prove it at Maui HQ, then roll the identical standard to every location — parameterized, never improvised."},
+              {h:"Low cost, by design", t:"No licensing and no markup. Hardware at cost, owned by the church; tooling shared across the fleet."},
+              {h:"Replicable", t:"Prove it at Maui HQ, then roll the identical standard to each location — parameterized, never improvised."},
             ].map((x,i)=>(
               <div key={i} style={{background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:12, padding:20}}>
                 <div style={{fontSize:15, fontWeight:800, marginBottom:6}}>{x.h}</div>
@@ -248,65 +332,36 @@ function App() {
         </div>
       </div>
 
-      {/* IF HIGHER GROUND FAILS */}
-      <div style={{padding:"56px 0"}}>
-        <div style={wrap}>
-          <div style={eyebrow}>The Question No One Has Asked</div>
-          <h2 style={h2}>What happens if Higher Ground leaves &mdash; or fails?</h2>
-          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:18}}>
-            <div style={{...card, borderTop:`3px solid ${C.red}`}}>
-              <div style={{fontSize:13, fontWeight:800, color:C.red, marginBottom:8}}>TODAY &mdash; the honest answer</div>
-              <p style={{fontSize:14, color:C.ink}}>
-                If Higher Ground terminates the relationship, lets the Microsoft 365 tenant lapse, or their
-                WatchGuard security subscription expires &mdash; the result is catastrophic. There is no documentation,
-                no credential handoff, and no recovery plan. The organization would be locked out of its own systems
-                with no map back in. Recovery would be measured in days, and in lost data.
-              </p>
-            </div>
-            <div style={{...card, borderTop:`3px solid ${C.green}`}}>
-              <div style={{fontSize:13, fontWeight:800, color:C.green, marginBottom:8}}>WITH BUTERANET &mdash; self-sufficient</div>
-              <p style={{fontSize:14, color:C.ink}}>
-                Every credential, diagram, and procedure is documented and handed to the church. SOPs mean staff
-                can run routine tasks without calling anyone. The church owns its environment &mdash; the hardware,
-                the documentation, the credentials &mdash; regardless of who manages it. ButeraNet is replaceable
-                by design. That is the point.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* SPECTRUM CALLOUT */}
-      <div style={{padding:"40px 0", background:C.white, borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}}>
+      {/* SPECTRUM NOTE */}
+      <div style={{padding:"40px 0", background:C.white, borderBottom:`1px solid ${C.line}`}}>
         <div style={wrap}>
           <div style={eyebrow}>A Point of Fact</div>
-          <h2 style={h2}>Spectrum: the claim versus the published spec</h2>
+          <h2 style={h2}>Spectrum: the verbal claim and the published spec</h2>
           <div style={{...card, background:C.bg, borderLeft:`4px solid ${C.amber}`}}>
-            <p style={{fontSize:14, color:C.ink}}>
-              Spectrum&rsquo;s representative verbally claimed 1 Gbps symmetric service. Their published Business Internet
-              specifications show asymmetric plans &mdash; not symmetric. True symmetric service requires Spectrum
-              Dedicated Fiber at roughly $1,000/month, and that fiber infrastructure is not yet available at this
-              location. This is stated as a verifiable fact, not a criticism: confirm it against spectrum.com before
-              relying on any verbal claim.
+            <p style={{fontSize:14}}>
+              Spectrum&rsquo;s representative verbally described 1 Gbps symmetric service. Spectrum&rsquo;s published Business
+              Internet specifications list asymmetric plans &mdash; not symmetric. True symmetric service is provided
+              through Spectrum Dedicated Fiber at roughly $1,000/month, and that fiber infrastructure is not yet
+              available at this location. This is stated so leadership can confirm it directly against spectrum.com
+              before relying on a verbal figure &mdash; a point of fact, not a criticism.
             </p>
           </div>
         </div>
       </div>
 
       {/* NEXT STEPS */}
-      <div style={{padding:"56px 0"}}>
+      <div style={{padding:"54px 0"}}>
         <div style={wrap}>
           <div style={eyebrow}>If You Say Yes</div>
-          <h2 style={h2}>What happens next &mdash; concretely</h2>
+          <h2 style={h2}>What happens next</h2>
           <p style={{color:C.muted, maxWidth:680, marginBottom:20}}>
-            No pressure and no close. This is simply the path, step by step, so leadership knows exactly what
-            agreeing to an assessment commits to.
+            The path step by step, so leadership knows exactly what agreeing to an assessment commits to.
           </p>
-          <div style={{...card}}>
+          <div style={card}>
             {NEXT.map((s,i)=>(
               <div key={i} style={{display:"flex", alignItems:"center", gap:14, padding:"12px 0", borderTop:i?`1px solid ${C.line}`:"none"}}>
                 <div style={{flexShrink:0, width:28, height:28, borderRadius:14, background:C.navy, color:C.white, fontWeight:800, fontSize:13, display:"flex", alignItems:"center", justifyContent:"center"}}>{i+1}</div>
-                <div style={{fontSize:15, color:C.ink}}>{s}</div>
+                <div style={{fontSize:15}}>{s}</div>
               </div>
             ))}
           </div>
@@ -319,12 +374,13 @@ function App() {
           <div style={{fontWeight:900, fontSize:17, color:C.white}}>ButeraNet Solutions</div>
           <div style={{marginTop:6}}>Managed IT for churches and ministries &middot; Hawaii</div>
           <div style={{marginTop:8}}>buteranet.com &nbsp;&middot;&nbsp; tdbutera@proton.me</div>
-          <div style={{marginTop:16, fontSize:11, color:"#64748B", lineHeight:1.6, maxWidth:840}}>
+          <div style={{marginTop:16, fontSize:11, color:"#64748B", lineHeight:1.6, maxWidth:850}}>
             Prepared for Kings Cathedral leadership. ButeraNet costs reflect published vendor pricing (UniFi, Atera,
-            Hudu &mdash; May 2026); the managed-services fee is adjustable above. Higher Ground and Spectrum monthly
-            costs were not disclosed or not provided and are shown as such &mdash; no figures are estimated for them.
-            Kings Central Oahu metrics are from that engagement and are verifiable with its operations point of
-            contact. This page is informational and is not a binding quote or contract.
+            Hudu &mdash; May 2026); the managed-services fee is adjustable above. Higher Ground&rsquo;s monthly cost is
+            entered by the reader; Spectrum provided no figures &mdash; neither is estimated. Licensing-expiration
+            behavior is per Cisco Meraki and WatchGuard published documentation. Kings Central Oahu metrics are from
+            that engagement and verifiable with its operations point of contact. This page is informational and is
+            not a binding quote or contract.
           </div>
         </div>
       </div>
