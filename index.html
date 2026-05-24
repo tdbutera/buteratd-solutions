@@ -196,7 +196,7 @@ function App() {
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Locations</div>
                 <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{sites}</div>
-                <input type="range" min={1} max={50} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:170, accentColor:C.blue}}/>
+                <input type="range" min={1} max={900} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:170, accentColor:C.blue}}/>
                 <div style={{fontSize:11, color:C.muted}}>Fleet tooling amortizes as locations are added.</div>
               </div>
               <div>
