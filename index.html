@@ -67,22 +67,25 @@ const NEXT = [
 
 function App() {
   const [sites, setSites] = useState(1);
-  const [fee, setFee] = useState(250);
+  // managed-service fee is tiered (FEE_TIERS) — no flat fee slider
   const [curCost, setCurCost] = useState(0);
   const [spCost, setSpCost] = useState(0);
   const [hiddenOn, setHiddenOn] = useState(false);
   const [hiddenHrs, setHiddenHrs] = useState(5);
   const [hRate, setHRate] = useState(35);
 
-  const TOOLING = 206;   // Atera Growth $179 + Hudu $27 — published, fleet-wide
-  const HRATE = 35;      // stated, conservative value of informal staff IT time
   const sc = Math.max(1, sites);
-  const bnMo = fee + Math.round(TOOLING / sc);
+  // Enterprise scaling model — progressive managed-service fee [up-to site count, $/site/mo]
+  const FEE_TIERS = [[1,500],[25,350],[100,225],[300,150],[900,95]];
+  const managedFee = (n) => { var t=0, prev=0; for (var k=0;k<FEE_TIERS.length;k++){ var u=FEE_TIERS[k][0], r=FEE_TIERS[k][1]; if(n>prev){ t+=(Math.min(n,u)-prev)*r; prev=u; } else { break; } } return t; };
+  const toolingOverhead = (n) => n<=25 ? 206 : n<=100 ? 750 : n<=300 ? 1500 : 3500;
   const hiddenMo = hiddenOn ? Math.round(hiddenHrs * 4.33 * hRate) : 0;
-  const curMo = (curCost || 0) + hiddenMo;
-  const bnFleet = fee * sc + TOOLING;          // ButeraNet total/mo across all sites (tooling fleet-wide, once)
-  const curFleet = curMo * sc;                  // Higher Ground total/mo across all sites
-  const spFleet = (spCost || 0) * sc;           // Spectrum total/mo across all sites
+  const bnManaged = managedFee(sc);
+  const bnTooling = toolingOverhead(sc);
+  const bnTotal = bnManaged + bnTooling;
+  const bnPerSite = bnTotal / sc;
+  const curTotal = ((curCost || 0) + hiddenMo) * sc;
+  const spTotal = (spCost || 0) * sc;
   const usd = (n) => "$" + Math.round(n).toLocaleString();
 
   const wrap = {maxWidth:1060, margin:"0 auto", padding:"0 24px"};
@@ -169,15 +172,22 @@ function App() {
       <div style={{padding:"54px 0"}}>
         <div style={wrap}>
           <div style={eyebrow}>The Cost of the Decision</div>
-          <h2 style={h2}>Cost &mdash; and savings &mdash; over one month, one year, five years</h2>
-          <p style={{color:C.muted, maxWidth:770, marginBottom:22}}>
-            Enter Higher Ground IT and Spectrum as a per-site monthly rate. ButeraNet&rsquo;s cost is shown in full.
-            The table and the savings panel both scale to the number of locations on the slider &mdash; one site, fifty,
-            or the whole organization &mdash; and the difference is shown in either direction, honestly.
+          <h2 style={h2}>An enterprise scaling model &mdash; cost per site falls as locations standardize</h2>
+          <p style={{color:C.muted, maxWidth:780, marginBottom:22}}>
+            ButeraNet is priced as a tiered enterprise model, not a flat per-site fee. The first locations carry the
+            design and setup load; each location added afterward is standardized to the same build &mdash; so the
+            blended cost per site drops as the organization scales. Enter Higher Ground IT and Spectrum as a per-site
+            monthly rate to compare. This is an illustrative model for planning, not a binding quote.
           </p>
 
           <div style={{...card, marginBottom:18}}>
             <div style={{display:"flex", gap:26, flexWrap:"wrap"}}>
+              <div>
+                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.green}}>Locations</div>
+                <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{sites}</div>
+                <input type="range" min={1} max={900} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:180, accentColor:C.green}}/>
+                <div style={{fontSize:11, color:C.muted}}>Maui HQ at 1; the whole organization at 900.</div>
+              </div>
               <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.amber}}>Higher Ground IT &mdash; $/site/mo</div>
                 <div style={{marginTop:4}}>
@@ -197,18 +207,6 @@ function App() {
                 <div style={{fontSize:11, color:C.muted}}>Per-site monthly rate, once Spectrum provides one.</div>
               </div>
               <div>
-                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Locations</div>
-                <div style={{fontSize:24, fontWeight:900, color:C.navy}}>{sites}</div>
-                <input type="range" min={1} max={900} value={sites} onChange={e=>setSites(+e.target.value)} style={{width:170, accentColor:C.blue}}/>
-                <div style={{fontSize:11, color:C.muted}}>Maui HQ at 1; the whole organization at 900.</div>
-              </div>
-              <div>
-                <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.green}}>ButeraNet fee / site / month</div>
-                <div style={{fontSize:24, fontWeight:900, color:C.green}}>{usd(fee)}</div>
-                <input type="range" min={200} max={600} step={25} value={fee} onChange={e=>setFee(+e.target.value)} style={{width:170, accentColor:C.green}}/>
-                <div style={{fontSize:11, color:C.muted}}>Managed-services fee. Hardware separate, at actual cost.</div>
-              </div>
-              <div>
                 <div style={{fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:C.navy}}>Hidden IT labor</div>
                 <label style={{display:"flex", alignItems:"center", gap:8, cursor:"pointer", margin:"6px 0"}}>
                   <input type="checkbox" checked={hiddenOn} onChange={e=>setHiddenOn(e.target.checked)} style={{width:16, height:16, accentColor:C.blue}}/>
@@ -218,17 +216,46 @@ function App() {
                   <div>
                     <input type="range" min={1} max={20} value={hiddenHrs} onChange={e=>setHiddenHrs(+e.target.value)} style={{width:190, accentColor:C.amber}}/>
                     <input type="range" min={25} max={50} step={5} value={hRate} onChange={e=>setHRate(+e.target.value)} style={{width:190, accentColor:C.amber, display:"block", marginTop:4}}/>
-                    <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${hRate}/hr = {usd(hiddenMo)}/site/mo &mdash; adjust both to your own estimate</div>
+                    <div style={{fontSize:11, color:C.muted}}>{hiddenHrs} hrs/week &times; 4.33 &times; ${hRate}/hr = {usd(hiddenMo)}/site/mo &mdash; applied to Higher Ground only</div>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          <div style={{fontSize:12.5, fontWeight:700, color:C.navy, marginBottom:8}}>
-            Totals below are for {sites} location{sites>1?"s":""}. Move the Locations slider to rescale.
+          <div style={{...card, marginBottom:18, borderTop:`3px solid ${C.green}`}}>
+            <div style={{fontSize:12, fontWeight:800, color:C.green, marginBottom:10, letterSpacing:1, textTransform:"uppercase"}}>ButeraNet &mdash; at {sites} location{sites>1?"s":""}</div>
+            <div style={{display:"flex", gap:26, flexWrap:"wrap", alignItems:"flex-end"}}>
+              <div><div style={{fontSize:11,color:C.muted}}>Managed service fee</div><div style={{fontSize:17,fontWeight:900,color:C.navy}}>{usd(bnManaged)}<span style={{fontSize:11,fontWeight:400}}>/mo</span></div></div>
+              <div style={{fontSize:18,color:C.muted,paddingBottom:2}}>+</div>
+              <div><div style={{fontSize:11,color:C.muted}}>Platform / tooling overhead</div><div style={{fontSize:17,fontWeight:900,color:C.navy}}>{usd(bnTooling)}<span style={{fontSize:11,fontWeight:400}}>/mo</span></div></div>
+              <div style={{fontSize:18,color:C.muted,paddingBottom:2}}>=</div>
+              <div><div style={{fontSize:11,color:C.muted}}>Total monthly</div><div style={{fontSize:22,fontWeight:900,color:C.green}}>{usd(bnTotal)}<span style={{fontSize:11,fontWeight:400}}>/mo</span></div></div>
+              <div><div style={{fontSize:11,color:C.muted}}>Effective per site</div><div style={{fontSize:22,fontWeight:900,color:C.green}}>{usd(bnPerSite)}<span style={{fontSize:11,fontWeight:400}}>/site/mo</span></div></div>
+            </div>
+            <div style={{fontSize:11,color:C.muted,marginTop:8}}>Hardware (one-time, billed at actual cost) and internet service are excluded &mdash; both are the same under any provider.</div>
           </div>
 
+          <div style={{...card, marginBottom:18}}>
+            <div style={{fontSize:12, fontWeight:800, color:C.navy, marginBottom:8, letterSpacing:1, textTransform:"uppercase"}}>The scaling model</div>
+            <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:24}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:C.muted,marginBottom:4}}>Managed fee &mdash; progressive, per site</div>
+                {[["Site 1","$500"],["Sites 2–25","$350"],["Sites 26–100","$225"],["Sites 101–300","$150"],["Sites 301–900","$95"]].map((t,i)=>(
+                  <div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:12,padding:"3px 0",borderBottom:`1px solid ${C.line}`}}><span>{t[0]}</span><span style={{fontWeight:700,color:C.navy}}>{t[1]}/site</span></div>
+                ))}
+              </div>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:C.muted,marginBottom:4}}>Platform / tooling overhead &mdash; by scale</div>
+                {[["1–25 locations","$206"],["26–100 locations","$750"],["101–300 locations","$1,500"],["301–900 locations","$3,500"]].map((t,i)=>(
+                  <div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:12,padding:"3px 0",borderBottom:`1px solid ${C.line}`}}><span>{t[0]}</span><span style={{fontWeight:700,color:C.navy}}>{t[1]}/mo</span></div>
+                ))}
+              </div>
+            </div>
+            <div style={{fontSize:11,color:C.muted,marginTop:8,fontStyle:"italic"}}>Progressive tiering: each band of locations is billed at its own rate, so the blended cost per site falls as the organization standardizes &mdash; it is never charged as a flat rate across all sites.</div>
+          </div>
+
+          <div style={{fontSize:12.5, fontWeight:700, color:C.navy, marginBottom:8}}>Totals for {sites} location{sites>1?"s":""}. Move the Locations slider to rescale.</div>
           <div style={{border:`1px solid ${C.line}`, borderRadius:12, overflow:"hidden"}}>
             <div style={{display:"grid", gridTemplateColumns:"1fr 1.2fr 1.2fr 1.2fr"}}>
               {["","Higher Ground IT","Spectrum","ButeraNet"].map((x,i)=>(
@@ -240,19 +267,19 @@ function App() {
                 <div style={{padding:"14px", fontSize:13, fontWeight:800, color:C.navy, background:C.bg}}>{row.label}</div>
                 <div style={{padding:"14px", background:"#FFFBEB"}}>
                   {curCost>0 || hiddenOn
-                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.amber}}>{usd(curFleet*row.m)}</div>
-                        <div style={{fontSize:11, color:C.muted}}>{usd(curMo)}/site/mo</div></div>
+                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.amber}}>{usd(curTotal*row.m)}</div>
+                        <div style={{fontSize:11, color:C.muted}}>{usd((curCost||0)+hiddenMo)}/site/mo</div></div>
                     : <div style={{fontSize:13, color:C.muted}}>Enter a figure above</div>}
                 </div>
                 <div style={{padding:"14px", background:C.bg}}>
                   {spCost>0
-                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.blue}}>{usd(spFleet*row.m)}</div>
+                    ? <div><div style={{fontSize:16, fontWeight:800, color:C.blue}}>{usd(spTotal*row.m)}</div>
                         <div style={{fontSize:11, color:C.muted}}>{usd(spCost)}/site/mo</div></div>
                     : <div style={{fontSize:13, color:C.muted}}>Enter a figure above</div>}
                 </div>
                 <div style={{padding:"14px", background:"#F0FDF4"}}>
-                  <div style={{fontSize:18, fontWeight:900, color:C.green}}>{usd(bnFleet*row.m)}</div>
-                  <div style={{fontSize:11, color:C.muted}}>{usd(bnMo)}/site/mo</div>
+                  <div style={{fontSize:18, fontWeight:900, color:C.green}}>{usd(bnTotal*row.m)}</div>
+                  <div style={{fontSize:11, color:C.muted}}>{usd(bnPerSite)}/site/mo effective</div>
                 </div>
               </div>
             ))}
@@ -261,12 +288,12 @@ function App() {
           {(curCost>0 || spCost>0) && (
             <div style={{...card, marginTop:18}}>
               <div style={{fontSize:13, fontWeight:800, color:C.navy, marginBottom:4}}>The difference &mdash; ButeraNet vs. each option</div>
-              <div style={{fontSize:11, color:C.muted, marginBottom:8}}>Across {sites} location{sites>1?"s":""}, at the current slider settings.</div>
+              <div style={{fontSize:11, color:C.muted, marginBottom:8}}>Across {sites} location{sites>1?"s":""}, at the current settings.</div>
               {[
-                {name:"vs. Higher Ground IT", base:curFleet, on:curCost>0},
-                {name:"vs. Spectrum", base:spFleet, on:spCost>0},
+                {name:"vs. Higher Ground IT", base:curTotal, on:curCost>0},
+                {name:"vs. Spectrum", base:spTotal, on:spCost>0},
               ].filter(x=>x.on).map((x,i)=>{
-                var d = x.base - bnFleet;
+                var d = x.base - bnTotal;
                 var cheaper = d>=0;
                 return (
                   <div key={i} style={{display:"flex", gap:18, flexWrap:"wrap", alignItems:"baseline", padding:"9px 0", borderTop:i?`1px solid ${C.line}`:"none"}}>
@@ -289,10 +316,12 @@ function App() {
           )}
 
           <div style={{marginTop:12, fontSize:12, color:C.muted}}>
-            ButeraNet total = (fee &times; locations) + fleet tooling (Atera $179 + Hudu $27, published, once for the
-            whole fleet). One-time hardware is separate, billed at actual distributor cost with no markup, and owned by
-            the church. Internet service is provider-neutral and excluded. Higher Ground and Spectrum totals are the
-            per-site figures you enter, multiplied by locations; nothing is estimated on their behalf.
+            This is an illustrative enterprise scaling model for planning &mdash; not a binding quote. ButeraNet total =
+            progressive managed-service fee + platform/tooling overhead (the $206 base reflects Atera and Hudu; it rises
+            with scale as platform infrastructure grows). One-time hardware is billed separately at actual distributor
+            cost and is owned by the church; internet service is provider-neutral. Both are excluded here. Higher Ground
+            and Spectrum totals are the per-site figures you enter, multiplied by locations &mdash; nothing is estimated
+            on their behalf.
           </div>
         </div>
       </div>
