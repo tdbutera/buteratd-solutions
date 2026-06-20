@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>ButeraNet Solutions — IT Proposal for Kings Cathedral Maui</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -100,9 +101,48 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--blue);vertical-al
   .hero p{font-size:15px;}
   input[type=range]{max-width:100%;}
 }
+/* ===== ADDED — nav, buttons, future-projects cards, gauges, schematics ===== */
+.nav{position:sticky;top:0;z-index:50;background:rgba(11,31,58,0.97);border-bottom:1px solid rgba(255,255,255,0.12);}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;}
+.nav a.brand{color:#fff;font-weight:900;font-size:14.5px;text-decoration:none;display:flex;align-items:center;gap:9px;letter-spacing:-0.2px;}
+.nav .brand .dmd{width:11px;height:11px;background:var(--green);transform:rotate(45deg);border-radius:2px;}
+.nav .links{display:flex;align-items:center;gap:20px;}
+.nav .links a{color:#CBD5E1;font-size:13px;font-weight:600;text-decoration:none;}
+.nav .links a:hover{color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px;border-radius:10px;padding:11px 18px;text-decoration:none;cursor:pointer;border:none;}
+.btn-exec{background:var(--green);color:#fff;} .btn-exec:hover{background:#0c6044;}
+.btn-ghost{border:1.5px solid rgba(255,255,255,0.5);color:#fff;background:transparent;}
+.hero .btn-row{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;}
+.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;}
+.pill.red{background:#FEF2F2;color:var(--red);} .pill.amber{background:#FFFBEB;color:var(--amber);} .pill.green{background:#F0FDF4;color:var(--green);}
+.fp-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:24px;text-decoration:none;color:var(--ink);display:block;transition:box-shadow .15s ease,transform .15s ease;}
+.fp-card:hover{box-shadow:0 10px 26px rgba(15,23,42,.10);transform:translateY(-2px);}
+.fp-ico{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.fp-card h3{font-size:18px;font-weight:800;color:var(--navy);margin:0 0 6px;}
+.fp-card .arrow{font-weight:800;color:var(--green);font-size:12.5px;margin-top:14px;display:inline-block;}
+.gauge-row{display:flex;align-items:center;gap:12px;margin:8px 0;}
+.gauge-lab{font-size:12px;color:var(--muted);width:78px;flex-shrink:0;text-align:right;}
+.gauge-track{flex:1;height:18px;border-radius:9px;background:#EEF2F6;overflow:hidden;}
+.gauge-fill{height:18px;border-radius:9px;display:flex;align-items:center;justify-content:flex-end;padding-right:9px;font-size:11px;font-weight:800;color:#fff;}
+.ph{background:#FEF9C3;color:#854D0E;font-weight:800;border-radius:4px;padding:0 5px;}
+svg.viz{width:100%;height:auto;display:block;}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+@media(max-width:640px){ .nav .links a:not(.btn){display:none;} .nav .wrap{height:52px;} }
 </style>
 </head>
 <body>
+
+<!-- NAV (added) -->
+<div class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="dmd"></span>ButeraNet &middot; Kings Cathedral Maui</a>
+  <div class="links">
+    <a href="index.html#proof">KCO Proof</a>
+    <a href="future-projects.html">Future Projects</a>
+    <a href="index.html#security">Security</a>
+    <a class="btn btn-exec" href="executive.html">Executive View &rarr;</a>
+  </div>
+</div></div>
 
 <!-- HERO -->
 <div class="hero">
@@ -113,6 +153,10 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--blue);vertical-al
     network work ButeraNet has completed at Kings Central Oahu, sets out an extensive three-way comparison,
     and shows ButeraNet&rsquo;s cost in full. Every figure here is either a published price or is shown openly
     as unknown. Nothing is estimated for another provider.</p>
+    <div class="btn-row">
+      <a class="btn btn-exec" href="executive.html">View the 90-second Executive Summary &rarr;</a>
+      <a class="btn btn-ghost" href="future-projects.html">Explore Future Projects</a>
+    </div>
   </div>
 </div>
 
@@ -135,7 +179,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--blue);vertical-al
 </div>
 
 <!-- KCO PROOF -->
-<div class="section white">
+<div class="section white" id="proof">
   <div class="wrap">
     <div class="eyebrow">Proof of Execution</div>
     <h2>Network modernization completed at Kings Central Oahu</h2>
@@ -378,6 +422,53 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--blue);vertical-al
       higher monthly cost &mdash; and that fiber infrastructure is not yet available at this location. This is stated
       so leadership can confirm it directly against spectrum.com before relying on a verbal figure &mdash; a point of
       fact, not a criticism.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FUTURE PROJECTS (teaser, added) -->
+<div class="section white" id="future">
+  <div class="wrap">
+    <div class="eyebrow">Where This Goes Next</div>
+    <h2>Future projects</h2>
+    <p class="lead">Three ways the foundation grows with Kings Cathedral. Tap any card for the full picture.</p>
+    <div class="grid g3">
+      <a class="fp-card" href="future-projects.html#presence">
+        <div class="fp-ico" style="background:#EFF6FF">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>
+        <h3>Online Presence</h3>
+        <div style="font-size:13.5px;color:var(--muted)">How Kings shows up in search &amp; maps today &rarr; an easy, mostly no-cost lift.</div>
+        <span class="arrow">See the before &rarr; after &rarr;</span>
+      </a>
+      <a class="fp-card" href="future-projects.html#suitcase">
+        <div class="fp-ico" style="background:#F0FDF4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F7B55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+        <h3>The Suitcase</h3>
+        <div style="font-size:13.5px;color:var(--muted)">A pre-built kit so a newly planted church is online &amp; streaming the same day &mdash; one cable in.</div>
+        <span class="arrow">See the kit &rarr;</span>
+      </a>
+      <a class="fp-card" href="future-projects.html#fabric">
+        <div class="fp-ico" style="background:#EEF2FF">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F4E79" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2.2"/><circle cx="4.5" cy="19" r="2.2"/><circle cx="12" cy="19" r="2.2"/><circle cx="19.5" cy="19" r="2.2"/><path d="M12 6.2v4.3M12 10.5L4.5 16.8M12 10.5l7.5 6.3M12 10.5v6.3"/></svg></div>
+        <h3>Unified Fabric</h3>
+        <div style="font-size:13.5px;color:var(--muted)">Every site under one view. You own the hardware; nothing bricks if a vendor leaves.</div>
+        <span class="arrow">See the vision &rarr;</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY (light touch, added) -->
+<div class="section" id="security">
+  <div class="wrap">
+    <div class="eyebrow">Security</div>
+    <h2>Quietly reviewed, calmly handled</h2>
+    <div class="card callout" style="display:flex;gap:16px;align-items:flex-start;border-left:4px solid var(--green)">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0F7B55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><path d="M12 2l8 3v6c0 5-3.5 8-8 11-4.5-3-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+      <div>
+        <div style="font-size:15px;color:var(--navy);font-weight:800;margin-bottom:4px">Email and external security have been reviewed.</div>
+        <div style="font-size:14px;color:var(--ink)">A short, no-cost hardening path is available &mdash; nothing urgent, nothing alarming. Ask Travis for the details whenever you&rsquo;d like them.</div>
+      </div>
     </div>
   </div>
 </div>

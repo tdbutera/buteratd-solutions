@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Executive View — ButeraNet · Kings Cathedral Maui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1F4E79; --navy2:#0B1F3A; --blue:#2E75B6; --lblue:#D5E8F0;
+  --ink:#1E293B; --muted:#64748B; --line:#E2E8F0; --bg:#F8FAFC; --white:#FFFFFF;
+  --green:#0F7B55; --red:#B91C1C; --amber:#B45309;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:'Inter',Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px;}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);}
+h1{font-size:38px;font-weight:900;line-height:1.14;letter-spacing:-0.8px;margin:14px 0 14px;}
+h2{font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin:6px 0 14px;}
+h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:5px;}
+p{margin:0;}
+.section{padding:44px 0;}
+.section.white{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.lead{color:var(--muted);max-width:760px;margin:0 0 8px;}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:22px;}
+.card.t-green{border-top:3px solid var(--green);} .card.t-blue{border-top:3px solid var(--blue);}
+.grid{display:grid;gap:16px;} .g3{grid-template-columns:1fr 1fr 1fr;} .g2{grid-template-columns:1fr 1fr;} .g4{grid-template-columns:repeat(4,1fr);}
+.kicker{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.hero{background:linear-gradient(135deg,var(--navy2),var(--navy));color:var(--white);padding:54px 0 46px;}
+.hero h1{color:var(--white);} .hero p{font-size:17px;color:#CBD5E1;max-width:720px;} .hero .eyebrow{color:#7FB3D9;}
+.foot{background:var(--navy2);color:#CBD5E1;padding:40px 0;font-size:13px;}
+.foot .name{font-weight:900;font-size:17px;color:var(--white);}
+.foot .disc{margin-top:16px;font-size:11px;color:#64748B;line-height:1.6;max-width:850px;}
+.nav{position:sticky;top:0;z-index:50;background:rgba(11,31,58,0.97);border-bottom:1px solid rgba(255,255,255,0.12);}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;}
+.nav a.brand{color:#fff;font-weight:900;font-size:14.5px;text-decoration:none;display:flex;align-items:center;gap:9px;letter-spacing:-0.2px;}
+.nav .brand .dmd{width:11px;height:11px;background:var(--green);transform:rotate(45deg);border-radius:2px;}
+.nav .links{display:flex;align-items:center;gap:20px;}
+.nav .links a{color:#CBD5E1;font-size:13px;font-weight:600;text-decoration:none;} .nav .links a:hover{color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px;border-radius:10px;padding:11px 18px;text-decoration:none;cursor:pointer;border:none;}
+.btn-exec{background:var(--green);color:#fff;} .btn-ghost{border:1.5px solid rgba(255,255,255,0.5);color:#fff;background:transparent;}
+.stat{background:#F8FAFC;border-radius:14px;padding:20px;border-top:3px solid var(--line);}
+.stat.green{border-top-color:var(--green);} .stat.blue{border-top-color:var(--blue);} .stat.navy{border-top-color:var(--navy);}
+.stat .big{font-size:34px;font-weight:900;color:var(--navy);line-height:1;letter-spacing:-1px;}
+.stat .big.g{color:var(--green);}
+.stat .lab{font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.4;}
+.ph{background:#FEF9C3;color:#854D0E;font-weight:800;border-radius:4px;padding:0 6px;}
+.chip{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;padding:7px 0;}
+.chip .c{color:var(--green);font-weight:900;flex-shrink:0;}
+.fp-mini{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:18px;text-decoration:none;color:var(--ink);display:block;}
+.fp-mini:hover{box-shadow:0 8px 22px rgba(15,23,42,.09);}
+.fp-mini .arrow{color:var(--green);font-weight:800;font-size:12.5px;margin-top:10px;display:inline-block;}
+.step{display:flex;align-items:center;gap:14px;padding:11px 0;} .step+.step{border-top:1px solid var(--line);}
+.step .n{flex-shrink:0;width:28px;height:28px;border-radius:14px;background:var(--navy);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+@media(max-width:640px){
+  .wrap{padding:0 16px;} h1{font-size:26px;} h2{font-size:20px;}
+  .section{padding:34px 0;} .hero{padding:40px 0 34px;} .g3,.g2,.g4{grid-template-columns:1fr;}
+  .nav .links a:not(.btn){display:none;} .nav .wrap{height:52px;} .stat .big{font-size:30px;}
+}
+</style>
+</head>
+<body>
+
+<div class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="dmd"></span>ButeraNet &middot; Kings Cathedral Maui</a>
+  <div class="links">
+    <a href="index.html#proof">KCO Proof</a>
+    <a href="future-projects.html">Future Projects</a>
+    <a href="index.html#security">Security</a>
+    <a class="btn btn-ghost" href="index.html">Full proposal</a>
+  </div>
+</div></div>
+
+<div class="hero"><div class="wrap">
+  <div class="eyebrow">Executive View &middot; 90 seconds</div>
+  <h1>The one page, if you only read one.</h1>
+  <p>ButeraNet is local, same-island managed IT for churches. The church owns all the hardware, every login and diagram is documented and handed to you, and there is no license that can be switched off. Here is the proof, the plan, and how to start.</p>
+</div></div>
+
+<!-- PROOF -->
+<div class="section" id="proof">
+  <div class="wrap">
+    <div class="eyebrow">Proven next door &mdash; Kings Central Oahu</div>
+    <h2>What we already did for a Kings Cathedral site</h2>
+    <div class="grid g4" style="margin-bottom:18px">
+      <div class="stat green"><div class="big g">91%</div><div class="lab">fewer Wi-Fi connection failures &mdash; <b>verified</b></div></div>
+      <div class="stat blue"><div class="big"><span class="ph">[X&rarr;Y%]</span></div><div class="lab">security maturity climb (BCAF) &mdash; <i>Travis confirms</i></div></div>
+      <div class="stat navy"><div class="big"><span class="ph">[$X]</span></div><div class="lab">value delivered, $0 invoiced &mdash; <i>Travis confirms</i></div></div>
+      <div class="stat green"><div class="big g">100%</div><div class="lab">of the hardware owned by the church</div></div>
+    </div>
+    <div class="grid g2" style="gap:24px">
+      <div class="card t-green">
+        <div class="kicker" style="color:var(--green)">What changed at KCO</div>
+        <div class="chip"><span class="c">&#10003;</span>Firewall brought to current, patched firmware</div>
+        <div class="chip"><span class="c">&#10003;</span>Network slowdown under load fixed &mdash; calls &amp; stream stable</div>
+        <div class="chip"><span class="c">&#10003;</span>Flat network split into 7 isolated segments (guest / staff / finance)</div>
+        <div class="chip"><span class="c">&#10003;</span>Secure remote management &mdash; fewer on-site trips</div>
+        <div class="chip"><span class="c">&#10003;</span>Everything documented and handed to the church</div>
+      </div>
+      <div class="card t-blue">
+        <div class="kicker" style="color:var(--blue)">Why it matters to Maui HQ</div>
+        <div style="font-size:14px;color:var(--ink);margin-bottom:10px">Maui HQ is the home of the finances and member data the whole organization depends on. The same standardized build proven at KCO is what we&rsquo;d bring here first &mdash; then, if leadership chooses, to every site.</div>
+        <div style="font-size:12.5px;color:var(--muted);font-style:italic">Verification: Ryan Hopkins, Kings Central Oahu operations point of contact.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VISION -->
+<div class="section white">
+  <div class="wrap">
+    <div class="eyebrow">Where it goes</div>
+    <h2>Three future projects</h2>
+    <div class="grid g3">
+      <a class="fp-mini" href="future-projects.html#presence">
+        <h3>Online presence</h3>
+        <div style="font-size:13px;color:var(--muted)">How Kings shows up in search &amp; maps &mdash; a few no-cost fixes lift it.</div>
+        <span class="arrow">See before &rarr; after &rarr;</span>
+      </a>
+      <a class="fp-mini" href="future-projects.html#suitcase">
+        <h3>The Suitcase</h3>
+        <div style="font-size:13px;color:var(--muted)">A pre-built kit &mdash; plant a church, plug in one cable, online &amp; streaming day one.</div>
+        <span class="arrow">See the kit &rarr;</span>
+      </a>
+      <a class="fp-mini" href="future-projects.html#fabric">
+        <h3>Unified fabric</h3>
+        <div style="font-size:13px;color:var(--muted)">Every site, one dashboard. You own it; nothing bricks if a vendor leaves.</div>
+        <span class="arrow">See the vision &rarr;</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO START -->
+<div class="section">
+  <div class="wrap">
+    <div class="grid g2" style="gap:28px;align-items:start">
+      <div>
+        <div class="eyebrow">How to start</div>
+        <h2>A small, reversible first step</h2>
+        <div class="card">
+          <div class="step"><div class="n">1</div><div style="font-size:14.5px">Sign a short Letter of Authorization</div></div>
+          <div class="step"><div class="n">2</div><div style="font-size:14.5px">On-site assessment visit &mdash; June 2026</div></div>
+          <div class="step"><div class="n">3</div><div style="font-size:14.5px">Security &amp; network assessment completed</div></div>
+          <div class="step"><div class="n">4</div><div style="font-size:14.5px">Findings report delivered to leadership</div></div>
+          <div class="step"><div class="n">5</div><div style="font-size:14.5px">Standardization proposal presented to Dr.&nbsp;Marocco</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow">Security</div>
+        <h2>Quietly handled</h2>
+        <div class="card" style="border-left:4px solid var(--green);background:var(--lblue);border-top:none">
+          <div style="font-size:14.5px;color:var(--navy);font-weight:800;margin-bottom:6px">Email and external security reviewed.</div>
+          <div style="font-size:14px;color:var(--ink)">A short, no-cost hardening path is available &mdash; nothing urgent. Ask Travis for the details.</div>
+        </div>
+        <div style="margin-top:20px">
+          <a class="btn btn-exec" href="index.html" style="background:var(--green);color:#fff">Open the full proposal &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot"><div class="wrap">
+  <div class="name">ButeraNet Solutions</div>
+  <div style="margin-top:6px">Managed IT for churches and ministries &middot; Hawaii</div>
+  <div style="margin-top:8px">buteranet.com &nbsp;&middot;&nbsp; travis@buteranet.com</div>
+  <div class="disc">Prepared for Kings Cathedral leadership. The 91% Wi-Fi figure is from the Kings Central Oahu engagement and is verifiable with its operations point of contact. Figures shown as placeholders are illustrative and confirmed by ButeraNet before use; no metric is estimated here. This page is informational and not a binding quote or contract.</div>
+</div></div>
+
+</body>
+</html>
