@@ -27,7 +27,7 @@ p{margin:0;}
 .section.white{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
 .lead{color:var(--muted);max-width:760px;margin:0 0 22px;}
 .card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:22px;}
-.card.t-green{border-top:3px solid var(--green);} .card.t-blue{border-top:3px solid var(--blue);}
+.card.t-green{border-top:3px solid var(--green);} .card.t-blue{border-top:3px solid var(--blue);} .card.t-amber{border-top:3px solid var(--amber);}
 .card.callout{background:var(--lblue);border:none;}
 .grid{display:grid;gap:16px;} .g3{grid-template-columns:1fr 1fr 1fr;} .g2{grid-template-columns:1fr 1fr;}
 .kicker{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
@@ -45,22 +45,26 @@ p{margin:0;}
 .btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px;border-radius:10px;padding:11px 18px;text-decoration:none;cursor:pointer;border:none;}
 .btn-exec{background:var(--green);color:#fff;} .btn-ghost{border:1.5px solid rgba(255,255,255,0.5);color:#fff;background:transparent;}
 .pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;}
-.pill.red{background:#FEF2F2;color:var(--red);} .pill.green{background:#F0FDF4;color:var(--green);}
-.gauge-row{display:flex;align-items:center;gap:12px;margin:9px 0;}
-.gauge-lab{font-size:12px;color:var(--muted);width:96px;flex-shrink:0;text-align:right;}
-.gauge-track{flex:1;height:20px;border-radius:10px;background:#EEF2F6;overflow:hidden;}
-.gauge-fill{height:20px;border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:11px;font-weight:800;color:#fff;}
-.ph{background:#FEF9C3;color:#854D0E;font-weight:800;border-radius:4px;padding:0 5px;}
+.pill.red{background:#FEF2F2;color:var(--red);} .pill.green{background:#F0FDF4;color:var(--green);} .pill.blue{background:#EFF6FF;color:var(--blue);}
 svg.viz{width:100%;height:auto;display:block;}
 .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:middle;}
 .rowlist .r{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;}
 .rowlist .r:first-child{border-top:none;}
 .ico-x{color:var(--red);font-weight:900;flex-shrink:0;} .ico-c{color:var(--green);font-weight:900;flex-shrink:0;}
+.stat{background:#F8FAFC;border-radius:14px;padding:18px;border-top:3px solid var(--line);}
+.stat.green{border-top-color:var(--green);} .stat.blue{border-top-color:var(--blue);} .stat.amber{border-top-color:var(--amber);}
+.stat .big{font-size:30px;font-weight:900;color:var(--navy);line-height:1;letter-spacing:-0.8px;} .stat .big.g{color:var(--green);}
+.stat .lab{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.4;}
+.sc{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--white);}
+.sc .tag{display:inline-block;font:800 10px/1 'Inter';letter-spacing:1px;text-transform:uppercase;border-radius:5px;padding:5px 9px;margin-bottom:10px;}
+.sc .spec{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-top:1px solid var(--line);}
+.sc .spec .k{color:var(--muted);} .sc .spec .v{font-weight:700;color:var(--navy);text-align:right;}
+.sc .price{font-size:21px;font-weight:900;color:var(--green);margin-top:10px;letter-spacing:-0.5px;}
 @media(max-width:640px){
   .wrap{padding:0 16px;} h1{font-size:25px;} h2{font-size:21px;} .hero h1{font-size:25px;}
   .section{padding:36px 0;} .hero{padding:40px 0 34px;} .g3,.g2{grid-template-columns:1fr;}
-  .nav .links a:not(.btn){display:none;} .nav .wrap{height:52px;} .gauge-lab{width:74px;}
+  .nav .links a:not(.btn){display:none;} .nav .wrap{height:52px;}
 }
 </style>
 </head>
@@ -87,26 +91,33 @@ svg.viz{width:100%;height:auto;display:block;}
   <div class="wrap">
     <div class="eyebrow">Future Project 1</div>
     <h2>Online presence &mdash; how Kings is found</h2>
-    <p class="lead">We looked at how Kings Cathedral shows up when someone searches Google or Maps. There are a few specific, mostly no-cost fixes that lift it &mdash; clearer listing, claimed profile, accurate hours and service/stream links.</p>
+    <p class="lead">The content your team makes is strong. The problem is the <b>listings</b> &mdash; the church shows up online with conflicting facts that confuse a first-time visitor. These are mostly no-cost fixes: claim the profiles, then make every listing tell one story.</p>
+    <div class="grid g3" style="margin-bottom:18px">
+      <div class="stat green"><div class="big g">4.8&#9733;</div><div class="lab">Google rating across <b>~204 reviews</b> &mdash; a real, strong reputation</div></div>
+      <div class="stat amber"><div class="big">5&times;</div><div class="lab">different campus counts listed publicly right now (168 / 206 / 365 / 460 &hellip;)</div></div>
+      <div class="stat amber"><div class="big">4&times;</div><div class="lab">different Sunday service times across listings (7 / 8 / 9:30 / 10)</div></div>
+    </div>
     <div class="grid g2" style="gap:24px;align-items:start">
-      <div class="card t-blue">
-        <div class="kicker" style="color:var(--blue)">Findability &mdash; here &rarr; here</div>
-        <div class="gauge-row"><span class="gauge-lab">Today</span><div class="gauge-track"><div class="gauge-fill" style="width:34%;background:var(--red)">&nbsp;</div></div></div>
-        <div class="gauge-row"><span class="gauge-lab">After fixes</span><div class="gauge-track"><div class="gauge-fill" style="width:86%;background:var(--green)">&nbsp;</div></div></div>
-        <div style="font-size:12px;color:var(--muted);margin-top:10px">Score today <span class="ph">[X / 100]</span> &rarr; after <span class="ph">[Y / 100]</span>. <em>Illustrative direction &mdash; Travis confirms the measured numbers.</em></div>
-      </div>
-      <div class="card">
-        <div class="kicker" style="color:var(--navy)">What changes</div>
+      <div class="card t-amber">
+        <div class="kicker" style="color:var(--amber)">Today &mdash; one church, many stories</div>
         <div class="rowlist">
-          <div class="r"><span class="ico-x">&times;</span><div><b>Google Business Profile</b> &mdash; gaps / unverified <span class="pill red">today</span></div></div>
-          <div class="r"><span class="ico-c">&#10003;</span><div>Claimed, verified, accurate <span class="pill green">after</span></div></div>
-          <div class="r"><span class="ico-x">&times;</span><div><b>Name, address, phone</b> inconsistent across the web</div></div>
-          <div class="r"><span class="ico-c">&#10003;</span><div>Consistent everywhere search looks</div></div>
-          <div class="r"><span class="ico-x">&times;</span><div><b>Service &amp; stream times</b> hard to find</div></div>
-          <div class="r"><span class="ico-c">&#10003;</span><div>One click from the search result</div></div>
+          <div class="r"><span class="ico-x">&times;</span><div>Service times disagree across the website, socials, and directories</div></div>
+          <div class="r"><span class="ico-x">&times;</span><div>Campus count cited 5 different ways in public listings</div></div>
+          <div class="r"><span class="ico-x">&times;</span><div>Still listed under the legacy &ldquo;First Assembly of God&rdquo; name + an old address</div></div>
+          <div class="r"><span class="ico-x">&times;</span><div>Google &amp; Yelp profiles unclaimed / duplicated; one 1&#9733; review unanswered</div></div>
+        </div>
+      </div>
+      <div class="card t-green">
+        <div class="kicker" style="color:var(--green)">After &mdash; one source of truth</div>
+        <div class="rowlist">
+          <div class="r"><span class="ico-c">&#10003;</span><div>Leadership certifies one set of service times; every channel matches</div></div>
+          <div class="r"><span class="ico-c">&#10003;</span><div>One agreed campus count and one current address, everywhere</div></div>
+          <div class="r"><span class="ico-c">&#10003;</span><div>Legacy name and stale directories corrected or out-ranked</div></div>
+          <div class="r"><span class="ico-c">&#10003;</span><div>Profiles claimed, duplicates merged, the review answered calmly</div></div>
         </div>
       </div>
     </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:14px;font-style:italic">Findings current as of June 2026 from a public review of King&rsquo;s Maui listings (Google, Yelp, Apple/Bing Maps, denominational directories). Industry benchmark: complete, claimed profiles draw materially more clicks than incomplete ones.</div>
   </div>
 </div>
 
@@ -115,37 +126,76 @@ svg.viz{width:100%;height:auto;display:block;}
   <div class="wrap">
     <div class="eyebrow">Future Project 2</div>
     <h2>The Suitcase &mdash; a church online the day it opens</h2>
-    <p class="lead">A pre-built case of network gear, configured before it ships. Plant a new church, plug in one fiber or coax line, and the building has Wi-Fi, a working network, and the bandwidth to livestream &mdash; the same day, with no IT visit. Built for Kings Cathedral&rsquo;s church-planting.</p>
-    <div class="card">
-      <svg class="viz" viewBox="0 0 720 280" role="img" aria-label="A hardened case holding pre-configured UniFi gear, with one cable in and Wi-Fi, network and streaming out">
-        <!-- case -->
-        <rect x="24" y="40" width="300" height="210" rx="16" fill="#0B1F3A"/>
-        <rect x="24" y="40" width="300" height="210" rx="16" fill="none" stroke="#1F4E79" stroke-width="2"/>
-        <rect x="120" y="28" width="108" height="16" rx="8" fill="#1F4E79"/>
-        <rect x="40" y="58" width="268" height="174" rx="9" fill="#13294A"/>
-        <g font-family="Inter,sans-serif" font-size="13" fill="#E2E8F0" font-weight="600">
-          <rect x="54" y="70" width="240" height="32" rx="6" fill="#0B1F3A" stroke="#0F7B55" stroke-width="1.5"/><text x="68" y="91">Cloud Gateway (UCG-Max)</text>
-          <rect x="54" y="108" width="240" height="32" rx="6" fill="#0B1F3A" stroke="#33507A"/><text x="68" y="129">PoE switch (USW-Lite-8-PoE)</text>
-          <rect x="54" y="146" width="114" height="32" rx="6" fill="#0B1F3A" stroke="#33507A"/><text x="68" y="167">U7 Pro AP</text>
-          <rect x="180" y="146" width="114" height="32" rx="6" fill="#0B1F3A" stroke="#33507A"/><text x="194" y="167">U7 Pro AP</text>
-          <rect x="54" y="184" width="240" height="30" rx="6" fill="#0B1F3A" stroke="#33507A"/><text x="68" y="204" fill="#94A3B8" font-size="12">G5 camera (optional)</text>
+    <p class="lead">A pre-built case of network gear, configured before it ships. Plant a church, connect it, and the building has Wi-Fi, a working network, and the bandwidth to livestream &mdash; the same day, no IT visit. Same UniFi core inside each; only the way it reaches the internet changes. Every box is owned by the church, with no license to renew.</p>
+    <div class="card" style="margin-bottom:18px">
+      <svg class="viz" viewBox="0 0 720 250" role="img" aria-label="A pre-built case with a swappable internet source on the left and Wi-Fi, network and streaming out on the right">
+        <text x="14" y="26" font-family="Inter,sans-serif" font-size="11" font-weight="800" letter-spacing="1.5" fill="#64748B">INTERNET IN &mdash; SWAPPABLE</text>
+        <g font-family="Inter,sans-serif" font-size="13" fill="#1E293B" font-weight="600">
+          <rect x="14" y="40" width="150" height="34" rx="7" fill="#fff" stroke="#2E75B6" stroke-width="1.5"/><text x="30" y="62">Fiber / cable</text>
+          <rect x="14" y="84" width="150" height="34" rx="7" fill="#fff" stroke="#2E75B6" stroke-width="1.5"/><text x="30" y="106">5G cellular</text>
+          <rect x="14" y="128" width="150" height="34" rx="7" fill="#fff" stroke="#2E75B6" stroke-width="1.5"/><text x="30" y="150">Starlink satellite</text>
         </g>
-        <!-- one cable in -->
-        <text x="360" y="58" font-family="Inter,sans-serif" font-size="11" font-weight="800" letter-spacing="1.5" fill="#64748B">ONE CABLE IN</text>
-        <path d="M324 92 H392" stroke="#2E75B6" stroke-width="3"/><circle cx="392" cy="92" r="4" fill="#2E75B6"/>
-        <text x="360" y="84" font-family="Inter,sans-serif" font-size="13" fill="#1E293B">fiber / coax</text>
-        <!-- arrow to outputs -->
-        <path d="M392 150 H470" stroke="#94A3B8" stroke-width="2.5" marker-end="url(#ar)"/>
-        <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#94A3B8"/></marker></defs>
-        <text x="392" y="138" font-family="Inter,sans-serif" font-size="11" font-weight="800" letter-spacing="1.5" fill="#64748B">DAY ONE, OUT</text>
-        <g font-family="Inter,sans-serif" font-size="14" fill="#1E293B" font-weight="600">
-          <circle cx="498" cy="92" r="5" fill="#0F7B55"/><text x="514" y="97">Wi-Fi across the building</text>
-          <circle cx="498" cy="150" r="5" fill="#0F7B55"/><text x="514" y="155">Wired network + phones</text>
-          <circle cx="498" cy="208" r="5" fill="#0F7B55"/><text x="514" y="213">Bandwidth to livestream</text>
+        <path d="M164 57 C210 57 210 101 250 101" stroke="#94A3B8" stroke-width="2" fill="none"/>
+        <path d="M164 101 H250" stroke="#94A3B8" stroke-width="2" fill="none"/>
+        <path d="M164 145 C210 145 210 101 250 101" stroke="#94A3B8" stroke-width="2" fill="none"/>
+        <rect x="250" y="44" width="210" height="160" rx="14" fill="#0B1F3A"/><rect x="262" y="56" width="186" height="136" rx="8" fill="#13294A"/>
+        <g font-family="Inter,sans-serif" font-size="12" fill="#E2E8F0" font-weight="600">
+          <rect x="274" y="66" width="162" height="26" rx="5" fill="#0B1F3A" stroke="#0F7B55"/><text x="286" y="83">Cloud Gateway Max</text>
+          <rect x="274" y="98" width="162" height="26" rx="5" fill="#0B1F3A" stroke="#33507A"/><text x="286" y="115">PoE switch</text>
+          <rect x="274" y="130" width="78" height="26" rx="5" fill="#0B1F3A" stroke="#33507A"/><text x="286" y="147">U7 Pro</text>
+          <rect x="358" y="130" width="78" height="26" rx="5" fill="#0B1F3A" stroke="#33507A"/><text x="370" y="147">U7 Pro</text>
+          <rect x="274" y="162" width="162" height="22" rx="5" fill="#0B1F3A"/><text x="286" y="177" font-size="10" fill="#94A3B8">+ G5 camera (optional)</text>
+        </g>
+        <path d="M460 124 H516" stroke="#94A3B8" stroke-width="2.5" marker-end="url(#a2)"/>
+        <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#94A3B8"/></marker></defs>
+        <text x="524" y="50" font-family="Inter,sans-serif" font-size="11" font-weight="800" letter-spacing="1.5" fill="#64748B">DAY ONE, OUT</text>
+        <g font-family="Inter,sans-serif" font-size="13.5" fill="#1E293B" font-weight="600">
+          <circle cx="528" cy="86" r="5" fill="#0F7B55"/><text x="544" y="91">Wi-Fi everywhere</text>
+          <circle cx="528" cy="124" r="5" fill="#0F7B55"/><text x="544" y="129">Wired network + phones</text>
+          <circle cx="528" cy="162" r="5" fill="#0F7B55"/><text x="544" y="167">Livestream-ready</text>
         </g>
       </svg>
-      <div class="legend"><span><i style="background:#0F7B55"></i>Real UniFi gear, owned by the church</span><span><i style="background:#2E75B6"></i>One incoming line</span><span style="font-style:italic">Illustrated concept &mdash; not a product photo</span></div>
+      <div class="legend"><span><i style="background:#0F7B55"></i>Same UniFi core (owned, no license)</span><span><i style="background:#2E75B6"></i>Internet source swaps to fit the site</span><span style="font-style:italic">Illustrated concept &mdash; not a product photo</span></div>
     </div>
+    <div class="grid g3">
+      <div class="sc">
+        <span class="tag" style="background:#EFF6FF;color:var(--blue)">Case 1 &middot; Fiber / cable</span>
+        <h3>Wired internet on site</h3>
+        <div style="font-size:13px;color:var(--muted);margin:4px 0 8px">For sites where fiber or cable is available.</div>
+        <div class="spec"><span class="k">Internet</span><span class="v">Fiber / coax</span></div>
+        <div class="spec"><span class="k">Bandwidth</span><span class="v">Up to 2.5 Gbps</span></div>
+        <div class="spec"><span class="k">Devices</span><span class="v">300+ supported</span></div>
+        <div class="spec"><span class="k">Wi-Fi</span><span class="v">WiFi 7 (U7 Pro)</span></div>
+        <div class="price">Ready for ~$800</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">UniFi gear, owned outright</div>
+      </div>
+      <div class="sc" style="border-top:3px solid var(--green)">
+        <span class="tag" style="background:#F0FDF4;color:var(--green)">Case 2 &middot; 5G cellular</span>
+        <h3>No wired line? Use 5G</h3>
+        <div style="font-size:13px;color:var(--muted);margin:4px 0 8px">For sites with no fiber or cable yet.</div>
+        <div class="spec"><span class="k">Internet</span><span class="v">UniFi 5G Max</span></div>
+        <div class="spec"><span class="k">Bandwidth</span><span class="v">Up to ~900 Mbps</span></div>
+        <div class="spec"><span class="k">Devices</span><span class="v">300+ supported</span></div>
+        <div class="spec"><span class="k">SIM</span><span class="v">Dual-SIM failover</span></div>
+        <div class="price">Ready for ~$1,200</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">+ a carrier data plan</div>
+      </div>
+      <div class="sc">
+        <span class="tag" style="background:#FFFBEB;color:var(--amber)">Case 3 &middot; Starlink</span>
+        <h3>Truly remote? Satellite</h3>
+        <div style="font-size:13px;color:var(--muted);margin:4px 0 8px">For locations off the grid entirely.</div>
+        <div class="spec"><span class="k">Internet</span><span class="v">Starlink</span></div>
+        <div class="spec"><span class="k">Bandwidth</span><span class="v">~100&ndash;200 Mbps</span></div>
+        <div class="spec"><span class="k">Devices</span><span class="v">300+ supported</span></div>
+        <div class="spec"><span class="k">Hardware</span><span class="v">$349 standard kit</span></div>
+        <div class="price">Ready for ~$1,150</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">+ Starlink ~$120/mo (Business tier for priority)</div>
+      </div>
+    </div>
+    <div class="card callout" style="margin-top:18px">
+      <div style="font-size:14px;color:var(--navy)"><b>Stocked at Maui HQ, deployed on a tracked trial.</b> Maui keeps the cases ready, ships one to a new church, and runs it on a short probationary period &mdash; monitored from the one dashboard &mdash; until the permanent network is established and signed off. Every case, every site, fully tracked from home.</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:12px;font-style:italic">Approximate, from real Ubiquiti and Starlink pricing (June 2026): Cloud Gateway Max $199, Switch Lite 8 PoE $109, U7 Pro $189, G5 camera $129, UniFi 5G Max $399, Starlink standard kit $349. Bandwidth figures are typical real-world ranges; the 5G/Starlink cases also carry a monthly data plan. Scales to the rackmount UDM-Pro ($379) for a full campus &mdash; the same gear running at KCO.</div>
   </div>
 </div>
 
@@ -153,25 +203,25 @@ svg.viz{width:100%;height:auto;display:block;}
 <div class="section" id="fabric">
   <div class="wrap">
     <div class="eyebrow">Future Project 3 &middot; The Vision</div>
-    <h2>Unified fabric &mdash; every site, one view</h2>
-    <p class="lead">As Kings Cathedral standardizes beyond Maui, every site connects to one simple dashboard. It is a window for visibility and support &mdash; not a kill-switch. Each site keeps running on its own, the church owns all the hardware, and nothing stops working if a vendor ever leaves.</p>
+    <h2>Unified fabric &mdash; Maui HQ over every site</h2>
+    <p class="lead">Maui HQ, run by ButeraNet, sits at the top. Every church &mdash; Hawai&lsquo;i, the mainland, and the nations &mdash; falls beneath it on one simple dashboard. It is a window for visibility and support, not a kill-switch: each site runs on its own, the church owns all the hardware, and nothing stops working if a vendor ever leaves.</p>
     <div class="card">
-      <svg class="viz" viewBox="0 0 720 250" role="img" aria-label="One dashboard at the top connecting down to many autonomous church sites, scaling toward 900">
-        <rect x="250" y="16" width="220" height="50" rx="10" fill="#1F4E79"/>
-        <text x="360" y="39" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="800" fill="#fff">One dashboard</text>
-        <text x="360" y="56" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#9CC4E4" letter-spacing="0.5">visibility, not a kill-switch</text>
-        <line x1="360" y1="66" x2="360" y2="92" stroke="#94A3B8" stroke-width="2"/>
-        <line x1="96" y1="92" x2="624" y2="92" stroke="#94A3B8" stroke-width="2"/>
-        <g stroke="#CBD5E1" stroke-width="2"><line x1="96" y1="92" x2="96" y2="120"/><line x1="228" y1="92" x2="228" y2="120"/><line x1="360" y1="92" x2="360" y2="120"/><line x1="492" y1="92" x2="492" y2="120"/><line x1="624" y1="92" x2="624" y2="120"/></g>
+      <svg class="viz" viewBox="0 0 720 250" role="img" aria-label="Maui HQ on ButeraNet at the top, with every church site beneath it on one dashboard, scaling past 900 sites">
+        <rect x="240" y="14" width="240" height="56" rx="11" fill="#1F4E79"/>
+        <text x="360" y="38" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="800" fill="#fff">Maui HQ</text>
+        <text x="360" y="57" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#9CC4E4" letter-spacing="0.5">&#9670; on ButeraNet Solutions &middot; one dashboard</text>
+        <line x1="360" y1="70" x2="360" y2="96" stroke="#94A3B8" stroke-width="2"/>
+        <line x1="96" y1="96" x2="624" y2="96" stroke="#94A3B8" stroke-width="2"/>
+        <g stroke="#CBD5E1" stroke-width="2"><line x1="96" y1="96" x2="96" y2="124"/><line x1="228" y1="96" x2="228" y2="124"/><line x1="360" y1="96" x2="360" y2="124"/><line x1="492" y1="96" x2="492" y2="124"/><line x1="624" y1="96" x2="624" y2="124"/></g>
         <g font-family="Inter,sans-serif" font-size="12.5" font-weight="700" fill="#1E293B">
-          <rect x="40" y="120" width="112" height="40" rx="8" fill="#fff" stroke="#0F7B55" stroke-width="1.5"/><text x="96" y="145" text-anchor="middle">Maui HQ</text>
-          <rect x="172" y="120" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="228" y="145" text-anchor="middle">Hawai'i Kai</text>
-          <rect x="304" y="120" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="360" y="145" text-anchor="middle">West O'ahu</text>
-          <rect x="436" y="120" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="492" y="145" text-anchor="middle">new plant</text>
-          <rect x="568" y="120" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="624" y="145" text-anchor="middle">new plant</text>
+          <rect x="40" y="124" width="112" height="40" rx="8" fill="#fff" stroke="#0F7B55" stroke-width="1.5"/><text x="96" y="149" text-anchor="middle">Hawai'i Kai</text>
+          <rect x="172" y="124" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="228" y="149" text-anchor="middle">West O'ahu</text>
+          <rect x="304" y="124" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="360" y="149" text-anchor="middle">Lahaina</text>
+          <rect x="436" y="124" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="492" y="149" text-anchor="middle">Mainland</text>
+          <rect x="568" y="124" width="112" height="40" rx="8" fill="#fff" stroke="#CBD5E1"/><text x="624" y="149" text-anchor="middle">The nations</text>
         </g>
         <g fill="#CBD5E1"><circle cx="250" cy="196" r="4"/><circle cx="290" cy="196" r="4"/><circle cx="330" cy="196" r="4"/><circle cx="370" cy="196" r="4"/><circle cx="410" cy="196" r="4"/><circle cx="450" cy="196" r="4"/><circle cx="490" cy="196" r="4"/></g>
-        <text x="360" y="228" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#64748B">&hellip; one standard, replicable to every location</text>
+        <text x="360" y="228" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#64748B">26 nations &middot; 650+ congregations today &mdash; one standard, scales past 900 sites</text>
       </svg>
       <div class="grid g3" style="margin-top:20px">
         <div class="card t-green"><div class="kicker" style="color:var(--green)">You own it</div><div style="font-size:13.5px">Every box is the church&rsquo;s, outright &mdash; no per-device licensing.</div></div>
@@ -192,7 +242,7 @@ svg.viz{width:100%;height:auto;display:block;}
   <div class="name">ButeraNet Solutions</div>
   <div style="margin-top:6px">Managed IT for churches and ministries &middot; Hawaii</div>
   <div style="margin-top:8px">buteranet.com &nbsp;&middot;&nbsp; travis@buteranet.com</div>
-  <div class="disc">Prepared for Kings Cathedral leadership. The Suitcase is an illustrated design concept built from real UniFi components; it is not a product photo. Online-presence scores shown as placeholders are illustrative and confirmed before use. The 91% Wi-Fi figure is from the Kings Central Oahu engagement and is verifiable with its operations point of contact. This page is informational and not a binding quote or contract.</div>
+  <div class="disc">Prepared for Kings Cathedral leadership. The Suitcase is an illustrated design concept built from real UniFi and Starlink components; it is not a product photo, and prices are approximate published figures (June 2026). Online-presence findings are from a public review of King&rsquo;s Maui listings, June 2026; the 4.8-star / ~204-review figure is the live Google rating. Worldwide footprint figures (26 nations, 650+ congregations) are from public sources and vary by source. The 91% Wi-Fi figure is from the Kings Central Oahu engagement and is verifiable with its operations point of contact. This page is informational and not a binding quote or contract.</div>
 </div></div>
 
 </body>
