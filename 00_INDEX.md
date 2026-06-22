@@ -49,6 +49,7 @@
 | 05 | Career | ⬜ not built |
 | 06 | Relocation shortlist (TN vs FL/TX/VA) | ✅ **built** — TX > FL > TN > VA |
 | 06b | National top-5 (50-state scan) | ✅ **built** — TX > AL > VA > UT > FL |
+| 06c | 4-season ranking + annual take-home | ✅ **built** — 4-seasons: VA>UT>MD>TN>OH>CO>NC; cash: TN>OH>TX>AL |
 | 07 | Real estate / homestead | ⬜ not built |
 | 08 | Education & GI Bill (Ch.35 ×6 + Ch.33 TEB) | ⬜ not built |
 | 09 | Insurance & risk | ⬜ not built |

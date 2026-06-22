@@ -102,6 +102,7 @@
   <button data-t="finance">Finances</button>
   <button data-t="fork">70% vs 100%</button>
   <button data-t="reloc">Relocation</button>
+  <button data-t="takehome">Take-home / yr</button>
   <button data-t="edu">Education / GI Bill</button>
   <button data-t="move">PPM / Move</button>
   <button data-t="timeline">Timeline</button>
@@ -306,6 +307,26 @@
   </div>
 </section>
 
+<!-- TAKE-HOME -->
+<section id="takehome">
+  <h2>Annual take-home — what's left after a year of living</h2>
+  <p class="sub">Family of 8. Total net income (military + civilian) minus state tax, housing (mortgage on the anchor-metro median home), property tax, home insurance, groceries, gas, utilities, healthcare. Reacts to the <b>VA rating</b> and <b>civilian salary</b> up top. <span class="tag">[model — verify line items locally]</span></p>
+
+  <div class="grid g3">
+    <div class="card"><h3>Net income / yr</h3><div class="big green" id="th-income">—</div><div class="note" id="th-incnote">military + civilian (after federal)</div></div>
+    <div class="card"><h3>Top state · take-home</h3><div class="big blue" id="th-top">—</div><div class="note" id="th-topnote"></div></div>
+    <div class="card"><h3>Top vs bottom spread</h3><div class="big" id="th-spread">—</div><div class="note">same income, different state = real money</div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Annual take-home by state <span class="mini">(sorted best→worst)</span></h3>
+    <div style="overflow-x:auto"><table id="thTable"></table></div>
+    <p class="tag">Mortgage = 30-yr P&amp;I @6.9% on 80% of the anchor-metro median home. Property tax = $0 where the 100% P&amp;T exemption is full (else on value above the cap); at 70% no exemption applies. Groceries/gas/utilities/healthcare scaled by state price level (BEA RPP). Assumes the <b>same civilian salary everywhere</b> — high-cost metros like NoVA often pay more, which narrows the gap.</p>
+  </div>
+
+  <div class="callout">Cheap housing + no/low income tax + cheap insurance is what actually maximizes saved cash — which is why <b>TN, OH, TX, AL</b> top the list and Florida's no-tax edge gets erased by its insurance bill.</div>
+</section>
+
 <!-- EDUCATION -->
 <section id="edu">
   <h2>Education &amp; GI Bill — the six-kid play</h2>
@@ -436,35 +457,39 @@ const MIL = { pension:3450, tricare:-64, sbp:-278, tax:-340 };
 const VA = { 70:2455, 100:4864 };
 
 const STATES = {
-  TX:{name:'Texas',      propRate:0.0168, incTaxEff:0,     vetProp:'full',    cap:0},
-  AL:{name:'Alabama',    propRate:0.0040, incTaxEff:0.045, vetProp:'full',    cap:0},
-  VA:{name:'Virginia',   propRate:0.0087, incTaxEff:0.05,  vetProp:'full',    cap:0},
-  UT:{name:'Utah',       propRate:0.0057, incTaxEff:0.045, vetProp:'partial', cap:479000},
-  FL:{name:'Florida',    propRate:0.0091, incTaxEff:0,     vetProp:'full',    cap:0},
-  TN:{name:'Tennessee',  propRate:0.0066, incTaxEff:0,     vetProp:'partial', cap:175000},
-  MD:{name:'Maryland',   propRate:0.0105, incTaxEff:0.075, vetProp:'full',    cap:0},
-  GA:{name:'Georgia',    propRate:0.0090, incTaxEff:0.05,  vetProp:'partial', cap:110000},
-  SC:{name:'S. Carolina',propRate:0.0056, incTaxEff:0.05,  vetProp:'full',    cap:0},
-  CO:{name:'Colorado',   propRate:0.0049, incTaxEff:0.044, vetProp:'partial', cap:100000},
+  TX:{name:'Texas',      propRate:0.0168, incTaxEff:0,     vetProp:'full',    cap:0,      home:260000, rpp:97,  ins:4500},
+  AL:{name:'Alabama',    propRate:0.0040, incTaxEff:0.045, vetProp:'full',    cap:0,      home:320000, rpp:88,  ins:3130},
+  VA:{name:'Virginia',   propRate:0.0087, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:345000, rpp:100, ins:1900},
+  UT:{name:'Utah',       propRate:0.0057, incTaxEff:0.045, vetProp:'partial', cap:479000, home:520000, rpp:98,  ins:900},
+  FL:{name:'Florida',    propRate:0.0091, incTaxEff:0,     vetProp:'full',    cap:0,      home:443000, rpp:100, ins:6400},
+  TN:{name:'Tennessee',  propRate:0.0066, incTaxEff:0,     vetProp:'partial', cap:175000, home:327000, rpp:90,  ins:3045},
+  MD:{name:'Maryland',   propRate:0.0105, incTaxEff:0.075, vetProp:'full',    cap:0,      home:450000, rpp:108, ins:1900},
+  GA:{name:'Georgia',    propRate:0.0090, incTaxEff:0.05,  vetProp:'partial', cap:110000, home:240000, rpp:93,  ins:2300},
+  SC:{name:'S. Carolina',propRate:0.0056, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:420000, rpp:95,  ins:2670},
+  CO:{name:'Colorado',   propRate:0.0049, incTaxEff:0.044, vetProp:'partial', cap:100000, home:465000, rpp:104, ins:4500},
+  OH:{name:'Ohio',       propRate:0.0140, incTaxEff:0.033, vetProp:'partial', cap:50000,  home:230000, rpp:90,  ins:1800},
+  NC:{name:'N. Carolina',propRate:0.0073, incTaxEff:0.0399,vetProp:'partial', cap:45000,  home:340000, rpp:94,  ins:2600},
 };
-const ORDER = ['TX','AL','VA','UT','FL','TN','MD','GA','SC','CO'];
+const ORDER = ['TX','AL','VA','UT','FL','TN','MD','GA','SC','CO','OH','NC'];
 
 // criteria: scores 1-10 (higher=better). verified flag for honesty.
 const CRIT = [
-  {key:'job',  label:'Cleared cyber market', w:22, verified:false, basis:'VA/MD densest (NoVA, Fort Meade/NSA); CO Space Force; TX San Antonio 16th AF/NSA-TX; AL Huntsville/Redstone; FL Tampa SOCOM+Pensacola; GA Augusta; SC Charleston NIWC; UT Hill AFB+NSA data center; TN Oak Ridge only. Tier-2.',
-     s:{TX:9, AL:8, VA:10, UT:6, FL:7, TN:5, MD:10, GA:7, SC:6, CO:9}},
-  {key:'inc',  label:'Income-tax burden', w:15, verified:true, basis:'No tax on salary: TX/FL/TN. Taxes civilian W-2: VA 5.75%, MD ~7.5% w/local, AL/GA/SC ~5%, UT 4.55%, CO 4.4%.',
-     s:{TX:10, AL:7, VA:4, UT:6, FL:10, TN:10, MD:3, GA:6, SC:6, CO:5}},
-  {key:'hs',   label:'Homeschool & parental rights', w:14, verified:true, basis:'No-notice: TX, +low-reg AL/UT/TN. Moderate (notice+testing): VA/FL/GA/SC/MD/CO. TX Prop 15 (2025 const.), FL Bill of Rights.',
-     s:{TX:10, AL:9, VA:5, UT:9, FL:7, TN:9, MD:6, GA:7, SC:6, CO:6}},
-  {key:'col',  label:'Cost of living', w:13, verified:true, basis:'BEA RPP 2023 (US=100): AL 88 / TN 90 / GA 93 / SC 95 / TX 97 / UT 98 / FL 100 / VA(NoVA high) / CO 104 / MD 108.',
-     s:{TX:7, AL:9, VA:5, UT:6, FL:6, TN:8, MD:4, GA:8, SC:6, CO:4}},
-  {key:'prop', label:'Vet property tax', w:12, verified:true, basis:'Full exemption @100% P&T: TX/FL/VA/AL/MD/SC. Partial/capped: UT (~$479K value), TN ($175K), GA (~$110K), CO (50% of first $200K).',
-     s:{TX:10, AL:10, VA:10, UT:8, FL:10, TN:6, MD:10, GA:7, SC:9, CO:6}},
-  {key:'dis',  label:'Disaster / insurance', w:12, verified:false, basis:'Avg HO premium: UT <$1K / VA & MD ~$1.9K / TN ~$3K / AL ~$3.1K / TX ~$4.5K / CO ~$4.5K / FL ~$6K+. Tier-2 Bankrate 2025.',
-     s:{TX:5, AL:4, VA:8, UT:9, FL:3, TN:6, MD:8, GA:5, SC:5, CO:4}},
-  {key:'crime',label:'Crime / safety', w:12, verified:false, basis:'State violent crime/100K (FBI 2024): VA ~270 / UT ~260 / FL ~258 / GA ~390 / TX ~420 / MD ~430 / AL ~450 / SC 437 / TN 592. Metro choice matters.',
-     s:{TX:6, AL:5, VA:9, UT:8, FL:7, TN:5, MD:5, GA:6, SC:4, CO:5}},
+  {key:'job',  label:'Cleared cyber market', w:22, verified:false, basis:'VA/MD densest (NoVA, Fort Meade/NSA); CO Space Force; TX San Antonio 16th AF/NSA-TX; AL Huntsville/Redstone; FL Tampa SOCOM+Pensacola; GA Augusta; SC Charleston NIWC; UT Hill AFB+NSA data center; OH Wright-Patterson; NC Fort Liberty/RTP; TN Oak Ridge only. Tier-2.',
+     s:{TX:9, AL:8, VA:10, UT:6, FL:7, TN:5, MD:10, GA:7, SC:6, CO:9, OH:6, NC:6}},
+  {key:'inc',  label:'Income-tax burden', w:15, verified:true, basis:'No tax on salary: TX/FL/TN. Taxes civilian W-2: VA 5.75%, MD ~7.5% w/local, AL/GA/SC ~5%, UT 4.55%, CO 4.4%, NC 3.99%, OH ~3.5%.',
+     s:{TX:10, AL:7, VA:4, UT:6, FL:10, TN:10, MD:3, GA:6, SC:6, CO:5, OH:6, NC:7}},
+  {key:'hs',   label:'Homeschool & parental rights', w:14, verified:true, basis:'No-notice: TX, +low-reg AL/UT/TN. Moderate (notice+testing): VA/FL/GA/SC/MD/CO/OH/NC. TX Prop 15 (2025 const.), FL Bill of Rights.',
+     s:{TX:10, AL:9, VA:5, UT:9, FL:7, TN:9, MD:6, GA:7, SC:6, CO:6, OH:6, NC:7}},
+  {key:'col',  label:'Cost of living', w:13, verified:true, basis:'BEA RPP 2023 (US=100): AL 88 / TN 90 / OH 90 / GA 93 / NC 94 / SC 95 / TX 97 / UT 98 / FL 100 / CO 104 / MD 108.',
+     s:{TX:7, AL:9, VA:5, UT:6, FL:6, TN:8, MD:4, GA:8, SC:6, CO:4, OH:8, NC:7}},
+  {key:'prop', label:'Vet property tax', w:12, verified:true, basis:'Full exemption @100% P&T: TX/FL/VA/AL/MD/SC. Partial/capped: UT (~$479K value), TN ($175K), GA (~$110K), CO (50% of first $200K), OH ($50K), NC ($45K).',
+     s:{TX:10, AL:10, VA:10, UT:8, FL:10, TN:6, MD:10, GA:7, SC:9, CO:6, OH:6, NC:5}},
+  {key:'dis',  label:'Disaster / insurance', w:12, verified:false, basis:'Avg HO premium: UT <$1K / OH ~$1.8K / VA & MD ~$1.9K / NC ~$2.6K / TN ~$3K / AL ~$3.1K / TX ~$4.5K / CO ~$4.5K / FL ~$6K+. Tier-2 Bankrate 2025.',
+     s:{TX:5, AL:4, VA:8, UT:9, FL:3, TN:6, MD:8, GA:5, SC:5, CO:4, OH:7, NC:6}},
+  {key:'crime',label:'Crime / safety', w:12, verified:false, basis:'State violent crime/100K (FBI 2024): VA ~270 / UT ~260 / FL ~258 / OH ~290 / NC ~370 / GA ~390 / TX ~420 / MD ~430 / AL ~450 / SC 437 / TN 592.',
+     s:{TX:6, AL:5, VA:9, UT:8, FL:7, TN:5, MD:5, GA:6, SC:4, CO:5, OH:6, NC:6}},
+  {key:'season',label:'Four-season climate', w:0, verified:true, basis:'Distinct 4 seasons: CO 10; VA/UT/MD/OH 9; TN/NC 7; GA 6; AL 5; SC 4; TX(San Antonio) 3; FL 1 (no winter). DRAG UP to make 4 seasons a requirement.',
+     s:{TX:3, AL:5, VA:9, UT:9, FL:1, TN:7, MD:9, GA:6, SC:4, CO:10, OH:9, NC:7}},
 ];
 
 // ---- countdown helpers ----
@@ -571,6 +596,49 @@ function render(){
   set('edu-tebrec', daysTo(D.tebRec));
   // ppm
   renderPpm();
+  renderTakehome();
+}
+
+// federal tax on civilian salary, MFJ + 6 kids (~constant across states)
+function civFed(civ){
+  const taxable=Math.max(0,civ-30000);
+  const b=[[23850,.10],[96950,.12],[206700,.22],[394600,.24]];
+  let t=0,prev=0;
+  for(const [cap,r] of b){ if(taxable>prev){ t+=(Math.min(taxable,cap)-prev)*r; prev=cap; } }
+  return Math.max(0, t-12000); // 6 x $2,000 child tax credit
+}
+const GOODS=61200; // family-of-8 groceries+gas+utils+healthcare+other at RPP 100
+function renderTakehome(){
+  const milYr=(S.rating===100?7632:5223)*12;
+  const net=milYr+(S.civ-civFed(S.civ));
+  set('th-income', fmt(net));
+  set('th-incnote', fmt(milYr)+' military + '+fmt(S.civ-civFed(S.civ))+' civilian (net fed)');
+  const rows=ORDER.map(k=>{
+    const st=STATES[k];
+    const stateTax=S.civ*st.incTaxEff;
+    let ptax;
+    if(S.rating===100) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
+    else ptax = st.home*st.propRate;
+    const housing=0.8*st.home*0.06322 + ptax + st.ins;
+    const goods=GOODS*st.rpp/100;
+    const take=net-stateTax-housing-goods;
+    return {k,stateTax,ptax,housing,goods,take};
+  }).sort((a,b)=>b.take-a.take);
+  set('th-top', fmt(rows[0].take));
+  set('th-topnote', STATES[rows[0].k].name+' leads');
+  set('th-spread', fmt(rows[0].take-rows[rows.length-1].take));
+  const t=document.getElementById('thTable');
+  let h='<tr><th>#</th><th>State</th><th class="num">State tax</th><th class="num">Mortgage</th><th class="num">Prop tax</th><th class="num">Insurance</th><th class="num">Living*</th><th class="num">Take-home/yr</th></tr>';
+  rows.forEach((r,i)=>{
+    h+=`<tr><td>${i+1}</td><td>${STATES[r.k].name}</td>`+
+      `<td class="num">${r.stateTax?'−'+fmt(r.stateTax):'$0'}</td>`+
+      `<td class="num">${fmt(0.8*STATES[r.k].home*0.06322)}</td>`+
+      `<td class="num">${r.ptax?fmt(r.ptax):'<span class="pill good" style="padding:0 6px">$0</span>'}</td>`+
+      `<td class="num">${fmt(STATES[r.k].ins)}</td>`+
+      `<td class="num">${fmt(r.goods)}</td>`+
+      `<td class="num ${i===0?'winner':''}"><b>${fmt(r.take)}</b></td></tr>`;
+  });
+  t.innerHTML=h;
 }
 
 function set(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
