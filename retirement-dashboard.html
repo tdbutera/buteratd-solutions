@@ -114,7 +114,7 @@
 <!-- SETUP -->
 <section id="setup">
   <h2>⚙ Setup — your situation</h2>
-  <p class="sub">Enter your details; every tab recomputes from these. All fields are editable/overridable. Defaults = the example operator (Navy E-8, spouse + 6 kids). <button id="resetBtn" class="seg" style="padding:4px 10px;cursor:pointer">↺ reset to example</button></p>
+  <p class="sub">Enter your details; every tab recomputes from these. All fields are editable/overridable, and <b>your inputs auto-save in this browser</b>. Defaults = the example operator (Navy E-8, spouse + 6 kids). <button id="resetBtn" class="seg" style="padding:4px 10px;cursor:pointer">↺ reset to example</button></p>
 
   <div class="grid g3">
     <div class="card">
@@ -561,6 +561,8 @@ const DEFAULT = { rank:'E-8', tis:20.42, sys:'High-3', high3:6759, pension:3450,
   spouse:true, kids:6, filing:'MFJ', tricare:64, sbp:278, milfed:340,
   rating:100, pt:true, civ:150000, finState:'TX', home:450000, retDate:'2028-02-29' };
 const S = Object.assign({}, DEFAULT);
+function saveState(){ try{ localStorage.setItem('retDash', JSON.stringify(S)); }catch(e){} }
+function loadState(){ try{ const j=localStorage.getItem('retDash'); if(j) Object.assign(S, JSON.parse(j)); }catch(e){} }
 // approx monthly basic pay near retirement-eligible TIS — [Tier-3 estimate; override High-3 with your LES]
 const PAY={'E-5':3700,'E-6':4300,'E-7':5200,'E-8':6491,'E-9':7300,'W-2':6200,'W-3':6900,'W-4':7800,'W-5':9200,'O-3':7200,'O-4':8500,'O-5':10000,'O-6':12000,'O-7':14500,'O-8':16500};
 // 2026 VA comp building blocks (eff 12/1/2025): veteran+spouse+1child base & each-additional-child <18.
@@ -772,6 +774,7 @@ function render(){
   renderCompare();
   renderSetup();
   set('civVal', fmt(S.civ));
+  saveState();
 }
 
 function renderSetup(){
@@ -1126,9 +1129,16 @@ on('in-tricare','input',e=>{ S.tricare=+e.target.value||0; render(); });
 on('in-sbp','input',e=>{ S.sbp=+e.target.value||0; render(); });
 on('in-milfed','input',e=>{ S.milfed=+e.target.value||0; render(); });
 on('in-retdate','change',e=>{ S.retDate=e.target.value; render(); });
-on('resetBtn','click',()=>{ Object.assign(S,DEFAULT); syncSetupFields(); const cs=document.getElementById('civInput'); if(cs) cs.value=S.civ; const rs=document.getElementById('ratingSlider'); if(rs) rs.value=S.rating; const pc=document.getElementById('ptCheck'); if(pc) pc.checked=S.pt; render(); });
+function syncHeaderControls(){
+  const cs=document.getElementById('civInput'); if(cs) cs.value=Math.min(220000,Math.max(100000,S.civ));
+  const rs=document.getElementById('ratingSlider'); if(rs) rs.value=S.rating;
+  const pc=document.getElementById('ptCheck'); if(pc) pc.checked=S.pt;
+}
+on('resetBtn','click',()=>{ try{localStorage.removeItem('retDash');}catch(e){} Object.assign(S,DEFAULT); syncSetupFields(); syncHeaderControls(); render(); });
 
+loadState();
 syncSetupFields();
+syncHeaderControls();
 render();
 </script>
 </body>

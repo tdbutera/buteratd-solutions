@@ -38,7 +38,7 @@
 
 ## Core document registry (build with `BUILD <nn>`)
 
-**Interactive view:** `retirement-dashboard.html` — local single-file dashboard. VA-rating toggle + **salary slider** drive everything live. Tabs: Overview · Finances · 70/100 fork · Relocation (12-state matrix + weights + sensitivity + **four-season weight**) · **Take-home/yr** (per-state budget + **salary-band legend**) · Education · PPM · Timeline · Data. Open in a browser; not deployed.
+**Interactive view:** `retirement-dashboard.html` — local single-file dashboard, **now a general tool any service member can use.** A **⚙ Setup** tab takes rank, years of service, retirement system, High-3 pay, dependents, filing status, premiums, and retirement date; the financial engine computes retirement pay, VA comp (by rating + family), federal tax, and net from those inputs (all overridable; auto-saves in-browser). A **rating slider (10–100%) + P&T checkbox** model the CRDP cliff and benefit gates. Tabs: Setup · Overview (home hub) · Finances · 70/100 fork · Relocation (12-state matrix + weights + sensitivity + four-season weight) · **Compare 12** (category leaders + sortable table + pros/cons) · Take-home/yr (per-state budget + salary-band legend) · Education · PPM · Timeline · Data. Open in a browser; not deployed.
 
 | # | Doc | Status |
 |---|---|---|
