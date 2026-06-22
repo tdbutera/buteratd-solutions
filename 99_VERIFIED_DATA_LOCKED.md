@@ -147,4 +147,23 @@ Shortlist: **TN (front-runner to beat) · FL · TX · VA.**
 
 ---
 
-**SESSION-END STATE:** Tier-1 pull queue executed (6/6) + 4 quality-of-life axes sourced (§I) + verifications resolved (§J). `06` relocation verdict built: TX > FL > TN > VA on default weights; TN front-runner falls to 3rd under full scoring. Dashboard synced (7 verified axes). Remaining permanent flag: BLS metro salary bands (env-blocked). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
+## K. Independent 50-state scan (Jun 2026) — feeds `06b`
+
+Profile filter: must support a **local cleared TS/SCI cyber job** ($137–180K) — this gates out cheap/safe states with no cleared market (ID, WY, WV, MS, MT) unless income is portable.
+
+**National data points (all states screened):**
+- **No income tax (9):** AK, FL, NV, NH (I&D repealed 1/1/25), SD, TN, TX, WA, WY. `[Verified – Tax Foundation 2026]`
+- **Full/uncapped disabled-vet property exemption (100% P&T):** TX, FL, VA, MD, AL (160 ac, no cap), MS, MI, OK, SC (home+5 ac), among ~22 states. **Capped/partial:** TN ($175K→$200K 7/26), SD ($150K), NV (~$31K), WY (~$3K), AK ($150K), GA (~$110K value), CO (50% of first $200K), NC ($45K). `[Verified/Tier-2]`
+- **Income-capped out for high earners:** WA vet exemption (~$40K income cap) — disqualified. `[Verified – WA DOR]`
+- **Avoid (tax both pension + salary):** CA (13.3%), DC. `[Verified]`
+- **Densest cleared-cyber states:** VA (#1, NoVA/DC + Hampton Roads) · MD (Fort Meade/NSA) · CO (Space Force) · TX (San Antonio 16th AF/NSA-TX) · AL (Huntsville/Redstone) · FL (Tampa SOCOM + Pensacola Navy IW) · GA (Augusta Army Cyber + NSA-GA) · SC (Charleston NIWC) · CA (San Diego). `[Tier-2 – ClearanceJobs/CyberSecJobs]`
+- **Cheapest COL (BEA RPP 2023):** MS ~87 · AR ~87 · AL ~88 · OK ~88 · WV ~88 · TN ~90 · GA ~93 · NC ~94 · TX ~97. `[Verified – BEA RPP]`
+- **Safest (violent crime/100K, FBI 2024):** ME 100 · NH 110 · ID ~240 · WY 203 · UT ~260 · VA ~270. **Highest:** NM/AK ~720 · TN 592 · AR 579 · AL ~450 · NV ~460 · SC 437. `[Verified – FBI/USAFacts]`
+- **Lowest home-insurance/disaster:** UT (~$650–1K) · NV · ID · NH · WY · WA · VA (~$1.9K). **Highest:** FL ($6K+) · LA · OK · KS · CO · TX (~$4–5K) · AL (~$3.1K). `[Tier-2 – Bankrate 2025]`
+- **Best homeschool (HSLDA):** no-notice = TX, OK, ID, MO, IN, IA, AK, MI; low-reg = AL, UT, WY, MT, KY, NV. **Moderate:** FL, VA, NC, SC, GA, CO, MD, TN(boundary). **Avoid (high):** MA, NY, PA, RI, VT. Parental-rights constitutional/statute leaders: TX (Prop 15, 2025), FL (Bill of Rights), + AL/GA/TN/OK/ID/UT/WY/MT/NC/ND statutes. `[Verified – HSLDA / parentalrights.org]`
+
+**Weighted result (job22/inc15/hs14/col13/prop12/dis12/crime12):** TX 8.31 · AL 7.52 · VA 7.39 · UT 7.26 · FL 7.20 · TN 6.94 · MD 6.77 · GA 6.62 · SC 6.00 · CO 5.89.
+
+---
+
+**SESSION-END STATE:** Independent 50-state scan persisted (§K). National top-5 = TX > AL > VA > UT > FL. Newcomers beating original shortlist: Alabama (#2, Huntsville), Utah (#4). Pivot variable = civilian-income portability (collapses job-market weight → cheap/safe/free states rise). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
