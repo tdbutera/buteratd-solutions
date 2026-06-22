@@ -28,6 +28,12 @@
 - **Comp:** child add-ons phase out at 18, but the **spouse-base delta persists for life** — 100% $4,158/mo vs 70% $1,961/mo = **~$2,197/mo (~$26.4K/yr) forever.**
 - **Rough 100%-vs-70% advantage:** ~10 yr of comp delta + full Ch.35 ≈ **$629,000**, before counting state property-tax savings. Over a normal retirement lifespan the comp delta alone runs past **$650K**.
 
+## The full curve (not just the fork)
+
+The dashboard now models **every 10% rating** (`99` §M), which surfaces two structural features the binary 70-vs-100 view hides:
+- **CRDP cliff at 50%:** at ≥50% the pension and VA comp stack fully (concurrent receipt). **Below 50% a VA waiver applies** — comp replaces taxable retired pay, so you only net the tax saved. Net jumps sharply crossing 50% (~$2,881 at 40% → ~$4,341 at 50%).
+- **P&T gate is separate from the rating number:** Chapter 35 (6 kids) and the full property exemption need **Permanent & Total**, achievable at 100% *or* via TDIU at a lower schedular rating. The dashboard has a P&T checkbox independent of the slider to model this.
+
 ## What this means
 
 1. **100% P&T is the highest-value financial objective in the entire plan** — bigger than relocation, PPM, or job choice. The education lever for 6 kids ($340K) exists *only* at P&T.

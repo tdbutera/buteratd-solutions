@@ -189,4 +189,25 @@ Profile filter: must support a **local cleared TS/SCI cyber job** ($137–180K) 
 
 ---
 
-**SESSION-END STATE:** Independent 50-state scan (§K) + anchor-county property-tax refinement (§L) persisted. National top-5 = TX > AL > VA > UT > FL. Full-exemption states make county moot at 100% P&T; partial states (TN/GA/CO/OH/UT/NC) need county detail. Pivot variable = civilian-income portability. Salary bands per state added to dashboard legend (Tier-2). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
+## M. VA disability comp curve, 10–100% (spouse + 6 kids, 2026)
+
+Monthly, tax-free. **70% & 100% `[Verified – VA.gov 2026 / user calculator]`; all others `[Tier-2 – computed via 2.8% COLA truncation method, ±verify — VA.gov 403-blocked]`.**
+
+| Rating | Monthly | Mil net/mo* | Notes |
+|---|---|---|---|
+| 10% | $175 | ~$2,785 | no dependent add-ons; <50% = VA waiver |
+| 20% | $347 | ~$2,802 | <50% waiver |
+| 30% | $799 | ~$2,847 | deps count at 30%+ |
+| 40% | $1,142 | ~$2,881 | <50% waiver |
+| **50%** | **$1,573** | **~$4,341** | **CRDP kicks in — full stack** |
+| 60% | $1,973 | ~$4,741 | |
+| **70%** | **$2,455** | **$5,223** | **Verified** |
+| 80% | $2,835 | ~$5,603 | |
+| 90% | $3,181 | ~$5,949 | |
+| **100%** | **$4,864** | **$7,632** | **Verified · P&T unlocks Ch.35 + full property exemption** |
+
+*Mil net = pension $3,450 − Tricare $64 − SBP/VGLI $278 − fed tax $340 + VA. **CRDP cliff at 50%:** at ≥50% pension and VA stack fully; **below 50% a VA waiver applies** — VA comp replaces taxable retired pay dollar-for-dollar (received tax-free), so the net gain is only the tax saved, not a full stack (modeled at ~9.86% effective). **Two benefit gates require Permanent & Total (P&T), not just a rating:** Chapter 35 (6 kids) and full state property-tax exemption — P&T can occur at 100% or via TDIU at a lower schedular rating.
+
+---
+
+**SESSION-END STATE:** VA comp curve §M persisted (70/100 verified, rest Tier-2 computed). Dashboard rating slider models all 10 increments + the 50% CRDP cliff + the P&T benefit gate. Independent 50-state scan (§K) + anchor-county property-tax refinement (§L) persisted. National top-5 = TX > AL > VA > UT > FL. Full-exemption states make county moot at 100% P&T; partial states (TN/GA/CO/OH/UT/NC) need county detail. Pivot variable = civilian-income portability. Salary bands per state added to dashboard legend (Tier-2). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.

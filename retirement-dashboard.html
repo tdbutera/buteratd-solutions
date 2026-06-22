@@ -83,11 +83,9 @@
     </h1>
     <div class="controls">
       <div class="ctl">
-        <label>VA rating (model)</label>
-        <div class="toggle" id="ratingToggle">
-          <button data-r="70">70%</button>
-          <button data-r="100" class="on">100% P&amp;T</button>
-        </div>
+        <label>VA rating: <b id="ratingVal" style="color:var(--green)">100%</b>
+          <span style="margin-left:8px;font-size:11px"><input type="checkbox" id="ptCheck" checked style="vertical-align:middle"> P&amp;T</span></label>
+        <input id="ratingSlider" type="range" min="10" max="100" step="10" value="100" style="width:200px">
       </div>
       <div class="ctl">
         <label>Civilian salary (gross/yr): <b id="civVal" style="color:var(--green)">$150,000</b></label>
@@ -163,7 +161,7 @@
 
   <div class="grid g3">
     <div class="card"><h3>Retirement pay</h3><div class="big green">$3,450</div><div class="note">E-8 High-3 · taxable</div></div>
-    <div class="card"><h3>VA disability <span id="fin-rlabel"></span></h3><div class="big green" id="fin-va">—</div><div class="note">tax-free, federal &amp; state</div></div>
+    <div class="card"><h3>VA disability <span id="fin-rlabel"></span></h3><div class="big green" id="fin-va">—</div><div class="note">tax-free, fed &amp; state · <span id="fin-vatag"></span></div></div>
     <div class="card"><h3>Income adjustments</h3><div class="big">$0</div><div class="note">none</div></div>
     <div class="card"><h3>Tricare Prime (Family)</h3><div class="big red">−$64</div><div class="note">covers all 8 — moot vs rating</div></div>
     <div class="card"><h3>SBP / VGLI premium</h3><div class="big red">−$278</div><div class="note">$1,846 SBP · $500K VGLI</div></div>
@@ -176,7 +174,7 @@
       <div><div class="big green" id="fin-netmo">—</div><div class="note">net monthly</div></div>
       <div><div class="big" id="fin-netyr">—</div><div class="note">net annual</div></div>
     </div>
-    <div class="callout good">CRDP / concurrent receipt confirmed — full pension <b>and</b> full VA stack with no waiver offset (applies at both ratings ≥50%).</div>
+    <div class="callout good" id="crdpNote">CRDP / concurrent receipt — full pension <b>and</b> full VA stack with no waiver offset (applies at every rating ≥50%).</div>
   </div>
 
   <h2 style="margin-top:26px">Household income — add the civilian paycheck</h2>
@@ -499,9 +497,20 @@ const fmt = n => '$'+Math.round(n).toLocaleString();
 const fmtmo = n => '$'+Math.round(n).toLocaleString();
 
 // ---- core state ----
-const S = { rating:100, civ:150000, fedRate:0.14, finState:'TX', home:450000 };
+const S = { rating:100, pt:true, civ:150000, fedRate:0.14, finState:'TX', home:450000 };
 const MIL = { pension:3450, tricare:-64, sbp:-278, tax:-340 };
-const VA = { 70:2455, 100:4864 };
+// 2026 VA monthly disability comp — veteran + spouse + 6 children under 18 (tax-free, eff 12/1/2025).
+// 70% & 100% [Verified – VA.gov 2026 / user calculator]; 10/20/30/40/50/60/80/90% [Tier-2 — computed via 2.8% COLA truncation method, ±verify; VA.gov 403-blocked]
+const COMP = { 10:175, 20:347, 30:799, 40:1142, 50:1573, 60:1973, 70:2455, 80:2835, 90:3181, 100:4864 };
+const VERIFIED_RATINGS = {70:1, 100:1};
+const baseNet = MIL.pension+MIL.tricare+MIL.sbp+MIL.tax; // 2768 = pension net w/ full tax, before VA
+const PTAXEFF = Math.abs(MIL.tax)/MIL.pension;           // ~0.0986 effective pension tax (for <50% waiver)
+function milNet(){
+  const VAc = COMP[S.rating]||0;
+  if(S.rating>=50) return baseNet + VAc;                 // CRDP: pension + VA fully stack
+  // below 50%: VA waiver — retired pay reduced by VA comp, received tax-free instead → net gain = tax saved
+  return baseNet + Math.min(VAc,MIL.pension)*PTAXEFF + Math.max(0, VAc-MIL.pension);
+}
 
 const STATES = {
   TX:{name:'Texas',      propRate:0.0168, incTaxEff:0,     vetProp:'full',    cap:0,      home:260000, rpp:97,  ins:4500, band:[120000,165000], metro:'San Antonio'},
@@ -563,7 +572,6 @@ const D = {
 };
 
 // ---- compute ----
-function milNet(){ return MIL.pension+MIL.tricare+MIL.sbp+MIL.tax+VA[S.rating]; }
 
 function civNet(stateKey){
   const st = STATES[stateKey];
@@ -601,10 +609,16 @@ function render(){
   document.getElementById('homeValV').textContent = fmt(S.home);
 
   // finance cards
-  const va = VA[S.rating];
+  const va = COMP[S.rating]||0;
   const net = milNet();
-  set('fin-rlabel','('+S.rating+'%)');
+  set('fin-rlabel','('+S.rating+'%'+(S.pt?' P&T':'')+')');
   set('fin-va', fmt(va));
+  set('fin-vatag', VERIFIED_RATINGS[S.rating]?'verified':'computed est.');
+  set('ratingVal', S.rating+'%'+(S.pt?' P&T':''));
+  const crdp=document.getElementById('crdpNote');
+  if(crdp) crdp.innerHTML = S.rating>=50
+    ? 'CRDP / concurrent receipt — full pension <b>and</b> full VA stack with no waiver offset (applies at every rating ≥50%).'
+    : '⚠️ <b>Below 50%: no CRDP.</b> VA comp triggers a retired-pay <b>waiver</b> — you receive it tax-free instead of taxable pension, so the net gain is only the tax saved, not a full stack. Net jumps sharply at 50%.';
   set('fin-netmo', fmt(net));
   set('fin-netyr', fmt(net*12));
   // household
@@ -629,13 +643,13 @@ function render(){
   set('ov-teb', daysTo(D.ret));
   set('ov-deltamo','+$2,409');
   const eduFull = 6*36*1574;
-  document.getElementById('ov-fork').innerHTML = S.rating===100
-    ? `<b>Modeling 100% P&amp;T.</b> On top of the +$2,409/mo tax-free comp, the six-kid Chapter 35 education lever is worth up to <b>${fmt(eduFull)}</b> — the single largest swing in the plan, and it disappears entirely at 70%.`
-    : `<b>Modeling 70%.</b> No Chapter 35 education benefit and no full state property exemption. Switching to 100% P&amp;T adds <b>+$2,409/mo</b> tax-free plus up to <b>${fmt(eduFull)}</b> in education value.`;
+  document.getElementById('ov-fork').innerHTML = S.pt
+    ? `<b>Modeling ${S.rating}% P&amp;T.</b> The six-kid Chapter 35 education lever (up to <b>${fmt(eduFull)}</b>) and the full state property exemption are <b>live</b> — both require P&amp;T. This is the single largest swing in the plan.`
+    : `<b>Modeling ${S.rating}% (not P&amp;T).</b> No Chapter 35 education benefit and no full state property exemption — both need <b>Permanent &amp; Total</b>. Checking P&amp;T (or reaching 100% P&amp;T) adds up to <b>${fmt(eduFull)}</b> in education value plus $0 property tax.`;
 
   // fork
   const kidsEdu = 6*36*1574;
-  set('fork-edu', S.rating===100? fmt(kidsEdu) : '$0');
+  set('fork-edu', S.pt? fmt(kidsEdu) : '$0');
   set('fork-life', '$26.4K/yr');
   set('fork-total', fmt(2409*12*10 + kidsEdu));
 
@@ -668,11 +682,11 @@ function render(){
 // shared annual take-home for a state (used by take-home tab + compare)
 function takeHome(k){
   const st=STATES[k];
-  const milYr=(S.rating===100?7632:5223)*12;
+  const milYr=milNet()*12;
   const net=milYr+(S.civ-civFed(S.civ));
   const stateTax=S.civ*st.incTaxEff;
   let ptax;
-  if(S.rating===100) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
+  if(S.pt) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
   else ptax = st.home*st.propRate;
   const housing=0.8*st.home*0.06322 + ptax + st.ins;
   return net - stateTax - housing - GOODS*st.rpp/100;
@@ -825,7 +839,7 @@ function civFed(civ){
 }
 const GOODS=61200; // family-of-8 groceries+gas+utils+healthcare+other at RPP 100
 function renderTakehome(){
-  const milYr=(S.rating===100?7632:5223)*12;
+  const milYr=milNet()*12;
   const net=milYr+(S.civ-civFed(S.civ));
   set('th-income', fmt(net));
   set('th-incnote', fmt(milYr)+' military + '+fmt(S.civ-civFed(S.civ))+' civilian (net fed)');
@@ -833,7 +847,7 @@ function renderTakehome(){
     const st=STATES[k];
     const stateTax=S.civ*st.incTaxEff;
     let ptax;
-    if(S.rating===100) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
+    if(S.pt) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
     else ptax = st.home*st.propRate;
     const housing=0.8*st.home*0.06322 + ptax + st.ins;
     const goods=GOODS*st.rpp/100;
@@ -911,7 +925,7 @@ function renderProp(){
     let at100;
     if(st.vetProp==='full') at100=0;
     else at100=Math.max(0,(S.home-st.cap))*st.propRate; // TN: owe on value above cap
-    const cur = S.rating===100? at100: full;
+    const cur = S.pt? at100: full;
     h+=`<tr><td>${k}${S.rating? '':''}</td><td class="num">${fmt(full)}/yr</td><td class="num ${at100===0?'':''}">${at100===0?'<span class="pill good">$0</span>':fmt(at100)+'/yr'}</td></tr>`;
   });
   t.innerHTML=h;
@@ -934,7 +948,7 @@ function renderEdu(){
   document.getElementById('eduMoV').textContent=mo;
   const months=kids*mo, total=months*1574;
   set('edu-months', months+' mo');
-  set('edu-total', S.rating===100? fmt(total) : '$0 (needs 100% P&T)');
+  set('edu-total', S.pt? fmt(total) : '$0 (needs 100% P&T)');
 }
 
 function renderPpm(){
@@ -948,9 +962,15 @@ function renderPpm(){
 }
 
 // ---- wiring ----
-document.querySelectorAll('#ratingToggle button').forEach(b=>{
-  b.onclick=()=>{ S.rating=+b.dataset.r; document.querySelectorAll('#ratingToggle button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); render(); };
+document.getElementById('ratingSlider').addEventListener('input',e=>{
+  S.rating=+e.target.value;
+  const pc=document.getElementById('ptCheck');
+  if(S.rating===100){ pc.checked=true; S.pt=true; }       // 100% defaults to P&T
+  else if(S.rating<100){ S.pt=pc.checked; }               // P&T at <100 = TDIU (user opt-in)
+  render();
 });
+document.getElementById('ptCheck').addEventListener('change',e=>{ S.pt=e.target.checked; render(); });
+window.__set=(o)=>{ Object.assign(S,o); render(); };       // test hook
 document.getElementById('civInput').addEventListener('input',e=>{ S.civ=+e.target.value||0; render(); });
 document.getElementById('fedRate').addEventListener('input',e=>{ S.fedRate=+e.target.value/100; render(); });
 document.getElementById('homeVal').addEventListener('input',e=>{ S.home=+e.target.value; render(); });
