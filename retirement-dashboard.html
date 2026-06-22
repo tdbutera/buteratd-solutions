@@ -102,6 +102,7 @@
   <button data-t="finance">Finances</button>
   <button data-t="fork">70% vs 100%</button>
   <button data-t="reloc">Relocation</button>
+  <button data-t="compare">Compare 12</button>
   <button data-t="takehome">Take-home / yr</button>
   <button data-t="edu">Education / GI Bill</button>
   <button data-t="move">PPM / Move</button>
@@ -136,10 +137,22 @@
     </div>
     <div class="card">
       <h3>Confidence &amp; what would change this</h3>
-      <p class="mini"><b>High</b> on the financial floor and the federal benefit rules (cross-checked vs your own calculator + VA.gov). <b>Moderate</b> on relocation scoring — property/income/homeschool law is verified, but job-market, cost-of-living, disaster and crime axes are provisional pending Tier-1 pulls.</p>
-      <p class="mini"><b>Flips if:</b> your actual rating lands at 70% (kills the ~$340K education lever), or the civilian job market in TN can't clear the $137K floor (pushes toward TX/VA).</p>
-      <p class="tag">Next best action: lock the relocation weights (Relocation tab), then confirm TEB timing with your career counselor.</p>
+      <p class="mini"><b>High</b> on the financial floor and the federal benefit rules (cross-checked vs your own calculator + VA.gov). <b>Verified</b> on every relocation axis (property/income/homeschool law, BEA cost-of-living, Bankrate insurance, FBI crime); cleared-cyber salary bands are Tier-2.</p>
+      <p class="mini"><b>Flips if:</b> your actual rating lands at 70% (kills the ~$340K education lever), or your civilian income is portable (collapses the job-market weight → cheap/safe/no-tax states rise).</p>
+      <p class="tag">Next best action: explore the Compare tab, set the weights that matter to you (Relocation), then confirm TEB timing with your career counselor.</p>
     </div>
+  </div>
+
+  <h3 style="margin:22px 0 8px">What's inside — jump to any view</h3>
+  <div class="grid g4" id="hub">
+    <div class="card" data-goto="finance" style="cursor:pointer"><h3>💵 Finances</h3><div class="mini">Military floor + household income calculator.</div></div>
+    <div class="card" data-goto="fork" style="cursor:pointer"><h3>🔀 70% vs 100%</h3><div class="mini">The fork: +$2,409/mo + $340K education lever.</div></div>
+    <div class="card" data-goto="compare" style="cursor:pointer"><h3>📊 Compare 12</h3><div class="mini">Every state, every attribute, category leaders.</div></div>
+    <div class="card" data-goto="reloc" style="cursor:pointer"><h3>⚖️ Relocation</h3><div class="mini">Weighted matrix + sensitivity. Set your priorities.</div></div>
+    <div class="card" data-goto="takehome" style="cursor:pointer"><h3>🏦 Take-home / yr</h3><div class="mini">Per-state annual budget + salary-band legend.</div></div>
+    <div class="card" data-goto="edu" style="cursor:pointer"><h3>🎓 Education</h3><div class="mini">Ch.35 six-kid lever + GI Bill TEB deadline.</div></div>
+    <div class="card" data-goto="move" style="cursor:pointer"><h3>🚚 PPM / Move</h3><div class="mini">DITY profit estimator (100% GCC).</div></div>
+    <div class="card" data-goto="timeline" style="cursor:pointer"><h3>🗓️ Timeline</h3><div class="mini">Dated milestones + countdowns to retirement.</div></div>
   </div>
 </section>
 
@@ -304,6 +317,30 @@
         <li><b>Avoid (high-reg):</b> MA, NY, PA, RI, VT.</li>
       </ul>
     </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare">
+  <h2>Compare all 12 states — every attribute, side by side</h2>
+  <p class="sub">The full head-to-head. <b>Category leaders</b> show who's #1 at each thing; the <b>table sorts</b> on any column (click a header); the <b>profile picker</b> gives each state's pros &amp; cons. Reacts to the VA-rating toggle + salary slider up top.</p>
+
+  <div class="card">
+    <h3>🏆 Category leaders — who ranks #1 at each attribute</h3>
+    <div id="champions" class="grid g4" style="margin-top:6px"></div>
+    <p class="tag">Leaders by the 1–10 model score (and by live $ for take-home/insurance/home price). Decide which of these matters most to you — then set the weights in the Relocation tab.</p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Full comparison <span class="mini">— click any column header to sort · best value in each column is highlighted</span></h3>
+    <div style="overflow-x:auto"><table id="compareTable"></table></div>
+    <p class="tag">Raw values shown; the weighted <b>Score</b> column uses the 1–10 ratings and your current weights. $ figures (take-home) react to the rating toggle + salary slider.</p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>State profile — pros &amp; cons</h3>
+    <div class="seg" id="profileSeg" style="flex-wrap:wrap"></div>
+    <div id="stateProfile" style="margin-top:10px"></div>
   </div>
 </section>
 
@@ -501,6 +538,22 @@ const CRIT = [
   {key:'season',label:'Four-season climate', w:0, verified:true, basis:'Distinct 4 seasons: CO 10; VA/UT/MD/OH 9; TN/NC 7; GA 6; AL 5; SC 4; TX(San Antonio) 3; FL 1 (no winter). DRAG UP to make 4 seasons a requirement.',
      s:{TX:3, AL:5, VA:9, UT:9, FL:1, TN:7, MD:9, GA:6, SC:4, CO:10, OH:9, NC:7}},
 ];
+const AXLAB={job:'Cyber job market',inc:'Low income tax',hs:'Homeschool freedom',col:'Low cost of living',prop:'Vet property tax',dis:'Low insurance/disaster',crime:'Safety',season:'Four seasons'};
+// display-only raw metadata
+const META={
+ TX:{crimeN:420, reg:'No-notice', prop:'Full exemption'},
+ AL:{crimeN:450, reg:'Low-reg',   prop:'Full (160 ac, no cap)'},
+ VA:{crimeN:270, reg:'Moderate',  prop:'Full exemption'},
+ UT:{crimeN:260, reg:'Low-reg',   prop:'~Full < $479K'},
+ FL:{crimeN:258, reg:'Moderate',  prop:'Full exemption'},
+ TN:{crimeN:592, reg:'Low-reg',   prop:'Partial ($175K cap)'},
+ MD:{crimeN:430, reg:'Moderate',  prop:'Full exemption'},
+ GA:{crimeN:390, reg:'Moderate',  prop:'Partial (~$110K)'},
+ SC:{crimeN:437, reg:'Moderate',  prop:'Full (home+5 ac)'},
+ CO:{crimeN:420, reg:'Moderate',  prop:'Partial (50% of $200K)'},
+ OH:{crimeN:290, reg:'Moderate',  prop:'Partial ($50K)'},
+ NC:{crimeN:370, reg:'Moderate',  prop:'Partial ($45K)'},
+};
 
 // ---- countdown helpers ----
 const today = new Date();
@@ -608,7 +661,133 @@ function render(){
   renderPpm();
   renderTakehome();
   renderSalaryLegend();
+  renderCompare();
   set('civVal', fmt(S.civ));
+}
+
+// shared annual take-home for a state (used by take-home tab + compare)
+function takeHome(k){
+  const st=STATES[k];
+  const milYr=(S.rating===100?7632:5223)*12;
+  const net=milYr+(S.civ-civFed(S.civ));
+  const stateTax=S.civ*st.incTaxEff;
+  let ptax;
+  if(S.rating===100) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
+  else ptax = st.home*st.propRate;
+  const housing=0.8*st.home*0.06322 + ptax + st.ins;
+  return net - stateTax - housing - GOODS*st.rpp/100;
+}
+const SCRT=(key,k)=>CRIT.find(c=>c.key===key).s[k];
+function argbest(fn,dir){let best=null,wins=[];ORDER.forEach(k=>{const v=fn(k);
+  if(best===null||(dir>0?v>best:v<best)){best=v;wins=[k];}else if(v===best)wins.push(k);});return {wins,val:best};}
+
+let compareSort={key:'score',dir:1};
+let profileState='TX';
+function sortCompare(key){ if(compareSort.key===key)compareSort.dir*=-1; else compareSort={key,dir:1}; renderCompareTable(); }
+function pickProfile(k){ profileState=k; renderProfileSeg(); renderStateProfile(); }
+
+function renderCompare(){ renderChampions(); renderCompareTable(); renderProfileSeg(); renderStateProfile(); }
+
+function renderChampions(){
+  const box=document.getElementById('champions'); if(!box) return;
+  const items=[
+   ['💼 Cyber job market', argbest(k=>SCRT('job',k),1), ()=>'densest cleared market'],
+   ['💰 Lowest income tax', argbest(k=>STATES[k].incTaxEff,-1), r=>r.val===0?'0% on wages':''],
+   ['🎓 Homeschool freedom', argbest(k=>SCRT('hs',k),1), ()=>'no-notice / lowest reg'],
+   ['🏷️ Cheapest cost of living', argbest(k=>STATES[k].rpp,-1), r=>'RPP '+r.val],
+   ['🏠 Best vet property tax', argbest(k=>SCRT('prop',k),1), ()=>'full exemption'],
+   ['🛡️ Cheapest insurance', argbest(k=>STATES[k].ins,-1), r=>fmt(r.val)+'/yr'],
+   ['🚔 Safest', argbest(k=>SCRT('crime',k),1), ()=>'lowest violent crime'],
+   ['🍂 Four seasons', argbest(k=>SCRT('season',k),1), ()=>'most distinct seasons'],
+   ['🏦 Highest take-home', argbest(k=>takeHome(k),1), r=>fmt(r.val)+'/yr'],
+   ['🏘️ Cheapest homes', argbest(k=>STATES[k].home,-1), r=>fmt(r.val)],
+  ];
+  box.innerHTML=items.map(([label,res,valfn])=>{
+    const names=res.wins.map(x=>STATES[x].name).join(' / ');
+    const sub=valfn(res);
+    return `<div class="card" style="padding:12px"><div class="mini" style="color:var(--muted)">${label}</div><div style="font-weight:700;margin-top:2px">${names}</div>${sub?`<div class="mini" style="color:var(--green)">${sub}</div>`:''}</div>`;
+  }).join('');
+}
+
+function compareCols(){
+  const SM={}; matrix().res.forEach((r,i)=>SM[r.k]={score:r.score,rank:i+1});
+  return [
+   {key:'name', label:'State', disp:k=>STATES[k].name, sub:k=>STATES[k].metro},
+   {key:'score',label:'Score', disp:k=>SM[k].score.toFixed(2), val:k=>SM[k].score},
+   {key:'rank', label:'Rank', disp:k=>'#'+SM[k].rank, val:k=>-SM[k].rank},
+   {key:'job',  label:'Cyber pay band', disp:k=>fmt(STATES[k].band[0])+'–'+fmt(STATES[k].band[1]), val:k=>SCRT('job',k)},
+   {key:'inc',  label:'Income tax', disp:k=>STATES[k].incTaxEff?(STATES[k].incTaxEff*100).toFixed(1)+'%':'none', val:k=>-STATES[k].incTaxEff},
+   {key:'hs',   label:'Homeschool', disp:k=>META[k].reg, val:k=>SCRT('hs',k)},
+   {key:'col',  label:'COL', disp:k=>STATES[k].rpp, val:k=>-STATES[k].rpp},
+   {key:'prop', label:'Vet property', disp:k=>META[k].prop, val:k=>SCRT('prop',k)},
+   {key:'ins',  label:'Insurance', disp:k=>fmt(STATES[k].ins), val:k=>-STATES[k].ins},
+   {key:'crime',label:'Crime/100K', disp:k=>META[k].crimeN, val:k=>-META[k].crimeN},
+   {key:'season',label:'Seasons', disp:k=>SCRT('season',k)+'/10', val:k=>SCRT('season',k)},
+   {key:'home', label:'Median home', disp:k=>fmt(STATES[k].home), val:k=>-STATES[k].home},
+   {key:'take', label:'Take-home', disp:k=>fmt(takeHome(k)), val:k=>takeHome(k)},
+  ];
+}
+function renderCompareTable(){
+  const t=document.getElementById('compareTable'); if(!t) return;
+  const COLS=compareCols();
+  const sortCol=COLS.find(c=>c.key===compareSort.key)||COLS[1];
+  let rows=[...ORDER];
+  if(sortCol.val) rows.sort((a,b)=> (sortCol.val(b)-sortCol.val(a)) * (compareSort.dir>0?1:-1));
+  // best value per column
+  const best={};
+  COLS.forEach(c=>{ if(c.val){ let bk=ORDER[0]; ORDER.forEach(k=>{if(c.val(k)>c.val(bk))bk=k;}); best[c.key]=c.val(bk); }});
+  let h='<tr>'+COLS.map(c=>{
+    const arrow=compareSort.key===c.key?(compareSort.dir>0?' ▼':' ▲'):'';
+    return `<th onclick="sortCompare('${c.key}')" style="cursor:pointer;white-space:nowrap">${c.label}${arrow}</th>`;
+  }).join('')+'</tr>';
+  rows.forEach(k=>{
+    h+='<tr>'+COLS.map(c=>{
+      const win=c.val && c.val(k)===best[c.key] ? ' class="num winner"' : (c.key==='name'?'':' class="num"');
+      if(c.key==='name') return `<td><b>${c.disp(k)}</b><br><span class="mini" style="color:var(--muted)">${c.sub(k)}</span></td>`;
+      return `<td${win}>${c.disp(k)}</td>`;
+    }).join('')+'</tr>';
+  });
+  t.innerHTML=h;
+}
+
+function renderProfileSeg(){
+  const seg=document.getElementById('profileSeg'); if(!seg) return;
+  seg.innerHTML=ORDER.map(k=>`<button onclick="pickProfile('${k}')" class="${k===profileState?'on':''}">${k}</button>`).join('');
+}
+function renderStateProfile(){
+  const box=document.getElementById('stateProfile'); if(!box) return;
+  const k=profileState, st=STATES[k];
+  const SM={}; matrix().res.forEach((r,i)=>SM[r.k]={score:r.score,rank:i+1});
+  const axes=CRIT.map(c=>({lab:AXLAB[c.key],s:c.s[k]})).sort((a,b)=>b.s-a.s);
+  const pros=axes.filter(a=>a.s>=7).slice(0,4);
+  const cons=axes.filter(a=>a.s<=5).reverse().slice(0,4);
+  box.innerHTML=`
+   <div class="grid g2">
+     <div>
+       <div style="font-size:18px;font-weight:700">${st.name} <span class="mini" style="color:var(--muted)">· ${st.metro}</span></div>
+       <div class="kpi" style="margin-top:8px">
+         <div><b>#${SM[k].rank}</b><span>weighted rank</span></div>
+         <div><b>${SM[k].score.toFixed(2)}</b><span>score</span></div>
+         <div><b>${fmt(takeHome(k))}</b><span>take-home/yr</span></div>
+       </div>
+       <table style="margin-top:8px">
+         <tr><td>Cyber pay band</td><td class="num">${fmt(st.band[0])}–${fmt(st.band[1])}</td></tr>
+         <tr><td>Income tax (salary)</td><td class="num">${st.incTaxEff?(st.incTaxEff*100).toFixed(1)+'%':'none'}</td></tr>
+         <tr><td>Vet property tax</td><td class="num">${META[k].prop}</td></tr>
+         <tr><td>Homeschool</td><td class="num">${META[k].reg}</td></tr>
+         <tr><td>Cost of living</td><td class="num">${st.rpp} (US=100)</td></tr>
+         <tr><td>Home insurance</td><td class="num">${fmt(st.ins)}/yr</td></tr>
+         <tr><td>Violent crime</td><td class="num">${META[k].crimeN}/100K</td></tr>
+         <tr><td>Median home</td><td class="num">${fmt(st.home)}</td></tr>
+       </table>
+     </div>
+     <div>
+       <h3 style="color:var(--green)">Pros</h3>
+       <ul class="tight">${pros.map(p=>`<li>${p.lab} <span class="mini">(${p.s}/10)</span></li>`).join('')||'<li class="mini">no standout strengths</li>'}</ul>
+       <h3 style="color:var(--red);margin-top:10px">Cons</h3>
+       <ul class="tight">${cons.map(c=>`<li>weak ${c.lab.toLowerCase()} <span class="mini">(${c.s}/10)</span></li>`).join('')||'<li class="mini">no major weaknesses</li>'}</ul>
+     </div>
+   </div>`;
 }
 
 function renderSalaryLegend(){
@@ -778,14 +957,13 @@ document.getElementById('homeVal').addEventListener('input',e=>{ S.home=+e.targe
 ['eduKids','eduMo'].forEach(id=>document.getElementById(id).addEventListener('input',renderEdu));
 ['ppmGcc','ppmCost'].forEach(id=>document.getElementById(id).addEventListener('input',renderPpm));
 
-document.querySelectorAll('#tabs button').forEach(b=>{
-  b.onclick=()=>{
-    document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));
-    document.querySelectorAll('main section').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on'); document.getElementById(b.dataset.t).classList.add('on');
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-});
+function switchTab(name){
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on', x.dataset.t===name));
+  document.querySelectorAll('main section').forEach(x=>x.classList.toggle('on', x.id===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+document.body.addEventListener('click',e=>{ const el=e.target.closest('[data-goto]'); if(el) switchTab(el.dataset.goto); });
 
 render();
 </script>
