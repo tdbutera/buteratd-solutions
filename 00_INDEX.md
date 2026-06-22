@@ -47,7 +47,7 @@
 | 03 | VA strategy | ⬜ not built |
 | 04 | Finance & tax | ⬜ not built |
 | 05 | Career | ⬜ not built |
-| 06 | Relocation shortlist (TN vs FL/TX/VA) | ⬜ not built |
+| 06 | Relocation shortlist (TN vs FL/TX/VA) | ✅ **built** — TX > FL > TN > VA |
 | 07 | Real estate / homestead | ⬜ not built |
 | 08 | Education & GI Bill (Ch.35 ×6 + Ch.33 TEB) | ⬜ not built |
 | 09 | Insurance & risk | ⬜ not built |
@@ -69,7 +69,8 @@
 - ✅ 2026 DITY/PPM reimbursement rate → `99` §F.
 - ✅ Ch.33 TEB rules + pre-retirement deadline → `99` §G.
 
-**Open verifies:** TN property-relief cap ($175K vs $250K eff 7/1/2025) · VA TY2026 military-retirement subtraction cap + age condition.
+**Resolved:** TN cap = **$175K operative** ($250K proposed, not enacted) · VA subtraction = **$40K TY2026, no age limit** · 4 quality-of-life axes sourced (§I–J).
+**Permanent flag:** BLS metro salary percentiles — environment-blocked (bls.gov 403); national anchor stands.
 
 ---
 
@@ -78,4 +79,4 @@
 
 ---
 
-**SESSION-END STATE:** System bootstrapped on clean local `retirement-planning` branch (Markdown only, no deploy; KCM website preserved on `main`). Inputs locked: VA = both-ratings fork; shortlist = TN+FL+TX+VA; military-floor financials ($5,223/mo @70%, $7,632/mo @100%, CRDP confirmed). **Tier-1 pull queue run (5/6 done, salary-bands pending) → results in `99` §E–G.** Key finding: TN front-runner has the weakest disabled-vet property benefit; VA is the only shortlist state taxing the civilian salary. No analytical core docs built yet. Next best action: fold in salary bands, then `BUILD 06` (relocation matrix) or `BUILD 02` (scenario fork).
+**SESSION-END STATE:** System on clean local `retirement-planning` branch (Markdown + 1 local HTML dashboard, no deploy; KCM site preserved on `main`). Inputs locked: VA = both-ratings fork; shortlist = TN+FL+TX+VA; military floor $5,223/$7,632 (CRDP confirmed). **Tier-1 pull queue 6/6 + 4 QoL axes + verifies resolved** (`99` §E–J). **`06` built:** full 7-axis weighted verdict — **TX > FL > TN > VA**; TN front-runner falls to 3rd under full scoring; decision pivots on civilian-income portability. Dashboard verified (15/15 JS assertions, 7 axes). Next best action: confirm income portability + target county; then `BUILD 02` (scenario fork) or `BUILD 01` (timeline).

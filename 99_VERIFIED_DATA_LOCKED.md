@@ -124,4 +124,27 @@ Shortlist: **TN (front-runner to beat) · FL · TX · VA.**
 
 ---
 
-**SESSION-END STATE:** Tier-1 pull queue executed (6/6). Salary §H added (BLS national anchor verified; metro percentiles still blocked = open pull; cleared-market ranking NoVA>San Antonio>Tampa>...>TN). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
+## I. Relocation quality-of-life axes (pulled Jun 2026) — feeds `06`
+
+| Axis | TN | FL | TX | VA | Source |
+|---|---|---|---|---|---|
+| Cost of living (BEA RPP 2023, US=100) | **90.4** | 103.5 | 98.4 | 101.1 | `[Verified – BEA RPP 2023]` |
+| Focus-metro median home | Nash $440K / Knox $327K | Tampa $443K | **SA $260K** | NoVA $664K / HR $345K | `[Tier-2 – Redfin/Zillow 2025]` |
+| Avg homeowners insurance/yr | ~$3.0K | **~$6K+** (costliest) | ~$4.5K | **~$2.7K** (cheapest) | `[Tier-2 – Bankrate 2025]` |
+| Catastrophe exposure | tornado | hurricane (severe) + insurer crisis stabilizing | Gulf hurricane/hail/grid | coastal/HR flooding | `[Tier-2]` |
+| Violent crime /100K (FBI 2024) | **~592** (4th-highest US) | ~258 | ~431 | **~234** (safest) | `[Tier-2 – FBI via USAFacts]` |
+| Homeschool / parental-rights | low-reg + dense co-ops; fundamental-right statute | Parents' Bill of Rights + low-reg | **no-notice + Prop 15 (2025 const. amend)** | moderate reg + secular NoVA (relig. exemption exists) | `[Verified – HSLDA / state statutes]` |
+
+**Suggested 1–10 scores (higher=better for this family):** see `06` matrix. Crime caveat: TN risk concentrates in Memphis/urban Nashville — **Knoxville & suburbs far safer**.
+
+---
+
+## J. Resolved verifications (Jun 2026)
+
+- **TN property-relief cap:** **$175,000 is operative** (TN Comptroller 2025 brochure + tn.gov). A raise to $250,000 (HB1009/SB0681, stated eff 7/1/2025) is **proposed but NOT confirmed enacted** — no Public Chapter found. Treat $175K as current; revisit if enacted. `[Verified – TN Comptroller; HB1009 status Unknown]`
+- **VA Military Benefits Subtraction:** **$40,000 for TY2026** (standing cap, no further scheduled increase). **Age-55 requirement ELIMINATED** since TY2024 (SB651) — no age gate. Does not shelter civilian wages. `[Verified – Virginia Tax / §58.1-322.03 / SB651]`
+- **BLS metro ISA percentiles:** **unresolvable from this environment** (bls.gov + all mirrors 403, confirmed via direct curl). National anchor $124,910 / $186,420 stands; metro precision needs unblocked network/BLS API key. Not decision-critical (cleared premium dominates).
+
+---
+
+**SESSION-END STATE:** Tier-1 pull queue executed (6/6) + 4 quality-of-life axes sourced (§I) + verifications resolved (§J). `06` relocation verdict built: TX > FL > TN > VA on default weights; TN front-runner falls to 3rd under full scoring. Dashboard synced (7 verified axes). Remaining permanent flag: BLS metro salary bands (env-blocked). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
