@@ -57,15 +57,17 @@
 
 ---
 
-## First-run pull queue (Tier 1 — pending)
+## First-run pull queue (Tier 1)
 
-- ⬜ TN disabled-veteran property-tax relief — amount/cap + 100% P&T gate.
-- ⬜ TN income tax — confirm Hall-tax repeal still in effect (no wage/investment tax).
-- ⬜ FL / TX / VA equivalents — disabled-vet property exemption + income tax (for `06` matrix).
-- ⬜ $137K+ cyber/ISSM salary bands in TN (+ challenger) metros.
-- ⬜ TN homeschool legal category + co-op density.
-- ⬜ 2026 DITY/PPM reimbursement rate.
-- ⬜ Ch.33 TEB transfer remaining-obligation rules + deadline before 29 Feb 2028.
+- ✅ TN disabled-veteran property-tax relief — capped reimbursement, 100% P&T gate → `99` §E.1 *(cap $175K vs $250K still to confirm)*.
+- ✅ TN income tax — none; Hall tax repealed → `99` §E.2.
+- ✅ FL / TX / VA equivalents — property exemption + income tax → `99` §E.1–E.2.
+- 🔄 $137K+ cyber/ISSM salary bands in TN (+ challenger) metros — **agent running**.
+- ✅ TN homeschool legal category → `99` §E.3.
+- ✅ 2026 DITY/PPM reimbursement rate → `99` §F.
+- ✅ Ch.33 TEB rules + pre-retirement deadline → `99` §G.
+
+**Open verifies:** TN property-relief cap ($175K vs $250K eff 7/1/2025) · VA TY2026 military-retirement subtraction cap + age condition.
 
 ---
 
@@ -74,4 +76,4 @@
 
 ---
 
-**SESSION-END STATE:** System bootstrapped on clean `retirement-planning` branch (KCM website preserved on `main`). Confirmed inputs locked: VA = both-ratings fork; shortlist = TN+FL+TX+VA; verified military-floor financials captured ($5,223/mo @70%, $7,632/mo @100%, CRDP confirmed). No core docs built yet — awaiting first `BUILD`/`ANALYZE`. Next best action: `BUILD 02` (scenario fork) or run the Tier-1 pull queue.
+**SESSION-END STATE:** System bootstrapped on clean local `retirement-planning` branch (Markdown only, no deploy; KCM website preserved on `main`). Inputs locked: VA = both-ratings fork; shortlist = TN+FL+TX+VA; military-floor financials ($5,223/mo @70%, $7,632/mo @100%, CRDP confirmed). **Tier-1 pull queue run (5/6 done, salary-bands pending) → results in `99` §E–G.** Key finding: TN front-runner has the weakest disabled-vet property benefit; VA is the only shortlist state taxing the civilian salary. No analytical core docs built yet. Next best action: fold in salary bands, then `BUILD 06` (relocation matrix) or `BUILD 02` (scenario fork).
