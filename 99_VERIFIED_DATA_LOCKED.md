@@ -107,4 +107,21 @@ Shortlist: **TN (front-runner to beat) · FL · TX · VA.**
 
 ---
 
-**SESSION-END STATE:** Tier-1 pull queue executed (5/6; salary-bands agent pending). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
+## H. Cleared cyber career market — shortlist metros (Jun 2026)
+
+**BLS anchor `[Verified – BLS OEWS May 2024, SOC 15-1212]`:** national median **$124,910**; 90th pct **~$186,420**. ⚠️ BLS *metro* percentiles were 403-blocked from the research environment — open Tier-1 pull (pull `oessrcma` XLS, filter OCC 15-1212). **Cleared TS/SCI roles add ~20–40% over OEWS** (TS/SCI ~$132K avg; +full-scope poly ~$148K–225K) `[Tier-2 – CyberSecJobs/ClearanceJobs]` — so the OEWS median *understates* this candidate's reach; cleared-density is the binding signal.
+
+| Rank | Metro | Clears $137K floor? | Hits $150–180K? | Note |
+|---|---|---|---|---|
+| 1 | **NoVA / DC (VA)** | Yes (easy) | **Yes**, >$180K w/ poly | densest cleared market (Booz Allen, Leidos, CACI, GDIT, IC); but high COL + VA income tax |
+| 2 | **San Antonio (TX)** | Yes | **Yes** | "Military City" — 16th AF cyber, NSA-Texas, Lackland; **no income tax + low COL = best net value** |
+| 3 | **Tampa (FL)** | Yes | Likely (upper edge) | MacDill = CENTCOM/SOCOM TS/SCI demand; no income tax |
+| 4 | Hampton Roads (VA) | Yes | Tighter | Navy/NATO ACT; lower band than NoVA |
+| 5 | Knoxville/Oak Ridge (TN) | Marginal–Yes | Possible (DOE niche) | ORNL/Y-12 DOE Q-clearance — TN's only real node |
+| — | Nashville/Memphis/Chattanooga (TN), Orlando/Jax (FL), Austin/Dallas (TX) | varies | harder | commercial cyber, thin cleared density |
+
+`[Tier-2/3 – CyberSecJobs, ClearanceJobs; verify specific roles]` — **TN is the weakest cluster for cleared $137K+ density**, reinforcing the relocation tension: front-runner on taxes/homeschool, laggard on property benefit AND job market.
+
+---
+
+**SESSION-END STATE:** Tier-1 pull queue executed (6/6). Salary §H added (BLS national anchor verified; metro percentiles still blocked = open pull; cleared-market ranking NoVA>San Antonio>Tampa>...>TN). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.

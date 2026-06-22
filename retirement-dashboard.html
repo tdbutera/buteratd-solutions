@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retirement Transition Dashboard — Navy E-8 · Retire 29 Feb 2028</title>
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#151a22; --panel2:#1b212b; --line:#2a323f;
+    --txt:#e7ecf3; --muted:#93a0b2; --green:#3fd07f; --red:#ff6b6b;
+    --amber:#ffcc55; --blue:#5aa9ff; --accent:#7c9cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--blue)}
+  header{position:sticky;top:0;z-index:50;background:rgba(11,14,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 18px}
+  .htop{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  h1{font-size:18px;margin:0;font-weight:650}
+  h1 small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+  .controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .toggle{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .toggle button{background:transparent;color:var(--muted);border:0;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
+  .toggle button.on{background:var(--accent);color:#0b0e13}
+  .ctl label{font-size:11px;color:var(--muted);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+  .ctl input{width:120px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:14px}
+  nav{display:flex;gap:4px;flex-wrap:wrap;padding:10px 18px 0;border-bottom:1px solid var(--line);position:sticky;top:64px;background:var(--bg);z-index:40}
+  nav button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer}
+  nav button.on{color:var(--txt);border-bottom-color:var(--accent)}
+  main{max-width:1100px;margin:0 auto;padding:22px 18px 80px}
+  section{display:none;animation:fade .25s}
+  section.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{font-size:20px;margin:6px 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card h3{margin:0 0 6px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:650}
+  .big{font-size:30px;font-weight:700;letter-spacing:-.01em}
+  .big.green{color:var(--green)} .big.red{color:var(--red)} .big.blue{color:var(--blue)}
+  .note{font-size:12px;color:var(--muted);margin-top:6px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:650}
+  .pill.good{background:rgba(63,208,127,.15);color:var(--green)}
+  .pill.warn{background:rgba(255,204,85,.15);color:var(--amber)}
+  .pill.bad{background:rgba(255,107,107,.15);color:var(--red)}
+  .pill.v{background:rgba(90,169,255,.13);color:var(--blue)}
+  .bar{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--green))}
+  .winner{outline:2px solid var(--green);outline-offset:-2px}
+  .slider-row{display:grid;grid-template-columns:160px 1fr 52px;gap:10px;align-items:center;margin:8px 0}
+  input[type=range]{width:100%}
+  .kpi{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 0}
+  .kpi div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:130px}
+  .kpi b{display:block;font-size:22px}
+  .kpi span{font-size:11px;color:var(--muted)}
+  .callout{border-left:3px solid var(--amber);background:rgba(255,204,85,.07);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;margin:14px 0}
+  .callout.bad{border-color:var(--red);background:rgba(255,107,107,.07)}
+  .callout.good{border-color:var(--green);background:rgba(63,208,127,.07)}
+  .tag{font-size:10.5px;color:var(--muted);font-style:italic}
+  .cd{display:flex;gap:12px;flex-wrap:wrap}
+  .cd .card{flex:1;min-width:150px;text-align:center}
+  .cd .big{font-size:34px}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:30px 18px;border-top:1px solid var(--line)}
+  .mini{font-size:12px;color:var(--muted)}
+  ul.tight{margin:6px 0;padding-left:20px} ul.tight li{margin:3px 0}
+  .seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:4px 0}
+  .seg button{background:transparent;border:0;color:var(--muted);padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
+  .seg button.on{background:var(--accent);color:#0b0e13}
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <h1>Retirement Transition Dashboard
+      <small>Navy E-8 · High-3 · 20 yr 5 mo · Retire <b>29 Feb 2028</b> · spouse + 6 kids · homeschool</small>
+    </h1>
+    <div class="controls">
+      <div class="ctl">
+        <label>VA rating (model)</label>
+        <div class="toggle" id="ratingToggle">
+          <button data-r="70">70%</button>
+          <button data-r="100" class="on">100% P&amp;T</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Civilian salary (gross/yr)</label>
+        <input id="civInput" type="number" value="150000" step="5000" min="0">
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav id="tabs">
+  <button data-t="overview" class="on">Overview</button>
+  <button data-t="finance">Finances</button>
+  <button data-t="fork">70% vs 100%</button>
+  <button data-t="reloc">Relocation</button>
+  <button data-t="edu">Education / GI Bill</button>
+  <button data-t="move">PPM / Move</button>
+  <button data-t="timeline">Timeline</button>
+  <button data-t="data">Data &amp; Sources</button>
+</nav>
+
+<main>
+
+<!-- OVERVIEW -->
+<section id="overview" class="on">
+  <h2>Bottom line</h2>
+  <p class="sub">Live model. The <b>VA-rating toggle</b> (top right) and <b>civilian salary</b> input drive every number below.</p>
+  <div class="grid g4">
+    <div class="card"><h3>Military net / mo</h3><div class="big green" id="ov-milmo">—</div><div class="note">Pension + VA − Tricare/SBP/tax</div></div>
+    <div class="card"><h3>Household net / mo (est)</h3><div class="big blue" id="ov-hhmo">—</div><div class="note" id="ov-hhnote">incl. civilian after-tax</div></div>
+    <div class="card"><h3>Best relocation pick</h3><div class="big" id="ov-state">—</div><div class="note" id="ov-statenote">weighted matrix winner</div></div>
+    <div class="card"><h3>TEB deadline</h3><div class="big amber" id="ov-teb" style="color:var(--amber)">—</div><div class="note">days left to transfer GI Bill on active duty</div></div>
+  </div>
+
+  <div class="callout good" id="ov-fork"></div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>The whole picture in one breath</h3>
+      <ul class="tight">
+        <li><b>Two ratings, one fork.</b> 70% vs 100% P&amp;T swings net income <b id="ov-deltamo">—</b>/mo tax-free, <b>plus</b> the 100%-only education lever for 6 kids.</li>
+        <li><b>Floor is solid.</b> Military pension + VA + Tricare means the family is covered before a single civilian paycheck.</li>
+        <li><b>Relocation is a money decision, not a vibe.</b> TN is the front-runner to beat — but it has the <b>weakest</b> disabled-vet property benefit of the shortlist.</li>
+        <li><b>One hard deadline:</b> the Ch.33 GI Bill transfer must be approved <b>while on active duty</b> — unrecoverable after 29 Feb 2028.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Confidence &amp; what would change this</h3>
+      <p class="mini"><b>High</b> on the financial floor and the federal benefit rules (cross-checked vs your own calculator + VA.gov). <b>Moderate</b> on relocation scoring — property/income/homeschool law is verified, but job-market, cost-of-living, disaster and crime axes are provisional pending Tier-1 pulls.</p>
+      <p class="mini"><b>Flips if:</b> your actual rating lands at 70% (kills the ~$340K education lever), or the civilian job market in TN can't clear the $137K floor (pushes toward TX/VA).</p>
+      <p class="tag">Next best action: lock the relocation weights (Relocation tab), then confirm TEB timing with your career counselor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCE -->
+<section id="finance">
+  <h2>Financial baseline — the military floor</h2>
+  <p class="sub">Verified against your retirement-calculator screenshots (Jun 2026). VA figures cross-check vs VA.gov 2026 tables. <span class="tag">[Verified]</span></p>
+
+  <div class="grid g3">
+    <div class="card"><h3>Retirement pay</h3><div class="big green">$3,450</div><div class="note">E-8 High-3 · taxable</div></div>
+    <div class="card"><h3>VA disability <span id="fin-rlabel"></span></h3><div class="big green" id="fin-va">—</div><div class="note">tax-free, federal &amp; state</div></div>
+    <div class="card"><h3>Income adjustments</h3><div class="big">$0</div><div class="note">none</div></div>
+    <div class="card"><h3>Tricare Prime (Family)</h3><div class="big red">−$64</div><div class="note">covers all 8 — moot vs rating</div></div>
+    <div class="card"><h3>SBP / VGLI premium</h3><div class="big red">−$278</div><div class="note">$1,846 SBP · $500K VGLI</div></div>
+    <div class="card"><h3>Federal income tax</h3><div class="big red">−$340</div><div class="note">MFJ · on pension only</div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Net military pay</h3>
+    <div style="display:flex;gap:30px;flex-wrap:wrap;align-items:baseline">
+      <div><div class="big green" id="fin-netmo">—</div><div class="note">net monthly</div></div>
+      <div><div class="big" id="fin-netyr">—</div><div class="note">net annual</div></div>
+    </div>
+    <div class="callout good">CRDP / concurrent receipt confirmed — full pension <b>and</b> full VA stack with no waiver offset (applies at both ratings ≥50%).</div>
+  </div>
+
+  <h2 style="margin-top:26px">Household income — add the civilian paycheck</h2>
+  <p class="sub">Civilian gross set in the header. State income tax pulled from your selected relocation pick. Federal effective rate is an editable estimate (large family ⇒ many credits).</p>
+  <div class="grid g2">
+    <div class="card">
+      <div class="slider-row">
+        <label>Fed effective rate</label>
+        <input id="fedRate" type="range" min="0" max="30" value="14">
+        <span id="fedRateV">14%</span>
+      </div>
+      <div class="slider-row">
+        <label>Relocation state</label>
+        <div class="seg" id="finStateSeg"></div>
+        <span></span>
+      </div>
+      <table>
+        <tr><td>Civilian gross</td><td class="num" id="fin-civg">—</td></tr>
+        <tr><td>− Federal (est)</td><td class="num red" id="fin-civf">—</td></tr>
+        <tr><td>− State income tax (<span id="fin-civstate"></span>)</td><td class="num red" id="fin-civs">—</td></tr>
+        <tr><td><b>Civilian net</b></td><td class="num" id="fin-civn"><b>—</b></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Total household</h3>
+      <div class="big green" id="fin-hhmo">—</div><div class="note">net per month</div>
+      <div class="big" id="fin-hhyr" style="margin-top:10px">—</div><div class="note">net per year</div>
+      <div class="kpi">
+        <div><b id="fin-milshare">—</b><span>from military (floor)</span></div>
+        <div><b id="fin-civshare">—</b><span>from civilian</span></div>
+      </div>
+      <p class="note">Floor never drops below the military net even with $0 civilian income — that's the safety net.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FORK -->
+<section id="fork">
+  <h2>70% vs 100% P&amp;T — what actually toggles</h2>
+  <p class="sub">Everything else equal, here is the real delta for an E-8 retiree with this family. Toggle the rating up top to see it ripple.</p>
+
+  <div class="grid g3">
+    <div class="card"><h3>Comp delta</h3><div class="big green">+$2,409<span style="font-size:14px">/mo</span></div><div class="note">≈ $28,908/yr tax-free, 100% vs 70%</div></div>
+    <div class="card"><h3>Education lever (Ch.35)</h3><div class="big green" id="fork-edu">—</div><div class="note">6 kids — <b>100% P&amp;T ONLY</b>, $0 at 70%</div></div>
+    <div class="card"><h3>Lifetime comp delta</h3><div class="big green" id="fork-life">—</div><div class="note">spouse-base delta ~$2,197/mo for life</div></div>
+  </div>
+
+  <table style="margin-top:16px">
+    <tr><th>Lever</th><th>70%</th><th>100% P&amp;T</th><th>Verdict</th></tr>
+    <tr><td>Monthly comp (spouse + 6 kids)</td><td>$2,455</td><td>$4,864</td><td><span class="pill good">+$2,409/mo</span></td></tr>
+    <tr><td>Chapter 35 DEA — all 6 kids</td><td>$0</td><td>up to ~$340K</td><td><span class="pill good">The big one</span></td></tr>
+    <tr><td>State property-tax full relief</td><td>No</td><td>Yes (FL/TX/VA full; TN capped)</td><td><span class="pill warn">Location-gated</span></td></tr>
+    <tr><td>Family Tricare</td><td>Covered</td><td>Covered</td><td><span class="pill v">Moot</span></td></tr>
+    <tr><td>CRDP / concurrent receipt</td><td>Yes</td><td>Yes</td><td><span class="pill v">Moot</span></td></tr>
+  </table>
+
+  <div class="callout bad"><b>Reminder:</b> 100% benefit unlocks require <b>permanent AND total</b> — not just a 100% combined rating. Ch.35 and full state property relief both gate on P&amp;T.</div>
+  <div class="card">
+    <h3>Total 100%-vs-70% advantage (rough lifetime view)</h3>
+    <p class="mini">Comp delta to spouse-base floor + the one-time education lever dwarfs everything else. Education alone (6 × 36 mo × $1,574) is the single largest swing in the whole plan.</p>
+    <div class="big green" id="fork-total">—</div><div class="note">illustrative: ~10 yr comp delta + full Ch.35 education lever</div>
+  </div>
+</section>
+
+<!-- RELOCATION -->
+<section id="reloc">
+  <h2>Relocation decision matrix</h2>
+  <p class="sub">TN (front-runner to beat) vs FL, TX, VA. <b>Set your weights</b> below — the ranking and sensitivity recompute live. Verified axes tagged; provisional axes flagged for Tier-1 pull.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Weights (must reflect what you value)</h3>
+      <div id="weights"></div>
+      <div class="mini" id="wsum"></div>
+    </div>
+    <div class="card">
+      <h3>Ranking</h3>
+      <div id="ranking"></div>
+      <div class="callout" id="sensitivity" style="margin-bottom:0"></div>
+    </div>
+  </div>
+
+  <h3 style="margin:22px 0 6px">Scorecard <span class="mini">(1–10; hover the criterion for basis)</span></h3>
+  <div style="overflow-x:auto">
+    <table id="scoreTable"></table>
+  </div>
+
+  <h2 style="margin-top:26px">The hard facts behind the scores</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Disabled-vet property tax @ 100% P&amp;T <span class="tag">[Verified]</span></h3>
+      <table>
+        <tr><th>State</th><th>Benefit</th></tr>
+        <tr><td>TN</td><td><span class="pill warn">Partial</span> reimbursement, capped at first ~$175K mkt value (→$250K eff 7/1/25, verify)</td></tr>
+        <tr><td>FL</td><td><span class="pill good">Full</span> homestead exemption (Stat 196.081)</td></tr>
+        <tr><td>TX</td><td><span class="pill good">Full</span> homestead exemption (Tax Code 11.131)</td></tr>
+        <tr><td>VA</td><td><span class="pill good">Full</span> exemption on residence (Const. Art X §6-A)</td></tr>
+      </table>
+      <div class="callout">TN — the front-runner — is the <b>weakest</b> here. At 70%, none of these gates open.</div>
+    </div>
+    <div class="card">
+      <h3>Property-tax calculator (home value)</h3>
+      <div class="slider-row"><label>Home value</label><input id="homeVal" type="range" min="200000" max="900000" step="25000" value="450000"><span id="homeValV"></span></div>
+      <table id="propTable"></table>
+      <p class="tag">Effective property-tax rates are Tier-2 statewide averages — verify by county.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>State income tax on the civilian salary <span class="tag">[Verified]</span></h3>
+      <ul class="tight">
+        <li><b>TN / FL / TX:</b> none — $0 on wages.</li>
+        <li><b>VA:</b> 2–5.75% (top rate over $17K) — taxes your civilian W-2; ~<b id="reloc-vatax">—</b>/yr on the current salary. $40K military-retirement subtraction does <i>not</i> cover civilian wages.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Homeschool legal climate <span class="tag">[Verified – HSLDA]</span></h3>
+      <ul class="tight">
+        <li><b>TX:</b> Low — no notice, no testing (private-school status).</li>
+        <li><b>TN:</b> Low — church-umbrella (Cat IV) route avoids state notice/testing.</li>
+        <li><b>VA:</b> Moderate — notice + progress proof; religious exemption can zero it out.</li>
+        <li><b>FL:</b> Moderate — notice + portfolio + annual evaluation.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="edu">
+  <h2>Education &amp; GI Bill — the six-kid play</h2>
+  <p class="sub">The single largest financial swing between 70% and 100%. Two stackable programs, one hard deadline.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Chapter 35 DEA — per child <span class="tag">[100% P&amp;T only]</span></h3>
+      <div class="slider-row"><label>Eligible kids</label><input id="eduKids" type="range" min="0" max="6" value="6"><span id="eduKidsV"></span></div>
+      <div class="slider-row"><label>Months / child</label><input id="eduMo" type="range" min="0" max="36" value="36"><span id="eduMoV"></span></div>
+      <table>
+        <tr><td>Rate (FY26 full-time max)</td><td class="num">$1,574/mo</td></tr>
+        <tr><td>Benefit-months (independent pools)</td><td class="num" id="edu-months">—</td></tr>
+        <tr><td><b>Total potential value</b></td><td class="num" id="edu-total"><b>—</b></td></tr>
+      </table>
+      <p class="note">36 months per eligible child, ages ~18–26. Paid to the student; <b>no housing stipend</b>. Monthly enrollment verification since Jan 2026. <b>$0 at 70%.</b></p>
+    </div>
+    <div class="card">
+      <h3>Chapter 33 (Post-9/11) Transfer — TEB</h3>
+      <ul class="tight">
+        <li>36-month <b>shared</b> pool — <b>does</b> include BAH-based housing + book stipend (unlike Ch.35).</li>
+        <li>Stack with Ch.35 per child (not same enrollment period); 48-mo cap if one person uses both.</li>
+        <li><b>Must be submitted AND approved while on active duty.</b> Designate <b>every</b> dependent now (even $0) — you can re-allocate later but cannot add new dependents post-separation.</li>
+        <li>10-yr/precluded retainability exemption likely applies — confirm with career counselor.</li>
+      </ul>
+      <div class="cd" style="margin-top:8px">
+        <div class="card"><div class="big amber" id="edu-teb" style="color:var(--amber)">—</div><div class="note">days to retirement (TEB hard stop)</div></div>
+        <div class="card"><div class="big" id="edu-tebrec">—</div><div class="note">days to recommended file-by (~6 mo prior)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="callout bad"><b>Time-critical:</b> a missed pre-retirement TEB transfer cannot be fixed later. This is the #1 dated action item.</div>
+</section>
+
+<!-- MOVE -->
+<section id="move">
+  <h2>PPM / DITY move — 2026</h2>
+  <p class="sub">Reimbursement is <b>100% of the Government Constructed Cost (GCC)</b> for CY2026 (the temporary 130% bump expired 30 Sep 2025). <span class="tag">[Verified – DFAS / DoD MAP 42-25(R)]</span></p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>How profit actually works</h3>
+      <ul class="tight">
+        <li><b>Profit = GCC payment − your actual move costs.</b> GCC scales with net weight hauled (capped at allowance) × distance.</li>
+        <li><b>E-8 w/ dependents allowance = 14,000 lb.</b></li>
+        <li>Reimbursement is <b>taxable</b> — DFAS withholds 22% federal (no FICA). Offset with documented expenses + certified weigh tickets.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Take-home estimator</h3>
+      <div class="slider-row"><label>GCC reimbursement</label><input id="ppmGcc" type="range" min="10000" max="45000" step="1000" value="40000"><span id="ppmGccV"></span></div>
+      <div class="slider-row"><label>Your actual costs</label><input id="ppmCost" type="range" min="3000" max="25000" step="500" value="9000"><span id="ppmCostV"></span></div>
+      <table>
+        <tr><td>Gross profit (GCC − costs)</td><td class="num" id="ppm-gross">—</td></tr>
+        <tr><td>− Tax on reimbursement (22%)</td><td class="num red" id="ppm-tax">—</td></tr>
+        <tr><td><b>Estimated take-home</b></td><td class="num"><b id="ppm-net">—</b></td></tr>
+      </table>
+      <p class="tag">Rough illustrator — pull your real GCC from the official MilMove estimator for the actual lane &amp; weight.</p>
+    </div>
+  </div>
+  <div class="callout">~$40K is <b>gross taxable GCC</b>, not take-home — realistic only near the full 14,000 lb cap over a long-distance move.</div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <h2>Timeline — anchored to real dates</h2>
+  <p class="sub">Countdowns are live as of today.</p>
+  <div class="cd">
+    <div class="card"><div class="big blue" id="t-taps">—</div><div class="note">days to TAPS (Jun 2026 — confirm)</div></div>
+    <div class="card"><div class="big blue" id="t-prd">—</div><div class="note">days to PRD (Jan 2027 — confirm)</div></div>
+    <div class="card"><div class="big amber" id="t-teb2" style="color:var(--amber)">—</div><div class="note">days to TEB file-by (~Aug 2027)</div></div>
+    <div class="card"><div class="big green" id="t-ret">—</div><div class="note">days to retirement (29 Feb 2028)</div></div>
+  </div>
+  <table style="margin-top:18px">
+    <tr><th>Phase</th><th>Window</th><th>Key moves</th></tr>
+    <tr><td><b>Now</b></td><td>Jun 2026</td><td>Confirm actual rating path (70 vs 100 P&amp;T). Start nexus-letter / claim sequencing. Designate all 6 dependents in DEERS.</td></tr>
+    <tr><td><b>By TAPS</b></td><td>Jun 2026</td><td>Attend TAPS. Lock relocation shortlist weights. Begin clearance-friendly job search in target metros.</td></tr>
+    <tr><td><b>12 mo out</b></td><td>≈ Feb–Mar 2027</td><td>Initiate Ch.33 TEB transfer (with margin). SkillBridge / terminal-leave plan. Pre-approve home-purchase financing.</td></tr>
+    <tr><td><b>6 mo out</b></td><td>≈ Aug–Sep 2027</td><td><b>TEB approved.</b> Finalize PPM plan + weigh-ticket logistics. Sign civilian offer. File state residency intent.</td></tr>
+    <tr><td><b>Post-retire</b></td><td>after 29 Feb 2028</td><td>File VA claim (BDD if eligible earlier). Establish homestead + apply property-tax exemption. Enroll kids' Ch.35.</td></tr>
+  </table>
+</section>
+
+<!-- DATA -->
+<section id="data">
+  <h2>Data &amp; sources</h2>
+  <p class="sub">Tier-1 authoritative unless flagged. Mirrors the locked verified-data file in the repo. Re-verify annually / on rating change.</p>
+  <div class="callout">Salary axis: BLS <b>metro</b> percentiles for Information Security Analysts (SOC 15-1212) were unreachable from the research environment (403-blocked). <b>National anchor (BLS OEWS May 2024): median $124,910, 90th pct $186,420.</b> Cleared TS/SCI roles run <b>~20–40% above</b> that — so the median understates this candidate's reach. Metro precision = open Tier-1 pull.</div>
+  <h3>Cleared cyber market ranking <span class="tag">[Tier-2/3 — CyberSecJobs / ClearanceJobs]</span></h3>
+  <table>
+    <tr><th>Metro</th><th>Clears $137K?</th><th>Hits $150–180K?</th><th>Note</th></tr>
+    <tr><td>NoVA / DC (VA)</td><td><span class="pill good">Yes</span></td><td><span class="pill good">Yes (&gt;$180K w/ poly)</span></td><td>densest cleared market; high COL + VA income tax</td></tr>
+    <tr><td>San Antonio (TX)</td><td><span class="pill good">Yes</span></td><td><span class="pill good">Yes</span></td><td>16th AF / NSA-TX — no income tax = best net value</td></tr>
+    <tr><td>Tampa (FL)</td><td><span class="pill good">Yes</span></td><td><span class="pill warn">Upper edge</span></td><td>MacDill CENTCOM/SOCOM; no income tax</td></tr>
+    <tr><td>Knoxville/Oak Ridge (TN)</td><td><span class="pill warn">Marginal</span></td><td><span class="pill warn">DOE niche</span></td><td>ORNL/Y-12 — TN's only real cleared node</td></tr>
+    <tr><td>Nashville/Memphis/Chatt. (TN)</td><td><span class="pill bad">Often below</span></td><td><span class="pill bad">Hard</span></td><td>commercial cyber, thin cleared density</td></tr>
+  </table>
+  <table>
+    <tr><th>Item</th><th>Value</th><th>Tier / source</th></tr>
+    <tr><td>VA comp 100% (spouse+6)</td><td>$4,864/mo</td><td class="tag">T1 — VA.gov 2026 tables; matches user calc</td></tr>
+    <tr><td>VA comp 70% (spouse+6)</td><td>$2,455/mo</td><td class="tag">T1 — VA.gov 2026 tables; matches user calc</td></tr>
+    <tr><td>Ch.35 DEA rate FY26</td><td>$1,574/mo full-time</td><td class="tag">T1 — VA.gov FY26</td></tr>
+    <tr><td>TN vet property relief cap</td><td>~$175K (→$250K eff 7/1/25)</td><td class="tag">T1 — TN Comptroller; cap increase to confirm</td></tr>
+    <tr><td>FL / TX / VA vet property</td><td>Full exemption @100% P&amp;T</td><td class="tag">T1 — FL 196.081 / TX 11.131 / VA Art X §6-A</td></tr>
+    <tr><td>VA income tax top rate</td><td>5.75% (over $17K)</td><td class="tag">T1 — Code of Va §58.1-320</td></tr>
+    <tr><td>VA mil-retirement subtraction</td><td>up to $40K (TY25+)</td><td class="tag">T1 — Virginia Tax; TY26 cap/age to confirm</td></tr>
+    <tr><td>PPM reimbursement 2026</td><td>100% of GCC</td><td class="tag">T1 — DFAS / DoD MAP 42-25(R)</td></tr>
+    <tr><td>E-8 HHG weight allowance</td><td>14,000 lb (w/ deps)</td><td class="tag">T1 — JTR 2026</td></tr>
+    <tr><td>ISA salary (national)</td><td>$124,910 median / $186,420 p90</td><td class="tag">T1 — BLS OEWS May 2024 (metro blocked)</td></tr>
+    <tr><td>State property-tax eff. rates</td><td>TN .66% · FL .91% · TX 1.68% · VA .87%</td><td class="tag">T2 — statewide avgs, verify by county</td></tr>
+    <tr><td>Job-market / COL / disaster scores</td><td>provisional</td><td class="tag">T3 — pending Tier-1 pull</td></tr>
+  </table>
+  <p class="tag">Open verifies: TN relief cap ($175K vs $250K) · VA TY2026 subtraction cap + age condition · BLS metro ISA percentiles · live cleared-job density per metro.</p>
+</section>
+
+</main>
+<footer>Local planning model — not deployed, not financial/legal advice. Re-verify dated figures on rating change. Built from the repo's verified-data file.</footer>
+
+<script>
+const fmt = n => '$'+Math.round(n).toLocaleString();
+const fmtmo = n => '$'+Math.round(n).toLocaleString();
+
+// ---- core state ----
+const S = { rating:100, civ:150000, fedRate:0.14, finState:'TN', home:450000 };
+const MIL = { pension:3450, tricare:-64, sbp:-278, tax:-340 };
+const VA = { 70:2455, 100:4864 };
+
+const STATES = {
+  TN:{name:'Tennessee', propRate:0.0066, incTaxEff:0,    vetProp:'partial', cap:175000},
+  FL:{name:'Florida',   propRate:0.0091, incTaxEff:0,    vetProp:'full',    cap:0},
+  TX:{name:'Texas',     propRate:0.0168, incTaxEff:0,    vetProp:'full',    cap:0},
+  VA:{name:'Virginia',  propRate:0.0087, incTaxEff:0.05, vetProp:'full',    cap:0},
+};
+const ORDER = ['TN','FL','TX','VA'];
+
+// criteria: scores 1-10 (higher=better). verified flag for honesty.
+const CRIT = [
+  {key:'prop', label:'Vet property tax', w:15, verified:true,  basis:'Full exemption FL/TX/VA; TN capped reimbursement',
+     s:{TN:6, FL:10, TX:10, VA:10}},
+  {key:'inc',  label:'Income-tax burden', w:20, verified:true, basis:'TN/FL/TX none; VA 5.75% on civilian wages',
+     s:{TN:10, FL:10, TX:10, VA:4}},
+  {key:'hs',   label:'Homeschool freedom', w:15, verified:true, basis:'HSLDA: TX/TN low; FL/VA moderate',
+     s:{TN:9, FL:6, TX:10, VA:7}},
+  {key:'job',  label:'Cleared cyber market', w:25, verified:false, basis:'NoVA highest; SA/Dallas strong; Tampa/SOCOM; TN thinner (PROVISIONAL)',
+     s:{TN:5, FL:7, TX:9, VA:10}},
+  {key:'dis',  label:'Disaster / insurance', w:15, verified:false, basis:'FL hurricane+insurance crisis; TX coast/hail/grid (PROVISIONAL)',
+     s:{TN:7, FL:3, TX:5, VA:7}},
+  {key:'col',  label:'Cost of living', w:10, verified:false, basis:'TN low; NoVA high (PROVISIONAL)',
+     s:{TN:8, FL:5, TX:6, VA:4}},
+];
+
+// ---- countdown helpers ----
+const today = new Date();
+const daysTo = d => Math.max(0, Math.ceil((new Date(d)-today)/86400000));
+const D = {
+  taps:'2026-06-30', prd:'2027-01-31', tebRec:'2027-08-31', ret:'2028-02-29'
+};
+
+// ---- compute ----
+function milNet(){ return MIL.pension+MIL.tricare+MIL.sbp+MIL.tax+VA[S.rating]; }
+
+function civNet(stateKey){
+  const st = STATES[stateKey];
+  const fed = S.civ*S.fedRate;
+  const state = S.civ*st.incTaxEff;
+  return {gross:S.civ, fed, state, net:S.civ-fed-state};
+}
+
+function matrix(){
+  const sum = CRIT.reduce((a,c)=>a+c.w,0);
+  const res = ORDER.map(k=>{
+    let tot=0; CRIT.forEach(c=> tot += c.s[k]*c.w);
+    return {k, score: tot/sum};
+  }).sort((a,b)=>b.score-a.score);
+  return {res, sum};
+}
+
+// sensitivity: find single weight change (to 0 or +20) that flips #1
+function sensitivity(){
+  const base = matrix().res;
+  const top = base[0].k, second = base[1].k;
+  for(const c of CRIT){
+    for(const test of [0, c.w+20]){
+      const old=c.w; c.w=test;
+      const r=matrix().res; c.w=old;
+      if(r[0].k!==top) return `Ranking is <b>${STATES[top].name}</b> &gt; <b>${STATES[second].name}</b>. It flips if you set <b>${c.label}</b> weight to <b>${test}</b> (→ ${STATES[r[0].k].name} leads). Closest challenger margin: ${(base[0].score-base[1].score).toFixed(2)} pts.`;
+    }
+  }
+  return `Ranking is <b>${STATES[top].name}</b> on top by ${(base[0].score-base[1].score).toFixed(2)} pts — robust to any single weight change.`;
+}
+
+// ---- render ----
+function render(){
+  document.getElementById('fedRateV').textContent = Math.round(S.fedRate*100)+'%';
+  document.getElementById('homeValV').textContent = fmt(S.home);
+
+  // finance cards
+  const va = VA[S.rating];
+  const net = milNet();
+  set('fin-rlabel','('+S.rating+'%)');
+  set('fin-va', fmt(va));
+  set('fin-netmo', fmt(net));
+  set('fin-netyr', fmt(net*12));
+  // household
+  const cn = civNet(S.finState);
+  set('fin-civg', fmt(cn.gross/12)+'/mo');
+  set('fin-civf', '−'+fmt(cn.fed/12)+'/mo');
+  set('fin-civs', '−'+fmt(cn.state/12)+'/mo');
+  set('fin-civn', fmt(cn.net/12)+'/mo');
+  set('fin-civstate', STATES[S.finState].name);
+  const hhmo = net + cn.net/12;
+  set('fin-hhmo', fmt(hhmo));
+  set('fin-hhyr', fmt(hhmo*12)+' /yr');
+  set('fin-milshare', fmt(net));
+  set('fin-civshare', fmt(cn.net/12));
+
+  // overview
+  set('ov-milmo', fmt(net));
+  set('ov-hhmo', fmt(hhmo));
+  const m = matrix().res;
+  set('ov-state', STATES[m[0].k].name);
+  set('ov-statenote','beats '+STATES[m[1].k].name+' by '+(m[0].score-m[1].score).toFixed(2)+' pts');
+  set('ov-teb', daysTo(D.ret));
+  set('ov-deltamo','+$2,409');
+  const eduFull = 6*36*1574;
+  document.getElementById('ov-fork').innerHTML = S.rating===100
+    ? `<b>Modeling 100% P&amp;T.</b> On top of the +$2,409/mo tax-free comp, the six-kid Chapter 35 education lever is worth up to <b>${fmt(eduFull)}</b> — the single largest swing in the plan, and it disappears entirely at 70%.`
+    : `<b>Modeling 70%.</b> No Chapter 35 education benefit and no full state property exemption. Switching to 100% P&amp;T adds <b>+$2,409/mo</b> tax-free plus up to <b>${fmt(eduFull)}</b> in education value.`;
+
+  // fork
+  const kidsEdu = 6*36*1574;
+  set('fork-edu', S.rating===100? fmt(kidsEdu) : '$0');
+  set('fork-life', '$26.4K/yr');
+  set('fork-total', fmt(2409*12*10 + kidsEdu));
+
+  // reloc va tax
+  set('reloc-vatax', fmt(S.civ*0.05));
+
+  renderWeights();
+  renderRanking();
+  renderScoreTable();
+  renderProp();
+  renderFinSeg();
+
+  // education
+  renderEdu();
+  // timeline
+  set('t-taps', daysTo(D.taps));
+  set('t-prd', daysTo(D.prd));
+  set('t-teb2', daysTo(D.tebRec));
+  set('t-ret', daysTo(D.ret));
+  set('edu-teb', daysTo(D.ret));
+  set('edu-tebrec', daysTo(D.tebRec));
+  // ppm
+  renderPpm();
+}
+
+function set(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+
+function renderWeights(){
+  const box=document.getElementById('weights'); box.innerHTML='';
+  CRIT.forEach(c=>{
+    const row=document.createElement('div'); row.className='slider-row';
+    row.innerHTML=`<label title="${c.basis}">${c.label} ${c.verified?'<span class="pill good" style="padding:0 6px">✓</span>':'<span class="pill warn" style="padding:0 6px">~</span>'}</label>
+      <input type="range" min="0" max="40" value="${c.w}" data-k="${c.key}">
+      <span>${c.w}</span>`;
+    box.appendChild(row);
+    const inp=row.querySelector('input'), sp=row.querySelector('span');
+    inp.addEventListener('input',()=>{ c.w=+inp.value; sp.textContent=c.w; renderWeights(); renderRanking(); renderScoreTable();
+      document.getElementById('wsum').textContent='Total weight: '+CRIT.reduce((a,x)=>a+x.w,0);
+      const mm=matrix().res; set('ov-state',STATES[mm[0].k].name); set('ov-statenote','beats '+STATES[mm[1].k].name+' by '+(mm[0].score-mm[1].score).toFixed(2)+' pts');
+    });
+  });
+  document.getElementById('wsum').textContent='Total weight: '+CRIT.reduce((a,x)=>a+x.w,0)+'  ·  ✓ verified  ~ provisional';
+}
+
+function renderRanking(){
+  const {res}=matrix(); const box=document.getElementById('ranking'); box.innerHTML='';
+  const max=res[0].score;
+  res.forEach((r,i)=>{
+    const d=document.createElement('div'); d.style.margin='10px 0';
+    d.innerHTML=`<div style="display:flex;justify-content:space-between"><b>${i+1}. ${STATES[r.k].name}</b><span>${r.score.toFixed(2)}</span></div>
+      <div class="bar"><i style="width:${(r.score/10*100)}%"></i></div>`;
+    box.appendChild(d);
+  });
+  document.getElementById('sensitivity').innerHTML = sensitivity();
+}
+
+function renderScoreTable(){
+  const t=document.getElementById('scoreTable');
+  let h='<tr><th>Criterion</th><th>Wt</th>'+ORDER.map(k=>`<th class="num">${k}</th>`).join('')+'</tr>';
+  CRIT.forEach(c=>{
+    h+=`<tr><td title="${c.basis}">${c.label} ${c.verified?'<span class="tag">[verified]</span>':'<span class="tag">[provisional]</span>'}</td><td>${c.w}</td>`+
+      ORDER.map(k=>`<td class="num">${c.s[k]}</td>`).join('')+'</tr>';
+  });
+  const {res}=matrix(); const rank={}; res.forEach((r,i)=>rank[r.k]=i);
+  h+=`<tr><td><b>Weighted score</b></td><td></td>`+ORDER.map(k=>{
+    const sc=res.find(r=>r.k===k).score; const win=rank[k]===0?'class="num winner"':'class="num"';
+    return `<td ${win}><b>${sc.toFixed(2)}</b></td>`;}).join('')+'</tr>';
+  t.innerHTML=h;
+}
+
+function renderProp(){
+  const t=document.getElementById('propTable');
+  let h=`<tr><th>State</th><th class="num">@70% (no exempt)</th><th class="num">@100% P&amp;T</th></tr>`;
+  ORDER.forEach(k=>{
+    const st=STATES[k];
+    const full=S.home*st.propRate;
+    let at100;
+    if(st.vetProp==='full') at100=0;
+    else at100=Math.max(0,(S.home-st.cap))*st.propRate; // TN: owe on value above cap
+    const cur = S.rating===100? at100: full;
+    h+=`<tr><td>${k}${S.rating? '':''}</td><td class="num">${fmt(full)}/yr</td><td class="num ${at100===0?'':''}">${at100===0?'<span class="pill good">$0</span>':fmt(at100)+'/yr'}</td></tr>`;
+  });
+  t.innerHTML=h;
+}
+
+function renderFinSeg(){
+  const seg=document.getElementById('finStateSeg'); if(seg.dataset.done) return;
+  ORDER.forEach(k=>{
+    const b=document.createElement('button'); b.textContent=k; if(k===S.finState)b.className='on';
+    b.onclick=()=>{ S.finState=k; [...seg.children].forEach(x=>x.className=''); b.className='on'; render(); };
+    seg.appendChild(b);
+  });
+  seg.dataset.done=1;
+}
+
+function renderEdu(){
+  const kids=+document.getElementById('eduKids').value;
+  const mo=+document.getElementById('eduMo').value;
+  document.getElementById('eduKidsV').textContent=kids;
+  document.getElementById('eduMoV').textContent=mo;
+  const months=kids*mo, total=months*1574;
+  set('edu-months', months+' mo');
+  set('edu-total', S.rating===100? fmt(total) : '$0 (needs 100% P&T)');
+}
+
+function renderPpm(){
+  const g=+document.getElementById('ppmGcc').value, c=+document.getElementById('ppmCost').value;
+  document.getElementById('ppmGccV').textContent=fmt(g);
+  document.getElementById('ppmCostV').textContent=fmt(c);
+  const gross=g-c, tax=g*0.22, net=gross-tax;
+  set('ppm-gross', fmt(gross));
+  set('ppm-tax','−'+fmt(tax));
+  set('ppm-net', fmt(net));
+}
+
+// ---- wiring ----
+document.querySelectorAll('#ratingToggle button').forEach(b=>{
+  b.onclick=()=>{ S.rating=+b.dataset.r; document.querySelectorAll('#ratingToggle button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); render(); };
+});
+document.getElementById('civInput').addEventListener('input',e=>{ S.civ=+e.target.value||0; render(); });
+document.getElementById('fedRate').addEventListener('input',e=>{ S.fedRate=+e.target.value/100; render(); });
+document.getElementById('homeVal').addEventListener('input',e=>{ S.home=+e.target.value; render(); });
+['eduKids','eduMo'].forEach(id=>document.getElementById(id).addEventListener('input',renderEdu));
+['ppmGcc','ppmCost'].forEach(id=>document.getElementById(id).addEventListener('input',renderPpm));
+
+document.querySelectorAll('#tabs button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('main section').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); document.getElementById(b.dataset.t).classList.add('on');
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+
+render();
+</script>
+</body>
+</html>

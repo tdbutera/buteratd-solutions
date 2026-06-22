@@ -38,6 +38,8 @@
 
 ## Core document registry (build with `BUILD <nn>`)
 
+**Interactive view:** `retirement-dashboard.html` — local single-file dashboard (VA-rating toggle, household calculator, live relocation decision-matrix + sensitivity, property/income-tax calcs, Ch.35 six-kid lever, TEB countdowns). Open in a browser; not deployed.
+
 | # | Doc | Status |
 |---|---|---|
 | 01 | Timeline | ⬜ not built |
@@ -62,7 +64,7 @@
 - ✅ TN disabled-veteran property-tax relief — capped reimbursement, 100% P&T gate → `99` §E.1 *(cap $175K vs $250K still to confirm)*.
 - ✅ TN income tax — none; Hall tax repealed → `99` §E.2.
 - ✅ FL / TX / VA equivalents — property exemption + income tax → `99` §E.1–E.2.
-- 🔄 $137K+ cyber/ISSM salary bands in TN (+ challenger) metros — **agent running**.
+- ✅ $137K+ cyber/ISSM salary bands → `99` §H (BLS metro percentiles blocked = open pull; cleared-market ranking done).
 - ✅ TN homeschool legal category → `99` §E.3.
 - ✅ 2026 DITY/PPM reimbursement rate → `99` §F.
 - ✅ Ch.33 TEB rules + pre-retirement deadline → `99` §G.
