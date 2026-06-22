@@ -90,8 +90,8 @@
         </div>
       </div>
       <div class="ctl">
-        <label>Civilian salary (gross/yr)</label>
-        <input id="civInput" type="number" value="150000" step="5000" min="0">
+        <label>Civilian salary (gross/yr): <b id="civVal" style="color:var(--green)">$150,000</b></label>
+        <input id="civInput" type="range" min="100000" max="220000" step="5000" value="150000" style="width:200px">
       </div>
     </div>
   </div>
@@ -319,6 +319,16 @@
   </div>
 
   <div class="card" style="margin-top:14px">
+    <h3>Realistic cleared-cyber salary band by state <span class="tag">[Tier-2 — ClearanceJobs/CyberSecJobs]</span></h3>
+    <p class="mini">Move the salary slider up top — the white line is your number. This shows whether it's realistic in each state's actual cleared market:
+      <span class="pill good" style="padding:0 6px">in band</span> achievable ·
+      <span class="pill warn" style="padding:0 6px">top-end</span> stretch (senior/poly) ·
+      <span class="pill bad" style="padding:0 6px">above market</span> unlikely locally ·
+      <span class="pill v" style="padding:0 6px">below</span> easily cleared.</p>
+    <div id="salaryLegend"></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
     <h3>Annual take-home by state <span class="mini">(sorted best→worst)</span></h3>
     <div style="overflow-x:auto"><table id="thTable"></table></div>
     <p class="tag">Mortgage = 30-yr P&amp;I @6.9% on 80% of the anchor-metro median home. Property tax = $0 where the 100% P&amp;T exemption is full (else on value above the cap); at 70% no exemption applies. Groceries/gas/utilities/healthcare scaled by state price level (BEA RPP). Assumes the <b>same civilian salary everywhere</b> — high-cost metros like NoVA often pay more, which narrows the gap.</p>
@@ -457,18 +467,18 @@ const MIL = { pension:3450, tricare:-64, sbp:-278, tax:-340 };
 const VA = { 70:2455, 100:4864 };
 
 const STATES = {
-  TX:{name:'Texas',      propRate:0.0168, incTaxEff:0,     vetProp:'full',    cap:0,      home:260000, rpp:97,  ins:4500},
-  AL:{name:'Alabama',    propRate:0.0040, incTaxEff:0.045, vetProp:'full',    cap:0,      home:320000, rpp:88,  ins:3130},
-  VA:{name:'Virginia',   propRate:0.0087, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:345000, rpp:100, ins:1900},
-  UT:{name:'Utah',       propRate:0.0057, incTaxEff:0.045, vetProp:'partial', cap:479000, home:520000, rpp:98,  ins:900},
-  FL:{name:'Florida',    propRate:0.0091, incTaxEff:0,     vetProp:'full',    cap:0,      home:443000, rpp:100, ins:6400},
-  TN:{name:'Tennessee',  propRate:0.0066, incTaxEff:0,     vetProp:'partial', cap:175000, home:327000, rpp:90,  ins:3045},
-  MD:{name:'Maryland',   propRate:0.0105, incTaxEff:0.075, vetProp:'full',    cap:0,      home:450000, rpp:108, ins:1900},
-  GA:{name:'Georgia',    propRate:0.0090, incTaxEff:0.05,  vetProp:'partial', cap:110000, home:240000, rpp:93,  ins:2300},
-  SC:{name:'S. Carolina',propRate:0.0056, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:420000, rpp:95,  ins:2670},
-  CO:{name:'Colorado',   propRate:0.0049, incTaxEff:0.044, vetProp:'partial', cap:100000, home:465000, rpp:104, ins:4500},
-  OH:{name:'Ohio',       propRate:0.0140, incTaxEff:0.033, vetProp:'partial', cap:50000,  home:230000, rpp:90,  ins:1800},
-  NC:{name:'N. Carolina',propRate:0.0073, incTaxEff:0.0399,vetProp:'partial', cap:45000,  home:340000, rpp:94,  ins:2600},
+  TX:{name:'Texas',      propRate:0.0168, incTaxEff:0,     vetProp:'full',    cap:0,      home:260000, rpp:97,  ins:4500, band:[120000,165000], metro:'San Antonio'},
+  AL:{name:'Alabama',    propRate:0.0040, incTaxEff:0.045, vetProp:'full',    cap:0,      home:320000, rpp:88,  ins:3130, band:[115000,155000], metro:'Huntsville'},
+  VA:{name:'Virginia',   propRate:0.0087, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:345000, rpp:100, ins:1900, band:[150000,200000], metro:'NoVA / Hampton Roads'},
+  UT:{name:'Utah',       propRate:0.0057, incTaxEff:0.045, vetProp:'partial', cap:479000, home:520000, rpp:98,  ins:900,  band:[110000,145000], metro:'Hill AFB / SLC'},
+  FL:{name:'Florida',    propRate:0.0091, incTaxEff:0,     vetProp:'full',    cap:0,      home:443000, rpp:100, ins:6400, band:[115000,155000], metro:'Tampa / Pensacola'},
+  TN:{name:'Tennessee',  propRate:0.0066, incTaxEff:0,     vetProp:'partial', cap:175000, home:327000, rpp:90,  ins:3045, band:[105000,140000], metro:'Knoxville / Oak Ridge'},
+  MD:{name:'Maryland',   propRate:0.0105, incTaxEff:0.075, vetProp:'full',    cap:0,      home:450000, rpp:108, ins:1900, band:[145000,195000], metro:'Fort Meade'},
+  GA:{name:'Georgia',    propRate:0.0090, incTaxEff:0.05,  vetProp:'partial', cap:110000, home:240000, rpp:93,  ins:2300, band:[110000,150000], metro:'Augusta'},
+  SC:{name:'S. Carolina',propRate:0.0056, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:420000, rpp:95,  ins:2670, band:[110000,145000], metro:'Charleston'},
+  CO:{name:'Colorado',   propRate:0.0049, incTaxEff:0.044, vetProp:'partial', cap:100000, home:465000, rpp:104, ins:4500, band:[130000,175000], metro:'Colorado Springs'},
+  OH:{name:'Ohio',       propRate:0.0140, incTaxEff:0.033, vetProp:'partial', cap:50000,  home:230000, rpp:90,  ins:1800, band:[105000,145000], metro:'Dayton / Wright-Patt'},
+  NC:{name:'N. Carolina',propRate:0.0073, incTaxEff:0.0399,vetProp:'partial', cap:45000,  home:340000, rpp:94,  ins:2600, band:[110000,150000], metro:'RTP / Fort Liberty'},
 };
 const ORDER = ['TX','AL','VA','UT','FL','TN','MD','GA','SC','CO','OH','NC'];
 
@@ -597,6 +607,33 @@ function render(){
   // ppm
   renderPpm();
   renderTakehome();
+  renderSalaryLegend();
+  set('civVal', fmt(S.civ));
+}
+
+function renderSalaryLegend(){
+  const box=document.getElementById('salaryLegend'); if(!box) return;
+  const MIN=100000, MAX=220000, span=MAX-MIN, pct=v=>(Math.max(MIN,Math.min(MAX,v))-MIN)/span*100;
+  const states=[...ORDER].sort((a,b)=>STATES[b].band[1]-STATES[a].band[1]);
+  let h='';
+  states.forEach(k=>{
+    const st=STATES[k], lo=st.band[0], hi=st.band[1];
+    let cls,label;
+    if(S.civ>hi){cls='bad';label='above market';}
+    else if(S.civ<lo){cls='v';label='below (easy)';}
+    else if(S.civ>=hi-0.2*(hi-lo)){cls='warn';label='top-end';}
+    else {cls='good';label='in band';}
+    h+=`<div style="display:grid;grid-template-columns:130px 1fr 92px;gap:10px;align-items:center;margin:7px 0">
+      <div class="mini"><b>${st.name}</b> <span style="color:var(--muted)">(${fmt(lo)}–${fmt(hi)})</span><br><span style="color:var(--muted)">${st.metro}</span></div>
+      <div style="position:relative;height:16px;background:var(--panel2);border-radius:8px">
+        <div style="position:absolute;left:${pct(lo)}%;width:${pct(hi)-pct(lo)}%;top:0;bottom:0;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:8px;opacity:.55"></div>
+        <div title="your salary" style="position:absolute;left:${pct(S.civ)}%;top:-3px;bottom:-3px;width:2px;background:#fff;box-shadow:0 0 4px #fff"></div>
+      </div>
+      <span class="pill ${cls}">${label}</span>
+    </div>`;
+  });
+  h+=`<div class="mini" style="display:flex;justify-content:space-between;color:var(--muted);margin-top:6px"><span>$100K</span><span>your salary: <b style="color:var(--green)">${fmt(S.civ)}</b></span><span>$220K</span></div>`;
+  box.innerHTML=h;
 }
 
 // federal tax on civilian salary, MFJ + 6 kids (~constant across states)

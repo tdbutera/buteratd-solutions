@@ -38,12 +38,12 @@
 
 ## Core document registry (build with `BUILD <nn>`)
 
-**Interactive view:** `retirement-dashboard.html` — local single-file dashboard (VA-rating toggle, household calculator, live relocation decision-matrix + sensitivity, property/income-tax calcs, Ch.35 six-kid lever, TEB countdowns). Open in a browser; not deployed.
+**Interactive view:** `retirement-dashboard.html` — local single-file dashboard. VA-rating toggle + **salary slider** drive everything live. Tabs: Overview · Finances · 70/100 fork · Relocation (12-state matrix + weights + sensitivity + **four-season weight**) · **Take-home/yr** (per-state budget + **salary-band legend**) · Education · PPM · Timeline · Data. Open in a browser; not deployed.
 
 | # | Doc | Status |
 |---|---|---|
-| 01 | Timeline | ⬜ not built |
-| 02 | Scenario comparison (70% vs 100% fork) | ⬜ not built |
+| 01 | Timeline | ✅ **built** |
+| 02 | Scenario comparison (70% vs 100% fork) | ✅ **built** |
 | 03 | VA strategy | ⬜ not built |
 | 04 | Finance & tax | ⬜ not built |
 | 05 | Career | ⬜ not built |
@@ -51,7 +51,7 @@
 | 06b | National top-5 (50-state scan) | ✅ **built** — TX > AL > VA > UT > FL |
 | 06c | 4-season ranking + annual take-home | ✅ **built** — 4-seasons: VA>UT>MD>TN>OH>CO>NC; cash: TN>OH>TX>AL |
 | 07 | Real estate / homestead | ⬜ not built |
-| 08 | Education & GI Bill (Ch.35 ×6 + Ch.33 TEB) | ⬜ not built |
+| 08 | Education & GI Bill (Ch.35 ×6 + Ch.33 TEB) | ✅ **built** |
 | 09 | Insurance & risk | ⬜ not built |
 | 10 | ButeraNet | ⬜ not built |
 | 11 | Risk register | ⬜ not built |

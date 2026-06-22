@@ -166,4 +166,27 @@ Profile filter: must support a **local cleared TS/SCI cyber job** ($137–180K) 
 
 ---
 
-**SESSION-END STATE:** Independent 50-state scan persisted (§K). National top-5 = TX > AL > VA > UT > FL. Newcomers beating original shortlist: Alabama (#2, Huntsville), Utah (#4). Pivot variable = civilian-income portability (collapses job-market weight → cheap/safe/free states rise). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
+## L. Anchor-county property-tax refinement (Jun 2026)
+
+> **At 100% P&T, county rate is moot in the full-exemption states** (TX/FL/VA/AL/MD/SC → $0). County rates matter only at **70%**, or in **partial-exemption states** (TN/GA/CO/OH/UT/NC). Effective rates are `[Tier-2 – verify with county assessor + tax year]`.
+
+| State | Anchor county (metro) | Eff. rate | @100% P&T |
+|---|---|---|---|
+| TX | Bexar (San Antonio) | ~1.8–2.0% | **$0** (full exempt) |
+| AL | Madison (Huntsville) | ~0.42% | **$0** (full exempt) |
+| VA | Virginia Beach / Fairfax | ~0.8–1.0% | **$0** (full exempt) |
+| FL | Hillsborough (Tampa) | ~0.9% | **$0** (full exempt) |
+| SC | Charleston | ~0.5% | **$0** (full exempt) |
+| MD | Anne Arundel (Ft Meade) | ~0.9% | **$0** (full exempt) |
+| **TN** | **Knox (Knoxville)** | **~0.52%** | owe on value > $175K |
+| GA | Richmond (Augusta) | ~1.1% | owe on value > ~$110K |
+| CO | El Paso (Colo. Springs) | ~0.49% | owe on 50% of first $200K |
+| UT | Davis/Weber (Hill AFB) | ~0.58% | ~$0 for homes < ~$479K |
+| OH | Montgomery (Dayton) | ~1.6% | owe on value > $50K (high rate) |
+| NC | Wake / Cumberland | ~0.7–0.9% | owe on value > $45K |
+
+**Lock note:** final property-tax math requires the **specific county + tax year** once a metro is chosen. Ohio's high effective rate is its hidden cost despite cheap home prices; Knox County TN is low-rate, softening its capped-relief disadvantage.
+
+---
+
+**SESSION-END STATE:** Independent 50-state scan (§K) + anchor-county property-tax refinement (§L) persisted. National top-5 = TX > AL > VA > UT > FL. Full-exemption states make county moot at 100% P&T; partial states (TN/GA/CO/OH/UT/NC) need county detail. Pivot variable = civilian-income portability. Salary bands per state added to dashboard legend (Tier-2). State data persisted in Section E: **key finding — TN (front-runner) has the WEAKEST disabled-vet property benefit (capped reimbursement vs FL/TX/VA full exemption); VA is the only shortlist state that taxes the civilian salary (~$8K+/yr)**. DITY (F) + TEB (G) persisted; TEB flagged as hard pre-retirement deadline. Open verifies: TN cap ($175K vs $250K), VA TY2026 retirement subtraction cap/age. Next: fold in salary bands → `BUILD 06` relocation matrix.
