@@ -49,6 +49,33 @@ Genuine four-season climates only (drops FL, TX/San Antonio, AL, GA, SC — hot,
 
 **Cross-lens read:** Texas wins overall and on cash; Tennessee wins on cash and survives the 4-season cut; **Virginia is the standout if you require 4 seasons** (and its lower take-home flips to competitive once you use a realistic NoVA salary).
 
+## 4. Both ratings — the take-home ranking reshuffles at 70%
+
+The table above assumes **100% P&T** (full property exemption live). At **70%** two things change: VA comp is ~$2,409/mo lower (≈$28.9K/yr less income), **and no state grants the full property exemption — so property tax applies everywhere.** That penalizes high-property-tax states and reshuffles the order. *(The dashboard does this live — slide the rating to 70% and the Take-home table re-sorts.)*
+
+| State | Take-home @100% P&T | Take-home @70% | Rank move | Property tax @70% |
+|---|---|---|---|---|
+| **Ohio** | $161,374 (#2) | **$131,766 (#1)** | ▲ +1 | $3,220 |
+| **Tennessee** | $161,689 (#1) | $131,626 (#2) | ▼ −1 | $2,158 |
+| **Georgia** | $157,332 (#5) | $127,434 (#3) | ▲ +2 | $2,160 |
+| Alabama | $157,436 (#4) | $127,248 (#4) | same | $1,280 |
+| **Texas** | $160,342 (#3) | $127,066 (#5) | ▼ −2 | **$4,368** |
+| N. Carolina | $151,894 (#6) | $122,657 (#6) | same | $2,482 |
+| Virginia | $149,307 (#7) | $117,398 (#7) | same | $3,002 |
+| S. Carolina | $147,804 (#8) | $116,544 (#8) | same | $2,352 |
+| Florida | $147,351 (#9) | $114,412 (#9) | same | $4,031 |
+| Utah | $143,197 (#10) | $111,558 (#10) | same | $2,964 |
+| Colorado | $137,302 (#11) | $107,904 (#11) | same | $2,279 |
+| Maryland | $135,351 (#12) | $101,718 (#12) | same | $4,725 |
+
+**What flips and why:**
+- **Texas drops #3 → #5.** Its full property exemption was carrying it; at 70% the **1.68% rate on the home (~$4,368/yr) is the worst of the affordable states** and there's nothing to offset it. Texas's tax-and-homeschool case stays strong, but its *cash* edge is a P&T artifact.
+- **Ohio and Georgia rise** — cheap homes + moderate rates mean they barely notice losing an exemption they only half-had.
+- **Tennessee stays top-2 either way** — capped relief means it loses little at 70%, and no income tax + cheap homes carry it.
+- Everyone is **~$30K/yr poorer** at 70% (the tax-free VA delta), but the *relative* order is what should drive the location choice if 100% P&T isn't a lock.
+
+> **Plan rule:** if 100% P&T is **not** highly likely, weight the **property-tax-rate** column more and the **exemption** less — which favors low-rate states (AL, GA, TN, CO) over high-rate Texas. See `11_Risk_Register` (the plan's #1 assumption).
+
 ---
 
-**SESSION-END STATE:** `06c` added. Four-season-required top 7 = VA > UT > MD > TN > OH > CO > NC (brings in OH/CO/NC, drops TX/FL/AL). Annual take-home (family of 8) ranks TN > OH > TX > AL > GA … > MD; ~$26K/yr spread; cheap housing+insurance beats no-income-tax headline. Dashboard adds Take-home tab + four-season weight slider; 12 states now in matrix. Verified 9/9 assertions.
+**SESSION-END STATE:** `06c` added. Four-season-required top 7 = VA > UT > MD > TN > OH > CO > NC. Annual take-home @100% P&T ranks TN > OH > TX > AL > GA … > MD; **at 70% it reshuffles** (§4): OH→#1, TN→#2, GA→#3, **Texas drops #3→#5** on its 1.68% property tax with no exemption; everyone ~$30K/yr poorer. Plan is now dual-track (docs + live dashboard rating slider). If P&T isn't a lock, favor low property-tax-rate states over Texas.

@@ -2,6 +2,8 @@
 
 > Built on request: find the best states from scratch, **ignoring the prior TN/FL/TX/VA shortlist.** Same 7-axis weighted model as `06`. Sources: `99_VERIFIED_DATA_LOCKED.md` §K + §E–J. All four research sweeps considered every state.
 
+> **Rating caveat:** this ranking assumes **100% P&T** (full property exemption live). At **70%**, no state grants the exemption and the *cash* order reshuffles — Texas drops on its high property-tax rate; low-rate states (AL/GA/TN/OH) rise. Full dual-scenario take-home in `06c §4`.
+
 ## The answer (default weights)
 
 | # | State | Score | Anchor metro | The case |
