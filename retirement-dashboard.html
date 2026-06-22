@@ -79,7 +79,7 @@
 <header>
   <div class="htop">
     <h1>Retirement Transition Dashboard
-      <small>Navy E-8 · High-3 · 20 yr 5 mo · Retire <b>29 Feb 2028</b> · spouse + 6 kids · homeschool</small>
+      <small id="hdrSub">E-8 · High-3 · spouse + 6 kids</small>
     </h1>
     <div class="controls">
       <div class="ctl">
@@ -96,6 +96,7 @@
 </header>
 
 <nav id="tabs">
+  <button data-t="setup">⚙ Setup</button>
   <button data-t="overview" class="on">Overview</button>
   <button data-t="finance">Finances</button>
   <button data-t="fork">70% vs 100%</button>
@@ -109,6 +110,66 @@
 </nav>
 
 <main>
+
+<!-- SETUP -->
+<section id="setup">
+  <h2>⚙ Setup — your situation</h2>
+  <p class="sub">Enter your details; every tab recomputes from these. All fields are editable/overridable. Defaults = the example operator (Navy E-8, spouse + 6 kids). <button id="resetBtn" class="seg" style="padding:4px 10px;cursor:pointer">↺ reset to example</button></p>
+
+  <div class="grid g3">
+    <div class="card">
+      <h3>Service &amp; retirement pay</h3>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Rank</label>
+        <select id="in-rank"></select></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Years of service</label>
+        <input id="in-tis" type="number" step="0.5" min="0"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Retirement system</label>
+        <select id="in-sys"><option>High-3</option><option>BRS</option></select></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>High-3 base pay/mo</label>
+        <input id="in-high3" type="number" step="50"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Retirement pay/mo</label>
+        <input id="in-pension" type="number" step="10"></div>
+      <p class="tag" id="pensionFormula"></p>
+    </div>
+
+    <div class="card">
+      <h3>Family</h3>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Spouse</label>
+        <span><input type="checkbox" id="in-spouse"> married</span></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Children &lt;18</label>
+        <input id="in-kids" type="number" step="1" min="0" max="15"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Tax filing</label>
+        <select id="in-filing"><option>MFJ</option><option>Single</option><option>HoH</option></select></div>
+      <p class="tag">Drives VA dependent comp + child tax credits + standard deduction.</p>
+    </div>
+
+    <div class="card">
+      <h3>Pay &amp; deductions (monthly)</h3>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Civilian salary/yr</label>
+        <input id="in-civ" type="number" step="5000"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Tricare premium</label>
+        <input id="in-tricare" type="number" step="5"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>SBP + VGLI</label>
+        <input id="in-sbp" type="number" step="5"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Fed tax on pension/mo</label>
+        <input id="in-milfed" type="number" step="10"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Retirement date</label>
+        <input id="in-retdate" type="date"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Live snapshot (from your inputs)</h3>
+    <div class="kpi">
+      <div><b id="su-pension">—</b><span>retirement pay/mo</span></div>
+      <div><b id="su-va">—</b><span>VA comp/mo (@ slider rating)</span></div>
+      <div><b id="su-milnet">—</b><span>military net/mo</span></div>
+      <div><b id="su-hh">—</b><span>household net/mo</span></div>
+      <div><b id="su-ret">—</b><span>days to retirement</span></div>
+    </div>
+    <p class="tag">VA comp computed from rating + spouse + children (2026 schedule; 70%/100% spouse+6 verified, other configs estimated — override any number directly). Retirement pay = (High-3: 2.5% · BRS: 2.0%) × years × High-3 base pay.</p>
+  </div>
+</section>
 
 <!-- OVERVIEW -->
 <section id="overview" class="on">
@@ -178,13 +239,13 @@
   </div>
 
   <h2 style="margin-top:26px">Household income — add the civilian paycheck</h2>
-  <p class="sub">Civilian gross set in the header. State income tax pulled from your selected relocation pick. Federal effective rate is an editable estimate (large family ⇒ many credits).</p>
+  <p class="sub">Civilian gross set in the header/Setup. Federal tax computed from your filing status + children (Setup); state income tax from your selected relocation pick.</p>
   <div class="grid g2">
     <div class="card">
       <div class="slider-row">
         <label>Fed effective rate</label>
-        <input id="fedRate" type="range" min="0" max="30" value="14">
-        <span id="fedRateV">14%</span>
+        <span></span>
+        <span id="fedRateV">—</span>
       </div>
       <div class="slider-row">
         <label>Relocation state</label>
@@ -496,20 +557,34 @@
 const fmt = n => '$'+Math.round(n).toLocaleString();
 const fmtmo = n => '$'+Math.round(n).toLocaleString();
 
-// ---- core state ----
-const S = { rating:100, pt:true, civ:150000, fedRate:0.14, finState:'TX', home:450000 };
-const MIL = { pension:3450, tricare:-64, sbp:-278, tax:-340 };
-// 2026 VA monthly disability comp — veteran + spouse + 6 children under 18 (tax-free, eff 12/1/2025).
-// 70% & 100% [Verified – VA.gov 2026 / user calculator]; 10/20/30/40/50/60/80/90% [Tier-2 — computed via 2.8% COLA truncation method, ±verify; VA.gov 403-blocked]
-const COMP = { 10:175, 20:347, 30:799, 40:1142, 50:1573, 60:1973, 70:2455, 80:2835, 90:3181, 100:4864 };
+// ---- core state (all editable in Setup) ----
+const DEFAULT = { rank:'E-8', tis:20.42, sys:'High-3', high3:6759, pension:3450,
+  spouse:true, kids:6, filing:'MFJ', tricare:64, sbp:278, milfed:340,
+  rating:100, pt:true, civ:150000, finState:'TX', home:450000, retDate:'2028-02-29' };
+const S = Object.assign({}, DEFAULT);
+// approx monthly basic pay near retirement-eligible TIS — [Tier-3 estimate; override High-3 with your LES]
+const PAY={'E-5':3700,'E-6':4300,'E-7':5200,'E-8':6491,'E-9':7300,'W-2':6200,'W-3':6900,'W-4':7800,'W-5':9200,'O-3':7200,'O-4':8500,'O-5':10000,'O-6':12000,'O-7':14500,'O-8':16500};
+// 2026 VA comp building blocks (eff 12/1/2025): veteran+spouse+1child base & each-additional-child <18.
+// 70% & 100% [Verified – VA.gov]; 30/40/50/60/80/90 [Tier-2 computed]; spouseAmt [estimate]. Override any number in Setup.
+const SP1C={30:635.08,40:923.07,50:1298.57,60:1643.77,70:2073.98,80:2396.58,90:2687.62,100:4318.98};
+const ADDL={30:32.88,40:43.85,50:54.81,60:65.78,70:75.87,80:87.65,90:98.61,100:109.11};
+const FLAT={10:175.51,20:346.95};
+const SPOUSEAMT={30:59,40:79,50:99,60:119,70:138,80:158,90:178,100:198};
 const VERIFIED_RATINGS = {70:1, 100:1};
-const baseNet = MIL.pension+MIL.tricare+MIL.sbp+MIL.tax; // 2768 = pension net w/ full tax, before VA
-const PTAXEFF = Math.abs(MIL.tax)/MIL.pension;           // ~0.0986 effective pension tax (for <50% waiver)
+function vaComp(rating, spouse, kids){
+  if(rating<30) return Math.floor(FLAT[rating]||0);       // no dependent add-ons below 30%
+  let base=SP1C[rating];
+  let c = kids>=1 ? base + (kids-1)*ADDL[rating] : base - ADDL[rating];
+  if(!spouse) c -= SPOUSEAMT[rating];
+  return Math.max(0, Math.floor(c));
+}
+function pensionCalc(){ const m=S.sys==='BRS'?0.02:0.025; return Math.round(m*S.tis*S.high3); }
 function milNet(){
-  const VAc = COMP[S.rating]||0;
-  if(S.rating>=50) return baseNet + VAc;                 // CRDP: pension + VA fully stack
-  // below 50%: VA waiver — retired pay reduced by VA comp, received tax-free instead → net gain = tax saved
-  return baseNet + Math.min(VAc,MIL.pension)*PTAXEFF + Math.max(0, VAc-MIL.pension);
+  const VAc=vaComp(S.rating,S.spouse,S.kids);
+  const baseNet=S.pension - S.tricare - S.sbp - S.milfed;  // pension net, before VA
+  if(S.rating>=50) return baseNet + VAc;                   // CRDP: pension + VA fully stack
+  const eff=S.milfed/Math.max(1,S.pension);                // <50%: VA waiver → net gain = tax saved
+  return baseNet + Math.min(VAc,S.pension)*eff + Math.max(0,VAc-S.pension);
 }
 
 const STATES = {
@@ -574,6 +649,11 @@ const D = {
 // ---- compute ----
 
 function civNet(stateKey){
+  const st0=STATES[stateKey];
+  const fed0=civFed(S.civ), state0=S.civ*st0.incTaxEff;
+  return {gross:S.civ, fed:fed0, state:state0, net:S.civ-fed0-state0};
+}
+function _civNetOld(stateKey){
   const st = STATES[stateKey];
   const fed = S.civ*S.fedRate;
   const state = S.civ*st.incTaxEff;
@@ -605,11 +685,11 @@ function sensitivity(){
 
 // ---- render ----
 function render(){
-  document.getElementById('fedRateV').textContent = Math.round(S.fedRate*100)+'%';
+  document.getElementById('fedRateV').textContent = S.civ>0? Math.round(civFed(S.civ)/S.civ*100)+'% (computed)':'—';
   document.getElementById('homeValV').textContent = fmt(S.home);
 
   // finance cards
-  const va = COMP[S.rating]||0;
+  const va = vaComp(S.rating,S.spouse,S.kids);
   const net = milNet();
   set('fin-rlabel','('+S.rating+'%'+(S.pt?' P&T':'')+')');
   set('fin-va', fmt(va));
@@ -640,15 +720,15 @@ function render(){
   const m = matrix().res;
   set('ov-state', STATES[m[0].k].name);
   set('ov-statenote','beats '+STATES[m[1].k].name+' by '+(m[0].score-m[1].score).toFixed(2)+' pts');
-  set('ov-teb', daysTo(D.ret));
+  set('ov-teb', daysTo(S.retDate));
   set('ov-deltamo','+$2,409');
-  const eduFull = 6*36*1574;
+  const eduFull = S.kids*36*1574;
   document.getElementById('ov-fork').innerHTML = S.pt
-    ? `<b>Modeling ${S.rating}% P&amp;T.</b> The six-kid Chapter 35 education lever (up to <b>${fmt(eduFull)}</b>) and the full state property exemption are <b>live</b> — both require P&amp;T. This is the single largest swing in the plan.`
+    ? `<b>Modeling ${S.rating}%${S.rating>=100?' P&amp;T':' P&amp;T (TDIU)'}.</b> The ${S.kids}-kid Chapter 35 education lever (up to <b>${fmt(eduFull)}</b>) and the full state property exemption are <b>live</b> — both require P&amp;T. This is the single largest swing in the plan.`
     : `<b>Modeling ${S.rating}% (not P&amp;T).</b> No Chapter 35 education benefit and no full state property exemption — both need <b>Permanent &amp; Total</b>. Checking P&amp;T (or reaching 100% P&amp;T) adds up to <b>${fmt(eduFull)}</b> in education value plus $0 property tax.`;
 
   // fork
-  const kidsEdu = 6*36*1574;
+  const kidsEdu = S.kids*36*1574;
   set('fork-edu', S.pt? fmt(kidsEdu) : '$0');
   set('fork-life', '$26.4K/yr');
   set('fork-total', fmt(2409*12*10 + kidsEdu));
@@ -664,19 +744,33 @@ function render(){
 
   // education
   renderEdu();
-  // timeline
+  // timeline (anchored to the retirement date in Setup)
+  const tebRec=new Date(new Date(S.retDate).getTime()-180*86400000).toISOString().slice(0,10);
   set('t-taps', daysTo(D.taps));
   set('t-prd', daysTo(D.prd));
-  set('t-teb2', daysTo(D.tebRec));
-  set('t-ret', daysTo(D.ret));
-  set('edu-teb', daysTo(D.ret));
-  set('edu-tebrec', daysTo(D.tebRec));
+  set('t-teb2', daysTo(tebRec));
+  set('t-ret', daysTo(S.retDate));
+  set('edu-teb', daysTo(S.retDate));
+  set('edu-tebrec', daysTo(tebRec));
   // ppm
   renderPpm();
   renderTakehome();
   renderSalaryLegend();
   renderCompare();
+  renderSetup();
   set('civVal', fmt(S.civ));
+}
+
+function renderSetup(){
+  const cn=civNet(S.finState), mn=milNet();
+  set('su-pension', fmt(S.pension)+'/mo');
+  set('su-va', fmt(vaComp(S.rating,S.spouse,S.kids))+'/mo');
+  set('su-milnet', fmt(mn)+'/mo');
+  set('su-hh', fmt(mn+cn.net/12)+'/mo');
+  set('su-ret', daysTo(S.retDate));
+  const mult=S.sys==='BRS'?'2.0%':'2.5%';
+  set('pensionFormula', `auto: ${mult} × ${S.tis} yrs × ${fmt(S.high3)} High-3 = ${fmt(pensionCalc())}/mo. Type in "Retirement pay" to override.`);
+  set('hdrSub', `${S.rank} · ${S.sys} · ${S.spouse?'spouse + ':''}${S.kids} kid${S.kids===1?'':'s'}`);
 }
 
 // shared annual take-home for a state (used by take-home tab + compare)
@@ -689,7 +783,7 @@ function takeHome(k){
   if(S.pt) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
   else ptax = st.home*st.propRate;
   const housing=0.8*st.home*0.06322 + ptax + st.ins;
-  return net - stateTax - housing - GOODS*st.rpp/100;
+  return net - stateTax - housing - goodsBase()*st.rpp/100;
 }
 const SCRT=(key,k)=>CRIT.find(c=>c.key===key).s[k];
 function argbest(fn,dir){let best=null,wins=[];ORDER.forEach(k=>{const v=fn(k);
@@ -829,15 +923,20 @@ function renderSalaryLegend(){
   box.innerHTML=h;
 }
 
-// federal tax on civilian salary, MFJ + 6 kids (~constant across states)
+// federal tax on civilian salary — filing-status brackets, minus child tax credit
+const STDDED={MFJ:30000,Single:15000,HoH:22500};
+const BRACKETS={
+ MFJ:[[23850,.10],[96950,.12],[206700,.22],[394600,.24],[501050,.32],[751600,.35],[1e12,.37]],
+ Single:[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[1e12,.37]],
+ HoH:[[17000,.10],[64850,.12],[103350,.22],[197300,.24],[250500,.32],[626350,.35],[1e12,.37]]};
 function civFed(civ){
-  const taxable=Math.max(0,civ-30000);
-  const b=[[23850,.10],[96950,.12],[206700,.22],[394600,.24]];
+  const std=STDDED[S.filing]||30000, taxable=Math.max(0,civ-std);
   let t=0,prev=0;
-  for(const [cap,r] of b){ if(taxable>prev){ t+=(Math.min(taxable,cap)-prev)*r; prev=cap; } }
-  return Math.max(0, t-12000); // 6 x $2,000 child tax credit
+  for(const [cap,r] of (BRACKETS[S.filing]||BRACKETS.MFJ)){ if(taxable>prev) t+=(Math.min(taxable,cap)-prev)*r; prev=cap; if(taxable<=cap) break; }
+  return Math.max(0, t - S.kids*2000); // $2,000 child tax credit per child
 }
-const GOODS=61200; // family-of-8 groceries+gas+utils+healthcare+other at RPP 100
+const householdSize=()=>1+(S.spouse?1:0)+S.kids;
+const goodsBase=()=>7650*householdSize(); // groceries+gas+utils+healthcare+other, per-person scaled, at RPP 100
 function renderTakehome(){
   const milYr=milNet()*12;
   const net=milYr+(S.civ-civFed(S.civ));
@@ -850,7 +949,7 @@ function renderTakehome(){
     if(S.pt) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
     else ptax = st.home*st.propRate;
     const housing=0.8*st.home*0.06322 + ptax + st.ins;
-    const goods=GOODS*st.rpp/100;
+    const goods=goodsBase()*st.rpp/100;
     const take=net-stateTax-housing-goods;
     return {k,stateTax,ptax,housing,goods,take};
   }).sort((a,b)=>b.take-a.take);
@@ -942,7 +1041,9 @@ function renderFinSeg(){
 }
 
 function renderEdu(){
-  const kids=+document.getElementById('eduKids').value;
+  const ek=document.getElementById('eduKids');
+  ek.max=S.kids; if(+ek.value>S.kids) ek.value=S.kids;
+  const kids=Math.min(+ek.value,S.kids);
   const mo=+document.getElementById('eduMo').value;
   document.getElementById('eduKidsV').textContent=kids;
   document.getElementById('eduMoV').textContent=mo;
@@ -971,8 +1072,7 @@ document.getElementById('ratingSlider').addEventListener('input',e=>{
 });
 document.getElementById('ptCheck').addEventListener('change',e=>{ S.pt=e.target.checked; render(); });
 window.__set=(o)=>{ Object.assign(S,o); render(); };       // test hook
-document.getElementById('civInput').addEventListener('input',e=>{ S.civ=+e.target.value||0; render(); });
-document.getElementById('fedRate').addEventListener('input',e=>{ S.fedRate=+e.target.value/100; render(); });
+document.getElementById('civInput').addEventListener('input',e=>{ S.civ=+e.target.value||0; const ic=document.getElementById('in-civ'); if(ic) ic.value=S.civ; render(); });
 document.getElementById('homeVal').addEventListener('input',e=>{ S.home=+e.target.value; render(); });
 ['eduKids','eduMo'].forEach(id=>document.getElementById(id).addEventListener('input',renderEdu));
 ['ppmGcc','ppmCost'].forEach(id=>document.getElementById(id).addEventListener('input',renderPpm));
@@ -985,6 +1085,37 @@ function switchTab(name){
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
 document.body.addEventListener('click',e=>{ const el=e.target.closest('[data-goto]'); if(el) switchTab(el.dataset.goto); });
 
+// ---- Setup inputs ----
+const RANKS=['E-1','E-2','E-3','E-4','E-5','E-6','E-7','E-8','E-9','W-1','W-2','W-3','W-4','W-5','O-1','O-2','O-3','O-4','O-5','O-6','O-7','O-8','O-9','O-10'];
+const setv=(id,v)=>{const e=document.getElementById(id); if(e&&e.value!==undefined) e.value=v;};
+function syncSetupFields(){
+  const rk=document.getElementById('in-rank');
+  if(rk) rk.innerHTML=RANKS.map(r=>`<option${r===S.rank?' selected':''}>${r}</option>`).join('');
+  setv('in-tis',S.tis); setv('in-high3',S.high3); setv('in-pension',S.pension);
+  const sy=document.getElementById('in-sys'); if(sy) sy.value=S.sys;
+  const sp=document.getElementById('in-spouse'); if(sp) sp.checked=S.spouse;
+  setv('in-kids',S.kids);
+  const fl=document.getElementById('in-filing'); if(fl) fl.value=S.filing;
+  setv('in-civ',S.civ); setv('in-tricare',S.tricare); setv('in-sbp',S.sbp); setv('in-milfed',S.milfed); setv('in-retdate',S.retDate);
+}
+function recalcPension(){ S.pension=pensionCalc(); setv('in-pension',S.pension); }
+function on(id,ev,fn){ const e=document.getElementById(id); if(e) e.addEventListener(ev,fn); }
+on('in-rank','change',e=>{ S.rank=e.target.value; if(PAY[S.rank]){S.high3=PAY[S.rank]; setv('in-high3',S.high3);} recalcPension(); render(); });
+on('in-tis','input',e=>{ S.tis=+e.target.value||0; recalcPension(); render(); });
+on('in-sys','change',e=>{ S.sys=e.target.value; recalcPension(); render(); });
+on('in-high3','input',e=>{ S.high3=+e.target.value||0; recalcPension(); render(); });
+on('in-pension','input',e=>{ S.pension=+e.target.value||0; render(); });
+on('in-spouse','change',e=>{ S.spouse=e.target.checked; render(); });
+on('in-kids','input',e=>{ S.kids=Math.max(0,+e.target.value||0); render(); });
+on('in-filing','change',e=>{ S.filing=e.target.value; render(); });
+on('in-civ','input',e=>{ S.civ=+e.target.value||0; const cs=document.getElementById('civInput'); if(cs) cs.value=Math.min(220000,Math.max(100000,S.civ)); render(); });
+on('in-tricare','input',e=>{ S.tricare=+e.target.value||0; render(); });
+on('in-sbp','input',e=>{ S.sbp=+e.target.value||0; render(); });
+on('in-milfed','input',e=>{ S.milfed=+e.target.value||0; render(); });
+on('in-retdate','change',e=>{ S.retDate=e.target.value; render(); });
+on('resetBtn','click',()=>{ Object.assign(S,DEFAULT); syncSetupFields(); const cs=document.getElementById('civInput'); if(cs) cs.value=S.civ; const rs=document.getElementById('ratingSlider'); if(rs) rs.value=S.rating; const pc=document.getElementById('ptCheck'); if(pc) pc.checked=S.pt; render(); });
+
+syncSetupFields();
 render();
 </script>
 </body>
