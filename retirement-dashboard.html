@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Retirement Transition Dashboard — Navy E-8 · Retire 29 Feb 2028</title>
+<title>Military Retirement Transition Dashboard</title>
 <style>
   :root{
     --bg:#0b0e13; --panel:#151a22; --panel2:#1b212b; --line:#2a323f;
@@ -188,7 +188,7 @@
     <div class="card">
       <h3>The whole picture in one breath</h3>
       <ul class="tight">
-        <li><b>Two ratings, one fork.</b> 70% vs 100% P&amp;T swings net income <b id="ov-deltamo">—</b>/mo tax-free, <b>plus</b> the 100%-only education lever for 6 kids.</li>
+        <li><b>Two ratings, one fork.</b> 70% vs 100% P&amp;T swings net income <b id="ov-deltamo">—</b>/mo tax-free, <b>plus</b> the 100%-only education lever for your kids.</li>
         <li><b>Floor is solid.</b> Military pension + VA + Tricare means the family is covered before a single civilian paycheck.</li>
         <li><b>Relocation is a money decision, not a vibe.</b> A 50-state scan ranks <b>TX > AL > VA > UT > FL</b> — Huntsville-AL and Utah beat the original picks; the whole order pivots on whether your income is local or portable.</li>
         <li><b>One hard deadline:</b> the Ch.33 GI Bill transfer must be approved <b>while on active duty</b> — unrecoverable after 29 Feb 2028.</li>
@@ -221,12 +221,11 @@
   <p class="sub">Verified against your retirement-calculator screenshots (Jun 2026). VA figures cross-check vs VA.gov 2026 tables. <span class="tag">[Verified]</span></p>
 
   <div class="grid g3">
-    <div class="card"><h3>Retirement pay</h3><div class="big green">$3,450</div><div class="note">E-8 High-3 · taxable</div></div>
+    <div class="card"><h3>Retirement pay</h3><div class="big green" id="fin-pension">—</div><div class="note" id="fin-pnote">taxable</div></div>
     <div class="card"><h3>VA disability <span id="fin-rlabel"></span></h3><div class="big green" id="fin-va">—</div><div class="note">tax-free, fed &amp; state · <span id="fin-vatag"></span></div></div>
-    <div class="card"><h3>Income adjustments</h3><div class="big">$0</div><div class="note">none</div></div>
-    <div class="card"><h3>Tricare Prime (Family)</h3><div class="big red">−$64</div><div class="note">covers all 8 — moot vs rating</div></div>
-    <div class="card"><h3>SBP / VGLI premium</h3><div class="big red">−$278</div><div class="note">$1,846 SBP · $500K VGLI</div></div>
-    <div class="card"><h3>Federal income tax</h3><div class="big red">−$340</div><div class="note">MFJ · on pension only</div></div>
+    <div class="card"><h3>Tricare premium</h3><div class="big red" id="fin-tricare">—</div><div class="note">covers family — moot vs rating</div></div>
+    <div class="card"><h3>SBP / VGLI premium</h3><div class="big red" id="fin-sbp">—</div><div class="note">survivor + life cover</div></div>
+    <div class="card"><h3>Federal tax on pension</h3><div class="big red" id="fin-fedtax">—</div><div class="note" id="fin-filenote">on pension</div></div>
   </div>
 
   <div class="card" style="margin-top:14px">
@@ -278,15 +277,15 @@
   <p class="sub">Everything else equal, here is the real delta for an E-8 retiree with this family. Toggle the rating up top to see it ripple.</p>
 
   <div class="grid g3">
-    <div class="card"><h3>Comp delta</h3><div class="big green">+$2,409<span style="font-size:14px">/mo</span></div><div class="note">≈ $28,908/yr tax-free, 100% vs 70%</div></div>
-    <div class="card"><h3>Education lever (Ch.35)</h3><div class="big green" id="fork-edu">—</div><div class="note">6 kids — <b>100% P&amp;T ONLY</b>, $0 at 70%</div></div>
-    <div class="card"><h3>Lifetime comp delta</h3><div class="big green" id="fork-life">—</div><div class="note">spouse-base delta ~$2,197/mo for life</div></div>
+    <div class="card"><h3>Comp delta</h3><div class="big green" id="fork-delta">—</div><div class="note" id="fork-deltayr">100% vs 70%, tax-free</div></div>
+    <div class="card"><h3>Education lever (Ch.35)</h3><div class="big green" id="fork-edu">—</div><div class="note"><span id="fork-edunote">kids</span> — <b>100% P&amp;T ONLY</b>, $0 at 70%</div></div>
+    <div class="card"><h3>Lifetime comp delta</h3><div class="big green" id="fork-life">—</div><div class="note">spouse-base delta persists for life</div></div>
   </div>
 
   <table style="margin-top:16px">
     <tr><th>Lever</th><th>70%</th><th>100% P&amp;T</th><th>Verdict</th></tr>
-    <tr><td>Monthly comp (spouse + 6 kids)</td><td>$2,455</td><td>$4,864</td><td><span class="pill good">+$2,409/mo</span></td></tr>
-    <tr><td>Chapter 35 DEA — all 6 kids</td><td>$0</td><td>up to ~$340K</td><td><span class="pill good">The big one</span></td></tr>
+    <tr><td>Monthly comp <span id="fork-fam" class="mini"></span></td><td id="fork-70">—</td><td id="fork-100">—</td><td><span class="pill good" id="fork-pill">—</span></td></tr>
+    <tr><td>Chapter 35 DEA — all kids</td><td>$0</td><td id="fork-ch35">—</td><td><span class="pill good">The big one</span></td></tr>
     <tr><td>State property-tax full relief</td><td>No</td><td>Yes (FL/TX/VA full; TN capped)</td><td><span class="pill warn">Location-gated</span></td></tr>
     <tr><td>Family Tricare</td><td>Covered</td><td>Covered</td><td><span class="pill v">Moot</span></td></tr>
     <tr><td>CRDP / concurrent receipt</td><td>Yes</td><td>Yes</td><td><span class="pill v">Moot</span></td></tr>
@@ -693,7 +692,13 @@ function render(){
   const net = milNet();
   set('fin-rlabel','('+S.rating+'%'+(S.pt?' P&T':'')+')');
   set('fin-va', fmt(va));
-  set('fin-vatag', VERIFIED_RATINGS[S.rating]?'verified':'computed est.');
+  set('fin-vatag', VERIFIED_RATINGS[S.rating]&&S.spouse&&S.kids===6?'verified':'computed est.');
+  set('fin-pension', fmt(S.pension));
+  set('fin-pnote', S.rank+' '+S.sys+' · taxable');
+  set('fin-tricare', '−'+fmt(S.tricare));
+  set('fin-sbp', '−'+fmt(S.sbp));
+  set('fin-fedtax', '−'+fmt(S.milfed));
+  set('fin-filenote', S.filing+' · on pension');
   set('ratingVal', S.rating+'%'+(S.pt?' P&T':''));
   const crdp=document.getElementById('crdpNote');
   if(crdp) crdp.innerHTML = S.rating>=50
@@ -721,17 +726,25 @@ function render(){
   set('ov-state', STATES[m[0].k].name);
   set('ov-statenote','beats '+STATES[m[1].k].name+' by '+(m[0].score-m[1].score).toFixed(2)+' pts');
   set('ov-teb', daysTo(S.retDate));
-  set('ov-deltamo','+$2,409');
+  set('ov-deltamo','+'+fmt(vaComp(100,S.spouse,S.kids)-vaComp(70,S.spouse,S.kids)));
   const eduFull = S.kids*36*1574;
   document.getElementById('ov-fork').innerHTML = S.pt
     ? `<b>Modeling ${S.rating}%${S.rating>=100?' P&amp;T':' P&amp;T (TDIU)'}.</b> The ${S.kids}-kid Chapter 35 education lever (up to <b>${fmt(eduFull)}</b>) and the full state property exemption are <b>live</b> — both require P&amp;T. This is the single largest swing in the plan.`
     : `<b>Modeling ${S.rating}% (not P&amp;T).</b> No Chapter 35 education benefit and no full state property exemption — both need <b>Permanent &amp; Total</b>. Checking P&amp;T (or reaching 100% P&amp;T) adds up to <b>${fmt(eduFull)}</b> in education value plus $0 property tax.`;
 
-  // fork
+  // fork — 70% vs 100% for THIS family
   const kidsEdu = S.kids*36*1574;
-  set('fork-edu', S.pt? fmt(kidsEdu) : '$0');
-  set('fork-life', '$26.4K/yr');
-  set('fork-total', fmt(2409*12*10 + kidsEdu));
+  const c70=vaComp(70,S.spouse,S.kids), c100=vaComp(100,S.spouse,S.kids), dlt=c100-c70;
+  set('fork-delta', '+'+fmt(dlt)+'/mo');
+  set('fork-deltayr', '≈ '+fmt(dlt*12)+'/yr tax-free, 100% vs 70%');
+  set('fork-70', fmt(c70)); set('fork-100', fmt(c100));
+  set('fork-pill', '+'+fmt(dlt)+'/mo');
+  set('fork-fam', '('+(S.spouse?'spouse + ':'')+S.kids+' kid'+(S.kids===1?'':'s')+')');
+  set('fork-ch35', S.kids?('up to '+fmt(kidsEdu)):'$0');
+  set('fork-edunote', S.kids+' kid'+(S.kids===1?'':'s'));
+  set('fork-edu', S.pt&&S.kids? fmt(kidsEdu) : '$0');
+  set('fork-life', fmt(dlt)+'/mo while kids home');
+  set('fork-total', fmt(dlt*12*10 + kidsEdu));
 
   // reloc va tax
   set('reloc-vatax', fmt(S.civ*0.05));
