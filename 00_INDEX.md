@@ -54,8 +54,8 @@
 | 08 | Education & GI Bill (Ch.35 ×6 + Ch.33 TEB) | ✅ **built** |
 | 09 | Insurance & risk | ⬜ not built |
 | 10 | ButeraNet | ⬜ not built |
-| 11 | Risk register | ⬜ not built |
-| 12 | Action tracker | ⬜ not built |
+| 11 | Risk register | ✅ **built** (red team) |
+| 12 | Action tracker | ✅ **built** |
 | 13 | Document inventory | ⬜ not built |
 | 14 | Decision log | ⬜ not built |
 
