@@ -91,6 +91,7 @@
         <label>Civilian salary (gross/yr): <b id="civVal" style="color:var(--green)">$150,000</b></label>
         <input id="civInput" type="range" min="100000" max="220000" step="5000" value="150000" style="width:200px">
       </div>
+      <button onclick="window.print()" class="seg" style="padding:6px 12px;cursor:pointer;align-self:flex-end">🖨 Print / PDF</button>
     </div>
   </div>
 </header>
@@ -274,7 +275,7 @@
 <!-- FORK -->
 <section id="fork">
   <h2>70% vs 100% P&amp;T — what actually toggles</h2>
-  <p class="sub">Everything else equal, here is the real delta for an E-8 retiree with this family. Toggle the rating up top to see it ripple.</p>
+  <p class="sub">Everything else equal, here is the real delta for a retiree with your family (Setup). Toggle the rating up top to see it ripple.</p>
 
   <div class="grid g3">
     <div class="card"><h3>Comp delta</h3><div class="big green" id="fork-delta">—</div><div class="note" id="fork-deltayr">100% vs 70%, tax-free</div></div>
@@ -434,7 +435,7 @@
 
 <!-- EDUCATION -->
 <section id="edu">
-  <h2>Education &amp; GI Bill — the six-kid play</h2>
+  <h2>Education &amp; GI Bill — the dependents' play</h2>
   <p class="sub">The single largest financial swing between 70% and 100%. Two stackable programs, one hard deadline.</p>
 
   <div class="grid g2">
@@ -475,7 +476,7 @@
       <h3>How profit actually works</h3>
       <ul class="tight">
         <li><b>Profit = GCC payment − your actual move costs.</b> GCC scales with net weight hauled (capped at allowance) × distance.</li>
-        <li><b>E-8 w/ dependents allowance = 14,000 lb.</b></li>
+        <li><b id="ppm-allow">—</b> — your HHG weight allowance drives the max GCC.</li>
         <li>Reimbursement is <b>taxable</b> — DFAS withholds 22% federal (no FICA). Offset with documented expenses + certified weigh tickets.</li>
       </ul>
     </div>
@@ -491,26 +492,25 @@
       <p class="tag">Rough illustrator — pull your real GCC from the official MilMove estimator for the actual lane &amp; weight.</p>
     </div>
   </div>
-  <div class="callout">~$40K is <b>gross taxable GCC</b>, not take-home — realistic only near the full 14,000 lb cap over a long-distance move.</div>
+  <div class="callout" id="ppm-callout">~$40K is <b>gross taxable GCC</b>, not take-home — realistic only near your full weight cap over a long-distance move.</div>
 </section>
 
 <!-- TIMELINE -->
 <section id="timeline">
   <h2>Timeline — anchored to real dates</h2>
-  <p class="sub">Countdowns are live as of today.</p>
+  <p class="sub">Countdowns and windows derive from your <b>retirement date</b> (Setup). Milestones are relative to separation.</p>
   <div class="cd">
-    <div class="card"><div class="big blue" id="t-taps">—</div><div class="note">days to TAPS (Jun 2026 — confirm)</div></div>
-    <div class="card"><div class="big blue" id="t-prd">—</div><div class="note">days to PRD (Jan 2027 — confirm)</div></div>
-    <div class="card"><div class="big amber" id="t-teb2" style="color:var(--amber)">—</div><div class="note">days to TEB file-by (~Aug 2027)</div></div>
-    <div class="card"><div class="big green" id="t-ret">—</div><div class="note">days to retirement (29 Feb 2028)</div></div>
+    <div class="card"><div class="big amber" id="t-teb2" style="color:var(--amber)">—</div><div class="note">days to TEB file-by (~12 mo out)</div></div>
+    <div class="card"><div class="big blue" id="t-6mo">—</div><div class="note">days to 6-mo-out window</div></div>
+    <div class="card"><div class="big green" id="t-ret">—</div><div class="note">days to retirement (<span id="t-retdate">—</span>)</div></div>
   </div>
   <table style="margin-top:18px">
     <tr><th>Phase</th><th>Window</th><th>Key moves</th></tr>
-    <tr><td><b>Now</b></td><td>Jun 2026</td><td>Confirm actual rating path (70 vs 100 P&amp;T). Start nexus-letter / claim sequencing. Designate all 6 dependents in DEERS.</td></tr>
-    <tr><td><b>By TAPS</b></td><td>Jun 2026</td><td>Attend TAPS. Lock relocation shortlist weights. Begin clearance-friendly job search in target metros.</td></tr>
-    <tr><td><b>12 mo out</b></td><td>≈ Feb–Mar 2027</td><td>Initiate Ch.33 TEB transfer (with margin). SkillBridge / terminal-leave plan. Pre-approve home-purchase financing.</td></tr>
-    <tr><td><b>6 mo out</b></td><td>≈ Aug–Sep 2027</td><td><b>TEB approved.</b> Finalize PPM plan + weigh-ticket logistics. Sign civilian offer. File state residency intent.</td></tr>
-    <tr><td><b>Post-retire</b></td><td>after 29 Feb 2028</td><td>File VA claim (BDD if eligible earlier). Establish homestead + apply property-tax exemption. Enroll kids' Ch.35.</td></tr>
+    <tr><td><b>Now</b></td><td id="tl-now">—</td><td>Confirm actual rating path (70 vs 100 P&amp;T). Start nexus-letter / claim sequencing. Designate all dependents in DEERS.</td></tr>
+    <tr><td><b>~18 mo out</b></td><td id="tl-18">—</td><td>Attend TAPS. Lock relocation weights. Narrow to a metro/county. Begin clearance-friendly job search.</td></tr>
+    <tr><td><b>12 mo out</b></td><td id="tl-12">—</td><td>Initiate Ch.33 TEB transfer (with margin). SkillBridge / terminal-leave plan. Pre-approve home financing.</td></tr>
+    <tr><td><b>6 mo out</b></td><td id="tl-6">—</td><td><b>TEB approved.</b> File BDD VA claim. Finalize PPM + weigh-ticket logistics. Sign civilian offer. File residency intent.</td></tr>
+    <tr><td><b>Post-retire</b></td><td id="tl-post">—</td><td>Execute PPM move. Establish homestead + apply property-tax exemption. On P&amp;T: enroll kids' Ch.35. Confirm CRDP/Tricare.</td></tr>
   </table>
 </section>
 
@@ -643,9 +643,11 @@ const META={
 // ---- countdown helpers ----
 const today = new Date();
 const daysTo = d => Math.max(0, Math.ceil((new Date(d)-today)/86400000));
-const D = {
-  taps:'2026-06-30', prd:'2027-01-31', tebRec:'2027-08-31', ret:'2028-02-29'
-};
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtMY = d => MONTHS[d.getMonth()]+' '+d.getFullYear();
+const retOff = m => { const d=new Date(S.retDate); d.setMonth(d.getMonth()-m); return d; };
+// 2026 JTR HHG weight allowance (lb, with dependents) by pay grade [Tier-2]
+const WEIGHT={'E-1':8000,'E-2':8000,'E-3':8000,'E-4':8000,'E-5':9000,'E-6':11000,'E-7':13000,'E-8':14000,'E-9':15000,'W-1':12000,'W-2':14000,'W-3':15000,'W-4':16000,'W-5':17000,'O-1':10000,'O-2':12500,'O-3':14500,'O-4':17000,'O-5':17500,'O-6':18000,'O-7':18000,'O-8':18000,'O-9':18000,'O-10':18000};
 
 // ---- compute ----
 
@@ -759,15 +761,21 @@ function render(){
 
   // education
   renderEdu();
-  // timeline (anchored to the retirement date in Setup)
-  const tebRec=new Date(new Date(S.retDate).getTime()-180*86400000).toISOString().slice(0,10);
-  set('t-taps', daysTo(D.taps));
-  set('t-prd', daysTo(D.prd));
-  set('t-teb2', daysTo(tebRec));
+  // timeline (all milestones derive from the retirement date in Setup)
+  const iso=d=>d.toISOString().slice(0,10);
+  const r18=retOff(18), r12=retOff(12), r6=retOff(6);
+  set('t-teb2', daysTo(iso(r12)));
+  set('t-6mo', daysTo(iso(r6)));
   set('t-ret', daysTo(S.retDate));
+  set('t-retdate', fmtMY(new Date(S.retDate)));
   set('edu-teb', daysTo(S.retDate));
-  set('edu-tebrec', daysTo(tebRec));
-  // ppm
+  set('edu-tebrec', daysTo(iso(r6)));
+  set('tl-now','now'); set('tl-18','≈ '+fmtMY(r18)); set('tl-12','≈ '+fmtMY(r12));
+  set('tl-6','≈ '+fmtMY(r6)); set('tl-post','after '+fmtMY(new Date(S.retDate)));
+  // ppm — weight allowance from rank
+  const wt=(WEIGHT[S.rank]||14000).toLocaleString();
+  set('ppm-allow', wt+' lb HHG allowance ('+S.rank+', w/ dependents)');
+  const pc=document.getElementById('ppm-callout'); if(pc) pc.innerHTML=`~$40K is <b>gross taxable GCC</b>, not take-home — realistic only near your <b>${wt} lb</b> cap over a long-distance move.`;
   renderPpm();
   renderTakehome();
   renderSalaryLegend();
