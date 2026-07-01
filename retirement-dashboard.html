@@ -102,7 +102,7 @@
   <button data-t="finance">Finances</button>
   <button data-t="fork">70% vs 100%</button>
   <button data-t="reloc">Relocation</button>
-  <button data-t="compare">Compare 12</button>
+  <button data-t="compare">Compare 50</button>
   <button data-t="takehome">Take-home / yr</button>
   <button data-t="edu">Education / GI Bill</button>
   <button data-t="move">PPM / Move</button>
@@ -207,7 +207,7 @@
   <div class="grid g4" id="hub">
     <div class="card" data-goto="finance" style="cursor:pointer"><h3>💵 Finances</h3><div class="mini">Military floor + household income calculator.</div></div>
     <div class="card" data-goto="fork" style="cursor:pointer"><h3>🔀 70% vs 100%</h3><div class="mini">The fork: +$2,409/mo + $340K education lever.</div></div>
-    <div class="card" data-goto="compare" style="cursor:pointer"><h3>📊 Compare 12</h3><div class="mini">Every state, every attribute, category leaders.</div></div>
+    <div class="card" data-goto="compare" style="cursor:pointer"><h3>📊 Compare 50</h3><div class="mini">Every state, every attribute, category leaders.</div></div>
     <div class="card" data-goto="reloc" style="cursor:pointer"><h3>⚖️ Relocation</h3><div class="mini">Weighted matrix + sensitivity. Set your priorities.</div></div>
     <div class="card" data-goto="takehome" style="cursor:pointer"><h3>🏦 Take-home / yr</h3><div class="mini">Per-state annual budget + salary-band legend.</div></div>
     <div class="card" data-goto="edu" style="cursor:pointer"><h3>🎓 Education</h3><div class="mini">Ch.35 six-kid lever + GI Bill TEB deadline.</div></div>
@@ -302,8 +302,8 @@
 
 <!-- RELOCATION -->
 <section id="reloc">
-  <h2>Relocation decision matrix — national top 10</h2>
-  <p class="sub">Independent 50-state scan (see <b>06b</b>): TX · AL · VA · UT · FL · TN · MD · GA · SC · CO. <b>Set your weights</b> below — ranking + sensitivity recompute live across all ten. The cyber-job-market weight is the big lever: drop it (portable income) and the cheap/safe/no-tax states rise.</p>
+  <h2>Relocation decision matrix — all 50 states</h2>
+  <p class="sub">Now scores <b>all 50 states</b> across 11 axes (data-driven, normalized). <b>Set your weights</b> below — ranking + sensitivity recompute live. Every axis is a lever: drop cyber-job-market weight (portable income) and cheap/safe/no-tax states rise; raise College to reward vet-dependent tuition waivers; raise Seasons to require a four-season climate. <span class="tag">[data Tier-2 overall; income-tax/COL/property Tier-1/2]</span></p>
 
   <div class="grid g2">
     <div class="card">
@@ -381,7 +381,7 @@
 
 <!-- COMPARE -->
 <section id="compare">
-  <h2>Compare all 12 states — every attribute, side by side</h2>
+  <h2>Compare all 50 states — every attribute, side by side</h2>
   <p class="sub">The full head-to-head. <b>Category leaders</b> show who's #1 at each thing; the <b>table sorts</b> on any column (click a header); the <b>profile picker</b> gives each state's pros &amp; cons. Reacts to the VA-rating toggle + salary slider up top.</p>
 
   <div class="card">
@@ -588,57 +588,83 @@ function milNet(){
   return baseNet + Math.min(VAc,S.pension)*eff + Math.max(0,VAc-S.pension);
 }
 
-const STATES = {
-  TX:{name:'Texas',      propRate:0.0168, incTaxEff:0,     vetProp:'full',    cap:0,      home:260000, rpp:97,  ins:4500, band:[120000,165000], metro:'San Antonio'},
-  AL:{name:'Alabama',    propRate:0.0040, incTaxEff:0.045, vetProp:'full',    cap:0,      home:320000, rpp:88,  ins:3130, band:[115000,155000], metro:'Huntsville'},
-  VA:{name:'Virginia',   propRate:0.0087, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:345000, rpp:100, ins:1900, band:[150000,200000], metro:'NoVA / Hampton Roads'},
-  UT:{name:'Utah',       propRate:0.0057, incTaxEff:0.045, vetProp:'partial', cap:479000, home:520000, rpp:98,  ins:900,  band:[110000,145000], metro:'Hill AFB / SLC'},
-  FL:{name:'Florida',    propRate:0.0091, incTaxEff:0,     vetProp:'full',    cap:0,      home:443000, rpp:100, ins:6400, band:[115000,155000], metro:'Tampa / Pensacola'},
-  TN:{name:'Tennessee',  propRate:0.0066, incTaxEff:0,     vetProp:'partial', cap:175000, home:327000, rpp:90,  ins:3045, band:[105000,140000], metro:'Knoxville / Oak Ridge'},
-  MD:{name:'Maryland',   propRate:0.0105, incTaxEff:0.075, vetProp:'full',    cap:0,      home:450000, rpp:108, ins:1900, band:[145000,195000], metro:'Fort Meade'},
-  GA:{name:'Georgia',    propRate:0.0090, incTaxEff:0.05,  vetProp:'partial', cap:110000, home:240000, rpp:93,  ins:2300, band:[110000,150000], metro:'Augusta'},
-  SC:{name:'S. Carolina',propRate:0.0056, incTaxEff:0.05,  vetProp:'full',    cap:0,      home:420000, rpp:95,  ins:2670, band:[110000,145000], metro:'Charleston'},
-  CO:{name:'Colorado',   propRate:0.0049, incTaxEff:0.044, vetProp:'partial', cap:100000, home:465000, rpp:104, ins:4500, band:[130000,175000], metro:'Colorado Springs'},
-  OH:{name:'Ohio',       propRate:0.0140, incTaxEff:0.033, vetProp:'partial', cap:50000,  home:230000, rpp:90,  ins:1800, band:[105000,145000], metro:'Dayton / Wright-Patt'},
-  NC:{name:'N. Carolina',propRate:0.0073, incTaxEff:0.0399,vetProp:'partial', cap:45000,  home:340000, rpp:94,  ins:2600, band:[110000,150000], metro:'RTP / Fort Liberty'},
+const DATA={
+AL:{n:'Alabama',inc:5.0,mx:1,pr:0.40,vp:'F',vt:'Y',rpp:88.6,hm:235000,tu:11400,ins:3300,ds:8,hz:'hurricane/tornado',cr:450,hs:'Low',tl:'None',se:5,cy:8,an:'Huntsville/Redstone'},
+AK:{n:'Alaska',inc:0,mx:1,pr:1.04,vp:'F',vt:'N',rpp:102.5,hm:375000,tu:8500,ins:1385,ds:3,hz:'earthquake/winter',cr:724,hs:'None',tl:'None',se:7,cy:3,an:'JB Elmendorf'},
+AZ:{n:'Arizona',inc:2.5,mx:1,pr:0.63,vp:'P',vt:'N',rpp:100.9,hm:420000,tu:12100,ins:1950,ds:5,hz:'wildfire/flood',cr:430,hs:'Low',tl:'Light',se:3,cy:5,an:'Ft Huachuca'},
+AR:{n:'Arkansas',inc:3.7,mx:1,pr:0.56,vp:'F',vt:'Y',rpp:86.5,hm:210000,tu:9700,ins:4100,ds:8,hz:'tornado/flood',cr:579,hs:'Mod',tl:'None',se:6,cy:2,an:'none'},
+CA:{n:'California',inc:13.3,mx:0,pr:0.70,vp:'P',vt:'Y',rpp:112.6,hm:789000,tu:9600,ins:2100,ds:9,hz:'wildfire/earthquake',cr:430,hs:'Low',tl:'Heavy',se:4,cy:7,an:'SoCal/Bay/SpaceForce LA'},
+CO:{n:'Colorado',inc:4.25,mx:0,pr:0.49,vp:'P',vt:'N',rpp:103.5,hm:538000,tu:12000,ins:4310,ds:7,hz:'wildfire/hail',cr:420,hs:'Mod',tl:'Mod',se:9,cy:8,an:'Colo Springs/NORAD'},
+CT:{n:'Connecticut',inc:6.99,mx:1,pr:1.54,vp:'F',vt:'N',rpp:104.9,hm:447000,tu:15900,ins:1600,ds:4,hz:'hurricane/winter',cr:180,hs:'None',tl:'Heavy',se:8,cy:4,an:'Sub Base New London'},
+DE:{n:'Delaware',inc:6.6,mx:0,pr:0.53,vp:'F',vt:'N',rpp:99.9,hm:385000,tu:14700,ins:1365,ds:3,hz:'flood/hurricane',cr:430,hs:'Low',tl:'Heavy',se:7,cy:3,an:'Dover AFB'},
+FL:{n:'Florida',inc:0,mx:1,pr:0.74,vp:'F',vt:'Y',rpp:101.0,hm:385000,tu:6360,ins:6400,ds:10,hz:'hurricane/flood',cr:258,hs:'Mod',tl:'Heavy',se:1,cy:6,an:'Tampa/CENTCOM-SOCOM'},
+GA:{n:'Georgia',inc:5.39,mx:0,pr:0.81,vp:'P',vt:'Y',rpp:93.0,hm:319000,tu:7300,ins:2400,ds:7,hz:'hurricane/tornado',cr:390,hs:'Mod',tl:'Mod',se:5,cy:7,an:'Ft Eisenhower/Cyber CoE'},
+HI:{n:'Hawaii',inc:11.0,mx:1,pr:0.29,vp:'F',vt:'Y',rpp:108.6,hm:832000,tu:12200,ins:900,ds:6,hz:'hurricane/volcanic',cr:260,hs:'Mod',tl:'None',se:1,cy:5,an:'Pearl Harbor/NSA HI'},
+ID:{n:'Idaho',inc:5.3,mx:1,pr:0.47,vp:'P',vt:'Y',rpp:93.4,hm:443000,tu:8500,ins:1300,ds:3,hz:'wildfire/winter',cr:240,hs:'Low',tl:'None',se:8,cy:2,an:'none'},
+IL:{n:'Illinois',inc:4.95,mx:1,pr:1.95,vp:'F',vt:'Y',rpp:99.6,hm:270000,tu:15100,ins:2500,ds:6,hz:'tornado/flood',cr:440,hs:'None',tl:'Heavy',se:8,cy:3,an:'Scott AFB'},
+IN:{n:'Indiana',inc:3.05,mx:1,pr:0.76,vp:'F',vt:'Y',rpp:91.0,hm:245000,tu:9900,ins:2200,ds:6,hz:'tornado/flood',cr:300,hs:'None',tl:'Mod',se:8,cy:4,an:'Crane NSWC'},
+IA:{n:'Iowa',inc:3.8,mx:1,pr:1.33,vp:'F',vt:'N',rpp:90.6,hm:220000,tu:9500,ins:2600,ds:6,hz:'tornado/hail',cr:290,hs:'None',tl:'None',se:8,cy:2,an:'none'},
+KS:{n:'Kansas',inc:5.58,mx:1,pr:1.21,vp:'F',vt:'Y',rpp:90.5,hm:235000,tu:10200,ins:5455,ds:8,hz:'tornado/hail',cr:410,hs:'Low',tl:'Mod',se:7,cy:3,an:'Ft Leavenworth'},
+KY:{n:'Kentucky',inc:3.5,mx:0,pr:0.74,vp:'P',vt:'Y',rpp:88.7,hm:215000,tu:11500,ins:3100,ds:7,hz:'tornado/flood',cr:290,hs:'Low',tl:'Mod',se:7,cy:3,an:'Ft Campbell/Knox'},
+LA:{n:'Louisiana',inc:4.25,mx:1,pr:0.55,vp:'F',vt:'Y',rpp:91.0,hm:200000,tu:11100,ins:6274,ds:9,hz:'hurricane/flood',cr:550,hs:'Mod',tl:'Mod',se:2,cy:3,an:'Barksdale AFB'},
+ME:{n:'Maine',inc:7.15,mx:1,pr:1.24,vp:'P',vt:'Y',rpp:99.0,hm:380000,tu:10900,ins:1300,ds:3,hz:'winter/flood',cr:100,hs:'Mod',tl:'Heavy',se:8,cy:2,an:'Portsmouth NSY'},
+MD:{n:'Maryland',inc:5.75,mx:1,pr:0.99,vp:'F',vt:'Y',rpp:105.5,hm:420000,tu:10400,ins:1600,ds:4,hz:'hurricane/flood',cr:430,hs:'Mod',tl:'Heavy',se:7,cy:10,an:'Ft Meade/NSA'},
+MA:{n:'Massachusetts',inc:9.0,mx:1,pr:1.14,vp:'P',vt:'Y',rpp:107.5,hm:635000,tu:14300,ins:1900,ds:4,hz:'hurricane/winter',cr:330,hs:'High',tl:'Mod',se:8,cy:5,an:'Hanscom/MIT LL'},
+MI:{n:'Michigan',inc:4.25,mx:1,pr:1.38,vp:'F',vt:'Y',rpp:93.5,hm:245000,tu:15300,ins:1700,ds:5,hz:'winter/tornado',cr:460,hs:'None',tl:'Mod',se:9,cy:3,an:'Selfridge ANGB'},
+MN:{n:'Minnesota',inc:9.85,mx:0,pr:1.02,vp:'P',vt:'Y',rpp:97.0,hm:335000,tu:14400,ins:2600,ds:6,hz:'tornado/winter',cr:270,hs:'Mod',tl:'Light',se:9,cy:3,an:'none'},
+MS:{n:'Mississippi',inc:4.7,mx:1,pr:0.75,vp:'F',vt:'Y',rpp:87.3,hm:185000,tu:9300,ins:4200,ds:8,hz:'hurricane/tornado',cr:280,hs:'Low',tl:'None',se:3,cy:3,an:'Stennis/Keesler'},
+MO:{n:'Missouri',inc:4.7,mx:1,pr:0.91,vp:'N',vt:'Y',rpp:90.0,hm:250000,tu:10100,ins:3200,ds:7,hz:'tornado/flood',cr:490,hs:'None',tl:'Light',se:7,cy:4,an:'NGA St. Louis'},
+MT:{n:'Montana',inc:5.9,mx:0,pr:0.74,vp:'P',vt:'N',rpp:95.0,hm:468000,tu:8000,ins:2000,ds:5,hz:'wildfire/hail',cr:470,hs:'Low',tl:'None',se:8,cy:2,an:'Malmstrom AFB'},
+NE:{n:'Nebraska',inc:5.2,mx:1,pr:1.44,vp:'P',vt:'N',rpp:91.5,hm:285000,tu:9500,ins:4956,ds:8,hz:'tornado/hail',cr:330,hs:'Low',tl:'None',se:8,cy:5,an:'Offutt/STRATCOM'},
+NV:{n:'Nevada',inc:0,mx:1,pr:0.55,vp:'P',vt:'N',rpp:100.5,hm:445000,tu:8600,ins:1100,ds:4,hz:'wildfire/earthquake',cr:460,hs:'Low',tl:'Light',se:3,cy:3,an:'Nellis/Creech'},
+NH:{n:'New Hampshire',inc:0,mx:1,pr:1.61,vp:'P',vt:'Y',rpp:106.0,hm:480000,tu:17360,ins:1028,ds:3,hz:'winter/flood',cr:110,hs:'Mod',tl:'Light',se:9,cy:3,an:'Portsmouth NSY'},
+NJ:{n:'New Jersey',inc:10.75,mx:1,pr:2.23,vp:'F',vt:'Y',rpp:108.9,hm:569000,tu:15600,ins:1449,ds:5,hz:'hurricane/flood',cr:200,hs:'None',tl:'Heavy',se:7,cy:4,an:'JB MDL/Picatinny'},
+NM:{n:'New Mexico',inc:5.9,mx:0,pr:0.67,vp:'F',vt:'Y',rpp:92.0,hm:300000,tu:8300,ins:1900,ds:5,hz:'wildfire/drought',cr:717,hs:'Low',tl:'None',se:4,cy:4,an:'Kirtland/Sandia'},
+NY:{n:'New York',inc:10.9,mx:1,pr:1.54,vp:'P',vt:'Y',rpp:106.5,hm:508000,tu:8600,ins:1554,ds:6,hz:'hurricane/winter',cr:330,hs:'High',tl:'Heavy',se:8,cy:4,an:'Rome Labs/AFRL'},
+NC:{n:'North Carolina',inc:4.25,mx:1,pr:0.63,vp:'P',vt:'Y',rpp:93.5,hm:330000,tu:7400,ins:2352,ds:8,hz:'hurricane/flood',cr:370,hs:'Mod',tl:'Mod',se:5,cy:4,an:'Ft Liberty'},
+ND:{n:'North Dakota',inc:2.5,mx:1,pr:0.94,vp:'P',vt:'Y',rpp:90.0,hm:265000,tu:9400,ins:2400,ds:5,hz:'flood/winter',cr:290,hs:'Mod',tl:'None',se:9,cy:3,an:'Grand Forks/Minot'},
+OH:{n:'Ohio',inc:3.5,mx:1,pr:1.30,vp:'P',vt:'Y',rpp:90.5,hm:235000,tu:11400,ins:1500,ds:5,hz:'tornado/flood',cr:290,hs:'Mod',tl:'Heavy',se:9,cy:6,an:'Wright-Patterson'},
+OK:{n:'Oklahoma',inc:4.75,mx:1,pr:0.76,vp:'F',vt:'Y',rpp:89.5,hm:205000,tu:9600,ins:5298,ds:9,hz:'tornado/hail',cr:420,hs:'None',tl:'Heavy',se:6,cy:3,an:'Tinker AFB'},
+OR:{n:'Oregon',inc:9.9,mx:0,pr:0.86,vp:'P',vt:'N',rpp:103.5,hm:495000,tu:12100,ins:900,ds:5,hz:'wildfire/earthquake',cr:340,hs:'Mod',tl:'None',se:6,cy:2,an:'none'},
+PA:{n:'Pennsylvania',inc:3.07,mx:1,pr:1.36,vp:'F',vt:'N',rpp:98.0,hm:275000,tu:15700,ins:1712,ds:5,hz:'flood/winter',cr:310,hs:'High',tl:'Heavy',se:8,cy:4,an:'Tobyhanna/Carlisle'},
+RI:{n:'Rhode Island',inc:5.99,mx:1,pr:1.30,vp:'P',vt:'N',rpp:103.0,hm:437000,tu:14200,ins:1900,ds:4,hz:'hurricane/flood',cr:230,hs:'High',tl:'Heavy',se:8,cy:3,an:'NUWC Newport'},
+SC:{n:'South Carolina',inc:6.2,mx:1,pr:0.53,vp:'F',vt:'Y',rpp:94.0,hm:300000,tu:12900,ins:2900,ds:8,hz:'hurricane/flood',cr:437,hs:'Mod',tl:'Light',se:4,cy:5,an:'Charleston/NIWC'},
+SD:{n:'South Dakota',inc:0,mx:1,pr:1.08,vp:'P',vt:'N',rpp:88.1,hm:300000,tu:9200,ins:2900,ds:6,hz:'tornado/hail',cr:480,hs:'Mod',tl:'None',se:9,cy:2,an:'Ellsworth AFB'},
+TN:{n:'Tennessee',inc:0,mx:1,pr:0.55,vp:'P',vt:'N',rpp:91.0,hm:335000,tu:10200,ins:2800,ds:7,hz:'tornado/flood',cr:592,hs:'Low',tl:'None',se:6,cy:3,an:'Oak Ridge'},
+TX:{n:'Texas',inc:0,mx:1,pr:1.68,vp:'F',vt:'Y',rpp:97.0,hm:307000,tu:10900,ins:4915,ds:9,hz:'hurricane/hail',cr:420,hs:'None',tl:'Heavy',se:3,cy:8,an:'San Antonio/16th AF'},
+UT:{n:'Utah',inc:4.55,mx:0,pr:0.55,vp:'P',vt:'N',rpp:98.0,hm:511000,tu:7100,ins:900,ds:3,hz:'earthquake/wildfire',cr:260,hs:'Low',tl:'Light',se:7,cy:5,an:'Hill AFB/NSA Utah'},
+VT:{n:'Vermont',inc:8.75,mx:0,pr:1.71,vp:'P',vt:'N',rpp:101.5,hm:390000,tu:17490,ins:924,ds:2,hz:'winter/flood',cr:173,hs:'High',tl:'None',se:10,cy:2,an:'none'},
+VA:{n:'Virginia',inc:5.75,mx:1,pr:0.80,vp:'F',vt:'Y',rpp:102.0,hm:390000,tu:14700,ins:2100,ds:6,hz:'hurricane/flood',cr:270,hs:'Mod',tl:'Heavy',se:7,cy:10,an:'NoVA/Pentagon'},
+WA:{n:'Washington',inc:0,mx:1,pr:0.87,vp:'P',vt:'Y',rpp:106.5,hm:604000,tu:12200,ins:1400,ds:5,hz:'earthquake/wildfire',cr:370,hs:'Mod',tl:'Light',se:6,cy:5,an:'JBLM/Kitsap'},
+WV:{n:'West Virginia',inc:4.82,mx:1,pr:0.55,vp:'P',vt:'N',rpp:88.0,hm:174000,tu:9400,ins:1500,ds:4,hz:'flood/winter',cr:330,hs:'Mod',tl:'Mod',se:7,cy:4,an:'NSA/FBI CJIS'},
+WI:{n:'Wisconsin',inc:7.65,mx:1,pr:1.51,vp:'F',vt:'Y',rpp:93.0,hm:310000,tu:9500,ins:1500,ds:4,hz:'tornado/winter',cr:320,hs:'Low',tl:'None',se:9,cy:3,an:'none'},
+WY:{n:'Wyoming',inc:0,mx:1,pr:0.55,vp:'P',vt:'N',rpp:94.5,hm:350000,tu:6960,ins:1700,ds:4,hz:'wildfire/winter',cr:203,hs:'Low',tl:'None',se:8,cy:2,an:'FE Warren AFB'}
 };
-const ORDER = ['TX','AL','VA','UT','FL','TN','MD','GA','SC','CO','OH','NC'];
-
-// criteria: scores 1-10 (higher=better). verified flag for honesty.
-const CRIT = [
-  {key:'job',  label:'Cleared cyber market', w:22, verified:false, basis:'VA/MD densest (NoVA, Fort Meade/NSA); CO Space Force; TX San Antonio 16th AF/NSA-TX; AL Huntsville/Redstone; FL Tampa SOCOM+Pensacola; GA Augusta; SC Charleston NIWC; UT Hill AFB+NSA data center; OH Wright-Patterson; NC Fort Liberty/RTP; TN Oak Ridge only. Tier-2.',
-     s:{TX:9, AL:8, VA:10, UT:6, FL:7, TN:5, MD:10, GA:7, SC:6, CO:9, OH:6, NC:6}},
-  {key:'inc',  label:'Income-tax burden', w:15, verified:true, basis:'No tax on salary: TX/FL/TN. Taxes civilian W-2: VA 5.75%, MD ~7.5% w/local, AL/GA/SC ~5%, UT 4.55%, CO 4.4%, NC 3.99%, OH ~3.5%.',
-     s:{TX:10, AL:7, VA:4, UT:6, FL:10, TN:10, MD:3, GA:6, SC:6, CO:5, OH:6, NC:7}},
-  {key:'hs',   label:'Homeschool & parental rights', w:14, verified:true, basis:'No-notice: TX, +low-reg AL/UT/TN. Moderate (notice+testing): VA/FL/GA/SC/MD/CO/OH/NC. TX Prop 15 (2025 const.), FL Bill of Rights.',
-     s:{TX:10, AL:9, VA:5, UT:9, FL:7, TN:9, MD:6, GA:7, SC:6, CO:6, OH:6, NC:7}},
-  {key:'col',  label:'Cost of living', w:13, verified:true, basis:'BEA RPP 2023 (US=100): AL 88 / TN 90 / OH 90 / GA 93 / NC 94 / SC 95 / TX 97 / UT 98 / FL 100 / CO 104 / MD 108.',
-     s:{TX:7, AL:9, VA:5, UT:6, FL:6, TN:8, MD:4, GA:8, SC:6, CO:4, OH:8, NC:7}},
-  {key:'prop', label:'Vet property tax', w:12, verified:true, basis:'Full exemption @100% P&T: TX/FL/VA/AL/MD/SC. Partial/capped: UT (~$479K value), TN ($175K), GA (~$110K), CO (50% of first $200K), OH ($50K), NC ($45K).',
-     s:{TX:10, AL:10, VA:10, UT:8, FL:10, TN:6, MD:10, GA:7, SC:9, CO:6, OH:6, NC:5}},
-  {key:'dis',  label:'Disaster / insurance', w:12, verified:false, basis:'Avg HO premium: UT <$1K / OH ~$1.8K / VA & MD ~$1.9K / NC ~$2.6K / TN ~$3K / AL ~$3.1K / TX ~$4.5K / CO ~$4.5K / FL ~$6K+. Tier-2 Bankrate 2025.',
-     s:{TX:5, AL:4, VA:8, UT:9, FL:3, TN:6, MD:8, GA:5, SC:5, CO:4, OH:7, NC:6}},
-  {key:'crime',label:'Crime / safety', w:12, verified:false, basis:'State violent crime/100K (FBI 2024): VA ~270 / UT ~260 / FL ~258 / OH ~290 / NC ~370 / GA ~390 / TX ~420 / MD ~430 / AL ~450 / SC 437 / TN 592.',
-     s:{TX:6, AL:5, VA:9, UT:8, FL:7, TN:5, MD:5, GA:6, SC:4, CO:5, OH:6, NC:6}},
-  {key:'season',label:'Four-season climate', w:0, verified:true, basis:'Distinct 4 seasons: CO 10; VA/UT/MD/OH 9; TN/NC 7; GA 6; AL 5; SC 4; TX(San Antonio) 3; FL 1 (no winter). DRAG UP to make 4 seasons a requirement.',
-     s:{TX:3, AL:5, VA:9, UT:9, FL:1, TN:7, MD:9, GA:6, SC:4, CO:10, OH:9, NC:7}},
+const ORDER=Object.keys(DATA);
+const _nrm=(sel,inv)=>{const vs=ORDER.map(sel);const mn=Math.min(...vs),mx=Math.max(...vs);return v=>mx===mn?5.5:((inv?(mx-v):(v-mn))/(mx-mn))*9+1;};
+const _nInc=_nrm(k=>DATA[k].inc,1),_nRpp=_nrm(k=>DATA[k].rpp,1),_nIns=_nrm(k=>DATA[k].ins,1),_nCr=_nrm(k=>DATA[k].cr,1),_nTu=_nrm(k=>DATA[k].tu,1);
+const _HS={None:10,Low:8.5,Mod:5.5,High:2},_TL={None:10,Light:7.5,Mod:5,Heavy:2},_VP={F:10,P:6,N:2};
+const _college=k=>{const d=DATA[k];return d.vt==='Y'?10:d.vt==='P'?7:1+(_nTu(d.tu)-1)/9*5;};
+const STATES={},META={};
+ORDER.forEach(k=>{const d=DATA[k];
+ STATES[k]={name:d.n,propRate:d.pr/100,incTaxEff:d.inc/100*0.85,vetProp:d.vp==='F'?'full':d.vp==='N'?'none':'partial',home:d.hm,rpp:d.rpp,ins:d.ins,tuition:d.tu,disaster:d.ds,toll:d.tl,hazard:d.hz,band:[110000+d.cy*3000,135000+d.cy*7000],metro:d.an,vt:d.vt};
+ META[k]={crimeN:d.cr,reg:d.hs,prop:d.vp==='F'?'Full':d.vp==='N'?'None':'Partial',toll:d.tl,hazard:d.hz,tuition:d.tu,vt:d.vt};
+});
+const _mkS=fn=>{const o={};ORDER.forEach(k=>o[k]=Math.round(fn(k)*10)/10);return o;};
+const CRIT=[
+ {key:'job',label:'Cleared cyber market',w:18,verified:false,basis:'TS/SCI cyber density: VA/MD=10, CO/TX/AL=8, scaled by defense-cyber presence. Tier-2.',s:_mkS(k=>DATA[k].cy)},
+ {key:'inc',label:'Low income tax',w:12,verified:true,basis:'Top state income-tax rate on wages, normalized (0% = 10).',s:_mkS(k=>_nInc(DATA[k].inc))},
+ {key:'prop',label:'Vet property tax',w:10,verified:true,basis:'Disabled-vet homestead @100% P&T: Full=10, Partial=6, None=2.',s:_mkS(k=>_VP[DATA[k].vp])},
+ {key:'col',label:'Low cost of living',w:10,verified:true,basis:'BEA RPP (US=100), normalized (cheapest=10).',s:_mkS(k=>_nRpp(DATA[k].rpp))},
+ {key:'college',label:'College affordability',w:8,verified:false,basis:'Vet-dependent tuition waiver Y=10/Partial=7; else by in-state tuition. Tier-2.',s:_mkS(_college)},
+ {key:'ins',label:'Low home insurance',w:8,verified:false,basis:'Avg homeowners premium, normalized (cheapest=10). Bankrate 2025.',s:_mkS(k=>_nIns(DATA[k].ins))},
+ {key:'dis',label:'Low disaster risk',w:8,verified:false,basis:'FEMA NRI state risk inverted (lowest=10).',s:_mkS(k=>11-DATA[k].ds)},
+ {key:'crime',label:'Safety',w:8,verified:false,basis:'Violent crime /100k, normalized (safest=10). FBI.',s:_mkS(k=>_nCr(DATA[k].cr))},
+ {key:'hs',label:'Homeschool freedom',w:8,verified:true,basis:'HSLDA: None(no-notice)=10, Low=8.5, Moderate=5.5, High=2.',s:_mkS(k=>_HS[DATA[k].hs])},
+ {key:'seasons',label:'Four seasons',w:6,verified:true,basis:'Distinct four-season climate 1-10.',s:_mkS(k=>DATA[k].se)},
+ {key:'toll',label:'Low toll burden',w:4,verified:false,basis:'Toll-road burden: None=10, Light=7.5, Moderate=5, Heavy=2.',s:_mkS(k=>_TL[DATA[k].tl])},
 ];
-const AXLAB={job:'Cyber job market',inc:'Low income tax',hs:'Homeschool freedom',col:'Low cost of living',prop:'Vet property tax',dis:'Low insurance/disaster',crime:'Safety',season:'Four seasons'};
-// display-only raw metadata
-const META={
- TX:{crimeN:420, reg:'No-notice', prop:'Full exemption'},
- AL:{crimeN:450, reg:'Low-reg',   prop:'Full (160 ac, no cap)'},
- VA:{crimeN:270, reg:'Moderate',  prop:'Full exemption'},
- UT:{crimeN:260, reg:'Low-reg',   prop:'~Full < $479K'},
- FL:{crimeN:258, reg:'Moderate',  prop:'Full exemption'},
- TN:{crimeN:592, reg:'Low-reg',   prop:'Partial ($175K cap)'},
- MD:{crimeN:430, reg:'Moderate',  prop:'Full exemption'},
- GA:{crimeN:390, reg:'Moderate',  prop:'Partial (~$110K)'},
- SC:{crimeN:437, reg:'Moderate',  prop:'Full (home+5 ac)'},
- CO:{crimeN:420, reg:'Moderate',  prop:'Partial (50% of $200K)'},
- OH:{crimeN:290, reg:'Moderate',  prop:'Partial ($50K)'},
- NC:{crimeN:370, reg:'Moderate',  prop:'Partial ($45K)'},
-};
+const AXLAB={job:'Cyber job market',inc:'Low income tax',prop:'Vet property tax',col:'Low cost of living',college:'College affordability',ins:'Low insurance',dis:'Low disaster risk',crime:'Safety',hs:'Homeschool freedom',seasons:'Four seasons',toll:'Low tolls'};
 
 // ---- countdown helpers ----
 const today = new Date();
@@ -797,17 +823,21 @@ function renderSetup(){
   set('hdrSub', `${S.rank} · ${S.sys} · ${S.spouse?'spouse + ':''}${S.kids} kid${S.kids===1?'':'s'}`);
 }
 
+const TOLLC={None:0,Light:250,Mod:600,Heavy:1200}; // rough annual toll burden
+function propTaxFor(st){ // annual property tax after vet exemption
+  if(!S.pt) return st.home*st.propRate;                       // <P&T: no exemption
+  if(st.vetProp==='full') return 0;
+  if(st.vetProp==='none') return st.home*st.propRate;
+  return 0.5*st.home*st.propRate;                             // partial ≈ half relief
+}
 // shared annual take-home for a state (used by take-home tab + compare)
 function takeHome(k){
   const st=STATES[k];
-  const milYr=milNet()*12;
-  const net=milYr+(S.civ-civFed(S.civ));
+  const net=milNet()*12 + (S.civ-civFed(S.civ));
   const stateTax=S.civ*st.incTaxEff;
-  let ptax;
-  if(S.pt) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
-  else ptax = st.home*st.propRate;
-  const housing=0.8*st.home*0.06322 + ptax + st.ins;
-  return net - stateTax - housing - goodsBase()*st.rpp/100;
+  const housing=0.8*st.home*0.06322 + propTaxFor(st) + st.ins;
+  const toll=TOLLC[st.toll]||0;
+  return net - stateTax - housing - goodsBase()*st.rpp/100 - toll;
 }
 const SCRT=(key,k)=>CRIT.find(c=>c.key===key).s[k];
 function argbest(fn,dir){let best=null,wins=[];ORDER.forEach(k=>{const v=fn(k);
@@ -829,8 +859,11 @@ function renderChampions(){
    ['🏷️ Cheapest cost of living', argbest(k=>STATES[k].rpp,-1), r=>'RPP '+r.val],
    ['🏠 Best vet property tax', argbest(k=>SCRT('prop',k),1), ()=>'full exemption'],
    ['🛡️ Cheapest insurance', argbest(k=>STATES[k].ins,-1), r=>fmt(r.val)+'/yr'],
-   ['🚔 Safest', argbest(k=>SCRT('crime',k),1), ()=>'lowest violent crime'],
-   ['🍂 Four seasons', argbest(k=>SCRT('season',k),1), ()=>'most distinct seasons'],
+   ['🚔 Safest', argbest(k=>SCRT('crime',k),1), r=>META[r.wins[0]].crimeN+'/100k'],
+   ['🍂 Four seasons', argbest(k=>SCRT('seasons',k),1), ()=>'most distinct seasons'],
+   ['🌪️ Lowest disaster risk', argbest(k=>SCRT('dis',k),1), r=>STATES[r.wins[0]].hazard],
+   ['🎓 College (waiver/cost)', argbest(k=>SCRT('college',k),1), r=>STATES[r.wins[0]].vt==='Y'?'dependent tuition waiver':fmt(STATES[r.wins[0]].tuition)+'/yr'],
+   ['🛣️ Lowest tolls', argbest(k=>SCRT('toll',k),1), ()=>'no/low toll roads'],
    ['🏦 Highest take-home', argbest(k=>takeHome(k),1), r=>fmt(r.val)+'/yr'],
    ['🏘️ Cheapest homes', argbest(k=>STATES[k].home,-1), r=>fmt(r.val)],
   ];
@@ -848,13 +881,16 @@ function compareCols(){
    {key:'score',label:'Score', disp:k=>SM[k].score.toFixed(2), val:k=>SM[k].score},
    {key:'rank', label:'Rank', disp:k=>'#'+SM[k].rank, val:k=>-SM[k].rank},
    {key:'job',  label:'Cyber pay band', disp:k=>fmt(STATES[k].band[0])+'–'+fmt(STATES[k].band[1]), val:k=>SCRT('job',k)},
-   {key:'inc',  label:'Income tax', disp:k=>STATES[k].incTaxEff?(STATES[k].incTaxEff*100).toFixed(1)+'%':'none', val:k=>-STATES[k].incTaxEff},
+   {key:'inc',  label:'Income tax', disp:k=>DATA[k].inc?DATA[k].inc.toFixed(2)+'%':'none', val:k=>-DATA[k].inc},
    {key:'hs',   label:'Homeschool', disp:k=>META[k].reg, val:k=>SCRT('hs',k)},
    {key:'col',  label:'COL', disp:k=>STATES[k].rpp, val:k=>-STATES[k].rpp},
    {key:'prop', label:'Vet property', disp:k=>META[k].prop, val:k=>SCRT('prop',k)},
+   {key:'college',label:'College', disp:k=>DATA[k].vt==='Y'?'waiver':DATA[k].vt==='P'?'part.waiver':fmt(STATES[k].tuition), val:k=>SCRT('college',k)},
    {key:'ins',  label:'Insurance', disp:k=>fmt(STATES[k].ins), val:k=>-STATES[k].ins},
+   {key:'dis',  label:'Disaster', disp:k=>STATES[k].disaster+'/10', val:k=>-STATES[k].disaster},
    {key:'crime',label:'Crime/100K', disp:k=>META[k].crimeN, val:k=>-META[k].crimeN},
-   {key:'season',label:'Seasons', disp:k=>SCRT('season',k)+'/10', val:k=>SCRT('season',k)},
+   {key:'toll', label:'Tolls', disp:k=>META[k].toll, val:k=>SCRT('toll',k)},
+   {key:'seasons',label:'Seasons', disp:k=>SCRT('seasons',k)+'/10', val:k=>SCRT('seasons',k)},
    {key:'home', label:'Median home', disp:k=>fmt(STATES[k].home), val:k=>-STATES[k].home},
    {key:'take', label:'Take-home', disp:k=>fmt(takeHome(k)), val:k=>takeHome(k)},
   ];
@@ -969,25 +1005,25 @@ function renderTakehome(){
   const rows=ORDER.map(k=>{
     const st=STATES[k];
     const stateTax=S.civ*st.incTaxEff;
-    let ptax;
-    if(S.pt) ptax = st.vetProp==='full'?0:Math.max(0,(st.home-st.cap))*st.propRate;
-    else ptax = st.home*st.propRate;
+    const ptax=propTaxFor(st);
+    const toll=TOLLC[st.toll]||0;
     const housing=0.8*st.home*0.06322 + ptax + st.ins;
     const goods=goodsBase()*st.rpp/100;
-    const take=net-stateTax-housing-goods;
-    return {k,stateTax,ptax,housing,goods,take};
+    const take=net-stateTax-housing-goods-toll;
+    return {k,stateTax,ptax,housing,goods,toll,take};
   }).sort((a,b)=>b.take-a.take);
   set('th-top', fmt(rows[0].take));
   set('th-topnote', STATES[rows[0].k].name+' leads');
   set('th-spread', fmt(rows[0].take-rows[rows.length-1].take));
   const t=document.getElementById('thTable');
-  let h='<tr><th>#</th><th>State</th><th class="num">State tax</th><th class="num">Mortgage</th><th class="num">Prop tax</th><th class="num">Insurance</th><th class="num">Living*</th><th class="num">Take-home/yr</th></tr>';
+  let h='<tr><th>#</th><th>State</th><th class="num">State tax</th><th class="num">Mortgage</th><th class="num">Prop tax</th><th class="num">Insurance</th><th class="num">Toll</th><th class="num">Living*</th><th class="num">Take-home/yr</th></tr>';
   rows.forEach((r,i)=>{
     h+=`<tr><td>${i+1}</td><td>${STATES[r.k].name}</td>`+
       `<td class="num">${r.stateTax?'−'+fmt(r.stateTax):'$0'}</td>`+
       `<td class="num">${fmt(0.8*STATES[r.k].home*0.06322)}</td>`+
       `<td class="num">${r.ptax?fmt(r.ptax):'<span class="pill good" style="padding:0 6px">$0</span>'}</td>`+
       `<td class="num">${fmt(STATES[r.k].ins)}</td>`+
+      `<td class="num">${r.toll?fmt(r.toll):'$0'}</td>`+
       `<td class="num">${fmt(r.goods)}</td>`+
       `<td class="num ${i===0?'winner':''}"><b>${fmt(r.take)}</b></td></tr>`;
   });
@@ -1045,11 +1081,8 @@ function renderProp(){
   ORDER.forEach(k=>{
     const st=STATES[k];
     const full=S.home*st.propRate;
-    let at100;
-    if(st.vetProp==='full') at100=0;
-    else at100=Math.max(0,(S.home-st.cap))*st.propRate; // TN: owe on value above cap
-    const cur = S.pt? at100: full;
-    h+=`<tr><td>${k}${S.rating? '':''}</td><td class="num">${fmt(full)}/yr</td><td class="num ${at100===0?'':''}">${at100===0?'<span class="pill good">$0</span>':fmt(at100)+'/yr'}</td></tr>`;
+    const at100 = st.vetProp==='full'?0 : st.vetProp==='none'?full : 0.5*full;
+    h+=`<tr><td>${STATES[k].name}</td><td class="num">${fmt(full)}/yr</td><td class="num">${at100===0?'<span class="pill good">$0</span>':fmt(at100)+'/yr'}</td></tr>`;
   });
   t.innerHTML=h;
 }
