@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Military Retirement Transition Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#151a22; --panel2:#1b212b; --line:#2a323f;
+    --txt:#e7ecf3; --muted:#93a0b2; --green:#3fd07f; --red:#ff6b6b;
+    --amber:#ffcc55; --blue:#5aa9ff; --accent:#7c9cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--blue)}
+  header{position:sticky;top:0;z-index:50;background:rgba(11,14,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 18px}
+  .htop{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  h1{font-size:18px;margin:0;font-weight:650}
+  h1 small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+  .controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .toggle{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .toggle button{background:transparent;color:var(--muted);border:0;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
+  .toggle button.on{background:var(--accent);color:#0b0e13}
+  .ctl label{font-size:11px;color:var(--muted);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+  .ctl input{width:120px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 8px;font-size:14px}
+  nav{display:flex;gap:4px;flex-wrap:wrap;padding:10px 18px 0;border-bottom:1px solid var(--line);position:sticky;top:64px;background:var(--bg);z-index:40}
+  nav button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer}
+  nav button.on{color:var(--txt);border-bottom-color:var(--accent)}
+  main{max-width:1100px;margin:0 auto;padding:22px 18px 80px}
+  section{display:none;animation:fade .25s}
+  section.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{font-size:20px;margin:6px 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card h3{margin:0 0 6px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:650}
+  .big{font-size:30px;font-weight:700;letter-spacing:-.01em}
+  .big.green{color:var(--green)} .big.red{color:var(--red)} .big.blue{color:var(--blue)}
+  .note{font-size:12px;color:var(--muted);margin-top:6px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:650}
+  .pill.good{background:rgba(63,208,127,.15);color:var(--green)}
+  .pill.warn{background:rgba(255,204,85,.15);color:var(--amber)}
+  .pill.bad{background:rgba(255,107,107,.15);color:var(--red)}
+  .pill.v{background:rgba(90,169,255,.13);color:var(--blue)}
+  .bar{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--green))}
+  .winner{outline:2px solid var(--green);outline-offset:-2px}
+  .slider-row{display:grid;grid-template-columns:160px 1fr 52px;gap:10px;align-items:center;margin:8px 0}
+  input[type=range]{width:100%}
+  .kpi{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 0}
+  .kpi div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:130px}
+  .kpi b{display:block;font-size:22px}
+  .kpi span{font-size:11px;color:var(--muted)}
+  .callout{border-left:3px solid var(--amber);background:rgba(255,204,85,.07);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;margin:14px 0}
+  .callout.bad{border-color:var(--red);background:rgba(255,107,107,.07)}
+  .callout.good{border-color:var(--green);background:rgba(63,208,127,.07)}
+  .tag{font-size:10.5px;color:var(--muted);font-style:italic}
+  .cd{display:flex;gap:12px;flex-wrap:wrap}
+  .cd .card{flex:1;min-width:150px;text-align:center}
+  .cd .big{font-size:34px}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:30px 18px;border-top:1px solid var(--line)}
+  .mini{font-size:12px;color:var(--muted)}
+  ul.tight{margin:6px 0;padding-left:20px} ul.tight li{margin:3px 0}
+  .seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:4px 0}
+  .seg button{background:transparent;border:0;color:var(--muted);padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
+  .seg button.on{background:var(--accent);color:#0b0e13}
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <h1>Retirement Transition Dashboard
+      <small id="hdrSub">E-8 · High-3 · spouse + 6 kids</small>
+    </h1>
+    <div class="controls">
+      <div class="ctl">
+        <label>VA rating: <b id="ratingVal" style="color:var(--green)">100%</b>
+          <span style="margin-left:8px;font-size:11px"><input type="checkbox" id="ptCheck" checked style="vertical-align:middle"> P&amp;T</span></label>
+        <input id="ratingSlider" type="range" min="10" max="100" step="10" value="100" style="width:200px">
+      </div>
+      <div class="ctl">
+        <label>Civilian salary (gross/yr): <b id="civVal" style="color:var(--green)">$150,000</b></label>
+        <input id="civInput" type="range" min="100000" max="220000" step="5000" value="150000" style="width:200px">
+      </div>
+      <button onclick="window.print()" class="seg" style="padding:6px 12px;cursor:pointer;align-self:flex-end">🖨 Print / PDF</button>
+    </div>
+  </div>
+</header>
+
+<nav id="tabs">
+  <button data-t="setup">⚙ Setup</button>
+  <button data-t="overview" class="on">Overview</button>
+  <button data-t="finance">Finances</button>
+  <button data-t="fork">70% vs 100%</button>
+  <button data-t="reloc">Relocation</button>
+  <button data-t="compare">Compare 50</button>
+  <button data-t="takehome">Take-home / yr</button>
+  <button data-t="edu">Education / GI Bill</button>
+  <button data-t="move">PPM / Move</button>
+  <button data-t="timeline">Timeline</button>
+  <button data-t="data">Data &amp; Sources</button>
+</nav>
+
+<main>
+
+<!-- SETUP -->
+<section id="setup">
+  <h2>⚙ Setup — your situation</h2>
+  <p class="sub">Enter your details; every tab recomputes from these. All fields are editable/overridable, and <b>your inputs auto-save in this browser</b>. Defaults = the example operator (Navy E-8, spouse + 6 kids). <button id="resetBtn" class="seg" style="padding:4px 10px;cursor:pointer">↺ reset to example</button></p>
+
+  <div class="grid g3">
+    <div class="card">
+      <h3>Service &amp; retirement pay</h3>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Rank</label>
+        <select id="in-rank"></select></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Years of service</label>
+        <input id="in-tis" type="number" step="0.5" min="0"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Retirement system</label>
+        <select id="in-sys"><option>High-3</option><option>BRS</option></select></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>High-3 base pay/mo</label>
+        <input id="in-high3" type="number" step="50"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Retirement pay/mo</label>
+        <input id="in-pension" type="number" step="10"></div>
+      <p class="tag" id="pensionFormula"></p>
+    </div>
+
+    <div class="card">
+      <h3>Family</h3>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Spouse</label>
+        <span><input type="checkbox" id="in-spouse"> married</span></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Children &lt;18</label>
+        <input id="in-kids" type="number" step="1" min="0" max="15"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Tax filing</label>
+        <select id="in-filing"><option>MFJ</option><option>Single</option><option>HoH</option></select></div>
+      <p class="tag">Drives VA dependent comp + child tax credits + standard deduction.</p>
+    </div>
+
+    <div class="card">
+      <h3>Pay &amp; deductions (monthly)</h3>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Civilian salary/yr</label>
+        <input id="in-civ" type="number" step="5000"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Tricare premium</label>
+        <input id="in-tricare" type="number" step="5"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>SBP + VGLI</label>
+        <input id="in-sbp" type="number" step="5"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Fed tax on pension/mo</label>
+        <input id="in-milfed" type="number" step="10"></div>
+      <div class="slider-row" style="grid-template-columns:130px 1fr"><label>Retirement date</label>
+        <input id="in-retdate" type="date"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Live snapshot (from your inputs)</h3>
+    <div class="kpi">
+      <div><b id="su-pension">—</b><span>retirement pay/mo</span></div>
+      <div><b id="su-va">—</b><span>VA comp/mo (@ slider rating)</span></div>
+      <div><b id="su-milnet">—</b><span>military net/mo</span></div>
+      <div><b id="su-hh">—</b><span>household net/mo</span></div>
+      <div><b id="su-ret">—</b><span>days to retirement</span></div>
+    </div>
+    <p class="tag">VA comp computed from rating + spouse + children (2026 schedule; 70%/100% spouse+6 verified, other configs estimated — override any number directly). Retirement pay = (High-3: 2.5% · BRS: 2.0%) × years × High-3 base pay.</p>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview" class="on">
+  <h2>Bottom line</h2>
+  <p class="sub">Live model. The <b>VA-rating toggle</b> (top right) and <b>civilian salary</b> input drive every number below.</p>
+  <div class="grid g4">
+    <div class="card"><h3>Military net / mo</h3><div class="big green" id="ov-milmo">—</div><div class="note">Pension + VA − Tricare/SBP/tax</div></div>
+    <div class="card"><h3>Household net / mo (est)</h3><div class="big blue" id="ov-hhmo">—</div><div class="note" id="ov-hhnote">incl. civilian after-tax</div></div>
+    <div class="card"><h3>Best relocation pick</h3><div class="big" id="ov-state">—</div><div class="note" id="ov-statenote">weighted matrix winner</div></div>
+    <div class="card"><h3>TEB deadline</h3><div class="big amber" id="ov-teb" style="color:var(--amber)">—</div><div class="note">days left to transfer GI Bill on active duty</div></div>
+  </div>
+
+  <div class="callout good" id="ov-fork"></div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>The whole picture in one breath</h3>
+      <ul class="tight">
+        <li><b>Two ratings, one fork.</b> 70% vs 100% P&amp;T swings net income <b id="ov-deltamo">—</b>/mo tax-free, <b>plus</b> the 100%-only education lever for your kids.</li>
+        <li><b>Floor is solid.</b> Military pension + VA + Tricare means the family is covered before a single civilian paycheck.</li>
+        <li><b>Relocation is a money decision, not a vibe.</b> A 50-state scan ranks <b>TX > AL > VA > UT > FL</b> — Huntsville-AL and Utah beat the original picks; the whole order pivots on whether your income is local or portable.</li>
+        <li><b>One hard deadline:</b> the Ch.33 GI Bill transfer must be approved <b>while on active duty</b> — unrecoverable after 29 Feb 2028.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Confidence &amp; what would change this</h3>
+      <p class="mini"><b>High</b> on the financial floor and the federal benefit rules (cross-checked vs your own calculator + VA.gov). <b>Verified</b> on every relocation axis (property/income/homeschool law, BEA cost-of-living, Bankrate insurance, FBI crime); cleared-cyber salary bands are Tier-2.</p>
+      <p class="mini"><b>Flips if:</b> your actual rating lands at 70% (kills the ~$340K education lever), or your civilian income is portable (collapses the job-market weight → cheap/safe/no-tax states rise).</p>
+      <p class="tag">Next best action: explore the Compare tab, set the weights that matter to you (Relocation), then confirm TEB timing with your career counselor.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:22px 0 8px">What's inside — jump to any view</h3>
+  <div class="grid g4" id="hub">
+    <div class="card" data-goto="finance" style="cursor:pointer"><h3>💵 Finances</h3><div class="mini">Military floor + household income calculator.</div></div>
+    <div class="card" data-goto="fork" style="cursor:pointer"><h3>🔀 70% vs 100%</h3><div class="mini">The fork: +$2,409/mo + $340K education lever.</div></div>
+    <div class="card" data-goto="compare" style="cursor:pointer"><h3>📊 Compare 50</h3><div class="mini">Every state, every attribute, category leaders.</div></div>
+    <div class="card" data-goto="reloc" style="cursor:pointer"><h3>⚖️ Relocation</h3><div class="mini">Weighted matrix + sensitivity. Set your priorities.</div></div>
+    <div class="card" data-goto="takehome" style="cursor:pointer"><h3>🏦 Take-home / yr</h3><div class="mini">Per-state annual budget + salary-band legend.</div></div>
+    <div class="card" data-goto="edu" style="cursor:pointer"><h3>🎓 Education</h3><div class="mini">Ch.35 six-kid lever + GI Bill TEB deadline.</div></div>
+    <div class="card" data-goto="move" style="cursor:pointer"><h3>🚚 PPM / Move</h3><div class="mini">DITY profit estimator (100% GCC).</div></div>
+    <div class="card" data-goto="timeline" style="cursor:pointer"><h3>🗓️ Timeline</h3><div class="mini">Dated milestones + countdowns to retirement.</div></div>
+  </div>
+</section>
+
+<!-- FINANCE -->
+<section id="finance">
+  <h2>Financial baseline — the military floor</h2>
+  <p class="sub">Verified against your retirement-calculator screenshots (Jun 2026). VA figures cross-check vs VA.gov 2026 tables. <span class="tag">[Verified]</span></p>
+
+  <div class="grid g3">
+    <div class="card"><h3>Retirement pay</h3><div class="big green" id="fin-pension">—</div><div class="note" id="fin-pnote">taxable</div></div>
+    <div class="card"><h3>VA disability <span id="fin-rlabel"></span></h3><div class="big green" id="fin-va">—</div><div class="note">tax-free, fed &amp; state · <span id="fin-vatag"></span></div></div>
+    <div class="card"><h3>Tricare premium</h3><div class="big red" id="fin-tricare">—</div><div class="note">covers family — moot vs rating</div></div>
+    <div class="card"><h3>SBP / VGLI premium</h3><div class="big red" id="fin-sbp">—</div><div class="note">survivor + life cover</div></div>
+    <div class="card"><h3>Federal tax on pension</h3><div class="big red" id="fin-fedtax">—</div><div class="note" id="fin-filenote">on pension</div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Net military pay</h3>
+    <div style="display:flex;gap:30px;flex-wrap:wrap;align-items:baseline">
+      <div><div class="big green" id="fin-netmo">—</div><div class="note">net monthly</div></div>
+      <div><div class="big" id="fin-netyr">—</div><div class="note">net annual</div></div>
+    </div>
+    <div class="callout good" id="crdpNote">CRDP / concurrent receipt — full pension <b>and</b> full VA stack with no waiver offset (applies at every rating ≥50%).</div>
+  </div>
+
+  <h2 style="margin-top:26px">Household income — add the civilian paycheck</h2>
+  <p class="sub">Civilian gross set in the header/Setup. Federal tax computed from your filing status + children (Setup); state income tax from your selected relocation pick.</p>
+  <div class="grid g2">
+    <div class="card">
+      <div class="slider-row">
+        <label>Fed effective rate</label>
+        <span></span>
+        <span id="fedRateV">—</span>
+      </div>
+      <div class="slider-row">
+        <label>Relocation state</label>
+        <div class="seg" id="finStateSeg"></div>
+        <span></span>
+      </div>
+      <table>
+        <tr><td>Civilian gross</td><td class="num" id="fin-civg">—</td></tr>
+        <tr><td>− Federal (est)</td><td class="num red" id="fin-civf">—</td></tr>
+        <tr><td>− State income tax (<span id="fin-civstate"></span>)</td><td class="num red" id="fin-civs">—</td></tr>
+        <tr><td><b>Civilian net</b></td><td class="num" id="fin-civn"><b>—</b></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Total household</h3>
+      <div class="big green" id="fin-hhmo">—</div><div class="note">net per month</div>
+      <div class="big" id="fin-hhyr" style="margin-top:10px">—</div><div class="note">net per year</div>
+      <div class="kpi">
+        <div><b id="fin-milshare">—</b><span>from military (floor)</span></div>
+        <div><b id="fin-civshare">—</b><span>from civilian</span></div>
+      </div>
+      <p class="note">Floor never drops below the military net even with $0 civilian income — that's the safety net.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FORK -->
+<section id="fork">
+  <h2>70% vs 100% P&amp;T — what actually toggles</h2>
+  <p class="sub">Everything else equal, here is the real delta for a retiree with your family (Setup). Toggle the rating up top to see it ripple.</p>
+
+  <div class="grid g3">
+    <div class="card"><h3>Comp delta</h3><div class="big green" id="fork-delta">—</div><div class="note" id="fork-deltayr">100% vs 70%, tax-free</div></div>
+    <div class="card"><h3>Education lever (Ch.35)</h3><div class="big green" id="fork-edu">—</div><div class="note"><span id="fork-edunote">kids</span> — <b>100% P&amp;T ONLY</b>, $0 at 70%</div></div>
+    <div class="card"><h3>Lifetime comp delta</h3><div class="big green" id="fork-life">—</div><div class="note">spouse-base delta persists for life</div></div>
+  </div>
+
+  <table style="margin-top:16px">
+    <tr><th>Lever</th><th>70%</th><th>100% P&amp;T</th><th>Verdict</th></tr>
+    <tr><td>Monthly comp <span id="fork-fam" class="mini"></span></td><td id="fork-70">—</td><td id="fork-100">—</td><td><span class="pill good" id="fork-pill">—</span></td></tr>
+    <tr><td>Chapter 35 DEA — all kids</td><td>$0</td><td id="fork-ch35">—</td><td><span class="pill good">The big one</span></td></tr>
+    <tr><td>State property-tax full relief</td><td>No</td><td>Yes (FL/TX/VA full; TN capped)</td><td><span class="pill warn">Location-gated</span></td></tr>
+    <tr><td>Family Tricare</td><td>Covered</td><td>Covered</td><td><span class="pill v">Moot</span></td></tr>
+    <tr><td>CRDP / concurrent receipt</td><td>Yes</td><td>Yes</td><td><span class="pill v">Moot</span></td></tr>
+  </table>
+
+  <div class="callout bad"><b>Reminder:</b> 100% benefit unlocks require <b>permanent AND total</b> — not just a 100% combined rating. Ch.35 and full state property relief both gate on P&amp;T.</div>
+  <div class="card">
+    <h3>Total 100%-vs-70% advantage (rough lifetime view)</h3>
+    <p class="mini">Comp delta to spouse-base floor + the one-time education lever dwarfs everything else. Education alone (6 × 36 mo × $1,574) is the single largest swing in the whole plan.</p>
+    <div class="big green" id="fork-total">—</div><div class="note">illustrative: ~10 yr comp delta + full Ch.35 education lever</div>
+  </div>
+</section>
+
+<!-- RELOCATION -->
+<section id="reloc">
+  <h2>Relocation decision matrix — all 50 states</h2>
+  <p class="sub">Now scores <b>all 50 states</b> across 11 axes (data-driven, normalized). <b>Set your weights</b> below — ranking + sensitivity recompute live. Every axis is a lever: drop cyber-job-market weight (portable income) and cheap/safe/no-tax states rise; raise College to reward vet-dependent tuition waivers; raise Seasons to require a four-season climate. <span class="tag">[data Tier-2 overall; income-tax/COL/property Tier-1/2]</span></p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Weights (must reflect what you value)</h3>
+      <div id="weights"></div>
+      <div class="mini" id="wsum"></div>
+    </div>
+    <div class="card">
+      <h3>Ranking</h3>
+      <div id="ranking"></div>
+      <div class="callout" id="sensitivity" style="margin-bottom:0"></div>
+    </div>
+  </div>
+
+  <h3 style="margin:22px 0 6px">Scorecard <span class="mini">(1–10; hover the criterion for basis)</span></h3>
+  <div style="overflow-x:auto">
+    <table id="scoreTable"></table>
+  </div>
+
+  <h2 style="margin-top:26px">The hard facts behind the scores</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Disabled-vet property tax @ 100% P&amp;T <span class="tag">[Verified]</span></h3>
+      <table>
+        <tr><th>State</th><th>Benefit</th></tr>
+        <tr><td>TX / FL / VA</td><td><span class="pill good">Full</span> exemption (TX 11.131 · FL 196.081 · VA Art X §6-A)</td></tr>
+        <tr><td>AL / MD / SC</td><td><span class="pill good">Full</span> (AL home+160ac no cap · MD · SC home+5ac)</td></tr>
+        <tr><td>UT</td><td><span class="pill good">~Full</span> for homes under ~$479K taxable value</td></tr>
+        <tr><td>GA</td><td><span class="pill warn">Partial</span> — ~$110K of value exempt</td></tr>
+        <tr><td>TN</td><td><span class="pill warn">Partial</span> — capped at first <b>$175K</b> ($250K proposed, not enacted)</td></tr>
+        <tr><td>CO</td><td><span class="pill warn">Partial</span> — 50% of first $200K only</td></tr>
+      </table>
+      <div class="callout">At 70%, none of these full-exemption gates open. The calculator (right) models each state's benefit on your home value.</div>
+    </div>
+    <div class="card">
+      <h3>Property-tax calculator (home value)</h3>
+      <div class="slider-row"><label>Home value</label><input id="homeVal" type="range" min="200000" max="900000" step="25000" value="450000"><span id="homeValV"></span></div>
+      <table id="propTable"></table>
+      <p class="tag">Effective property-tax rates are Tier-2 statewide averages — verify by county.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Quality-of-life axes — national top 5 <span class="tag">[BEA RPP 2023 · Bankrate 2025 · FBI 2024]</span></h3>
+    <table>
+      <tr><th>Axis</th><th class="num">TX</th><th class="num">AL</th><th class="num">VA</th><th class="num">UT</th><th class="num">FL</th></tr>
+      <tr><td>Cost of living (US=100, BEA RPP)</td><td class="num">97</td><td class="num" style="color:var(--green)">88</td><td class="num">~96*</td><td class="num">98</td><td class="num">100</td></tr>
+      <tr><td>Avg home insurance / yr</td><td class="num">~$4.5K</td><td class="num">~$3.1K</td><td class="num">~$1.9K</td><td class="num" style="color:var(--green)">&lt;$1K</td><td class="num" style="color:var(--red)">~$6K+</td></tr>
+      <tr><td>Violent crime /100K (FBI '24)</td><td class="num">~420</td><td class="num" style="color:var(--red)">~450</td><td class="num" style="color:var(--green)">~270</td><td class="num" style="color:var(--green)">~260</td><td class="num">~258</td></tr>
+      <tr><td>Median home (anchor metro)</td><td class="num" style="color:var(--green)">SA $260K</td><td class="num">Hsv ~$320K</td><td class="num">NoVA $664K</td><td class="num">SLC ~$520K</td><td class="num">Tampa $443K</td></tr>
+    </table>
+    <p class="tag">*NoVA runs far above the VA state average. AL/UT are the safety+affordability plays; FL's insurance burden is the heaviest drag in the set. Metro choice dominates the state crime number.</p>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>State income tax on the civilian salary <span class="tag">[Verified]</span></h3>
+      <ul class="tight">
+        <li><b>$0 on wages:</b> TX, FL, TN (no income tax).</li>
+        <li><b>Taxes your civilian W-2:</b> CO 4.4% · UT 4.55% · AL/GA/SC ~5% · VA 5.75% · MD ~7.5% (w/ local). On $150K that's ~$6.6K–$11K/yr — a permanent drag the no-tax states avoid (~<b id="reloc-vatax">—</b>/yr at VA's rate).</li>
+        <li>Military-retirement pension is exempt in nearly all of these; the <i>salary</i> is what gets taxed.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Homeschool legal climate <span class="tag">[Verified – HSLDA]</span></h3>
+      <ul class="tight">
+        <li><b>No-notice / lowest:</b> TX (+ Prop 15 2025 constitutional amendment).</li>
+        <li><b>Low-reg:</b> AL, UT, TN (church-umbrella route).</li>
+        <li><b>Moderate (notice + testing/eval):</b> VA, FL, GA, SC, MD, CO.</li>
+        <li><b>Avoid (high-reg):</b> MA, NY, PA, RI, VT.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare">
+  <h2>Compare all 50 states — every attribute, side by side</h2>
+  <p class="sub">The full head-to-head. <b>Category leaders</b> show who's #1 at each thing; the <b>table sorts</b> on any column (click a header); the <b>profile picker</b> gives each state's pros &amp; cons. Reacts to the VA-rating toggle + salary slider up top.</p>
+
+  <div class="card">
+    <h3>🏆 Category leaders — who ranks #1 at each attribute</h3>
+    <div id="champions" class="grid g4" style="margin-top:6px"></div>
+    <p class="tag">Leaders by the 1–10 model score (and by live $ for take-home/insurance/home price). Decide which of these matters most to you — then set the weights in the Relocation tab.</p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Full comparison <span class="mini">— click any column header to sort · best value in each column is highlighted</span></h3>
+    <div style="overflow-x:auto"><table id="compareTable"></table></div>
+    <p class="tag">Raw values shown; the weighted <b>Score</b> column uses the 1–10 ratings and your current weights. $ figures (take-home) react to the rating toggle + salary slider.</p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>State profile — pros &amp; cons</h3>
+    <div class="seg" id="profileSeg" style="flex-wrap:wrap"></div>
+    <div id="stateProfile" style="margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- TAKE-HOME -->
+<section id="takehome">
+  <h2>Annual take-home — what's left after a year of living</h2>
+  <p class="sub">Family of 8. Total net income (military + civilian) minus state tax, housing (mortgage on the anchor-metro median home), property tax, home insurance, groceries, gas, utilities, healthcare. Reacts to the <b>VA rating</b> and <b>civilian salary</b> up top. <span class="tag">[model — verify line items locally]</span></p>
+
+  <div class="grid g3">
+    <div class="card"><h3>Net income / yr</h3><div class="big green" id="th-income">—</div><div class="note" id="th-incnote">military + civilian (after federal)</div></div>
+    <div class="card"><h3>Top state · take-home</h3><div class="big blue" id="th-top">—</div><div class="note" id="th-topnote"></div></div>
+    <div class="card"><h3>Top vs bottom spread</h3><div class="big" id="th-spread">—</div><div class="note">same income, different state = real money</div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Realistic cleared-cyber salary band by state <span class="tag">[Tier-2 — ClearanceJobs/CyberSecJobs]</span></h3>
+    <p class="mini">Move the salary slider up top — the white line is your number. This shows whether it's realistic in each state's actual cleared market:
+      <span class="pill good" style="padding:0 6px">in band</span> achievable ·
+      <span class="pill warn" style="padding:0 6px">top-end</span> stretch (senior/poly) ·
+      <span class="pill bad" style="padding:0 6px">above market</span> unlikely locally ·
+      <span class="pill v" style="padding:0 6px">below</span> easily cleared.</p>
+    <div id="salaryLegend"></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Annual take-home by state <span class="mini">(sorted best→worst)</span></h3>
+    <div style="overflow-x:auto"><table id="thTable"></table></div>
+    <p class="tag">Mortgage = 30-yr P&amp;I @6.9% on 80% of the anchor-metro median home. Property tax = $0 where the 100% P&amp;T exemption is full (else on value above the cap); at 70% no exemption applies. Groceries/gas/utilities/healthcare scaled by state price level (BEA RPP). Assumes the <b>same civilian salary everywhere</b> — high-cost metros like NoVA often pay more, which narrows the gap.</p>
+  </div>
+
+  <div class="callout">Cheap housing + no/low income tax + cheap insurance is what actually maximizes saved cash — which is why <b>TN, OH, TX, AL</b> top the list and Florida's no-tax edge gets erased by its insurance bill.</div>
+</section>
+
+<!-- EDUCATION -->
+<section id="edu">
+  <h2>Education &amp; GI Bill — the dependents' play</h2>
+  <p class="sub">The single largest financial swing between 70% and 100%. Two stackable programs, one hard deadline.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Chapter 35 DEA — per child <span class="tag">[100% P&amp;T only]</span></h3>
+      <div class="slider-row"><label>Eligible kids</label><input id="eduKids" type="range" min="0" max="6" value="6"><span id="eduKidsV"></span></div>
+      <div class="slider-row"><label>Months / child</label><input id="eduMo" type="range" min="0" max="36" value="36"><span id="eduMoV"></span></div>
+      <table>
+        <tr><td>Rate (FY26 full-time max)</td><td class="num">$1,574/mo</td></tr>
+        <tr><td>Benefit-months (independent pools)</td><td class="num" id="edu-months">—</td></tr>
+        <tr><td><b>Total potential value</b></td><td class="num" id="edu-total"><b>—</b></td></tr>
+      </table>
+      <p class="note">36 months per eligible child, ages ~18–26. Paid to the student; <b>no housing stipend</b>. Monthly enrollment verification since Jan 2026. <b>$0 at 70%.</b></p>
+    </div>
+    <div class="card">
+      <h3>Chapter 33 (Post-9/11) Transfer — TEB</h3>
+      <ul class="tight">
+        <li>36-month <b>shared</b> pool — <b>does</b> include BAH-based housing + book stipend (unlike Ch.35).</li>
+        <li>Stack with Ch.35 per child (not same enrollment period); 48-mo cap if one person uses both.</li>
+        <li><b>Must be submitted AND approved while on active duty.</b> Designate <b>every</b> dependent now (even $0) — you can re-allocate later but cannot add new dependents post-separation.</li>
+        <li>10-yr/precluded retainability exemption likely applies — confirm with career counselor.</li>
+      </ul>
+      <div class="cd" style="margin-top:8px">
+        <div class="card"><div class="big amber" id="edu-teb" style="color:var(--amber)">—</div><div class="note">days to retirement (TEB hard stop)</div></div>
+        <div class="card"><div class="big" id="edu-tebrec">—</div><div class="note">days to recommended file-by (~6 mo prior)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="callout bad"><b>Time-critical:</b> a missed pre-retirement TEB transfer cannot be fixed later. This is the #1 dated action item.</div>
+</section>
+
+<!-- MOVE -->
+<section id="move">
+  <h2>PPM / DITY move — 2026</h2>
+  <p class="sub">Reimbursement is <b>100% of the Government Constructed Cost (GCC)</b> for CY2026 (the temporary 130% bump expired 30 Sep 2025). <span class="tag">[Verified – DFAS / DoD MAP 42-25(R)]</span></p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>How profit actually works</h3>
+      <ul class="tight">
+        <li><b>Profit = GCC payment − your actual move costs.</b> GCC scales with net weight hauled (capped at allowance) × distance.</li>
+        <li><b id="ppm-allow">—</b> — your HHG weight allowance drives the max GCC.</li>
+        <li>Reimbursement is <b>taxable</b> — DFAS withholds 22% federal (no FICA). Offset with documented expenses + certified weigh tickets.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Take-home estimator</h3>
+      <div class="slider-row"><label>GCC reimbursement</label><input id="ppmGcc" type="range" min="10000" max="45000" step="1000" value="40000"><span id="ppmGccV"></span></div>
+      <div class="slider-row"><label>Your actual costs</label><input id="ppmCost" type="range" min="3000" max="25000" step="500" value="9000"><span id="ppmCostV"></span></div>
+      <table>
+        <tr><td>Gross profit (GCC − costs)</td><td class="num" id="ppm-gross">—</td></tr>
+        <tr><td>− Tax on reimbursement (22%)</td><td class="num red" id="ppm-tax">—</td></tr>
+        <tr><td><b>Estimated take-home</b></td><td class="num"><b id="ppm-net">—</b></td></tr>
+      </table>
+      <p class="tag">Rough illustrator — pull your real GCC from the official MilMove estimator for the actual lane &amp; weight.</p>
+    </div>
+  </div>
+  <div class="callout" id="ppm-callout">~$40K is <b>gross taxable GCC</b>, not take-home — realistic only near your full weight cap over a long-distance move.</div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <h2>Timeline — anchored to real dates</h2>
+  <p class="sub">Countdowns and windows derive from your <b>retirement date</b> (Setup). Milestones are relative to separation.</p>
+  <div class="cd">
+    <div class="card"><div class="big amber" id="t-teb2" style="color:var(--amber)">—</div><div class="note">days to TEB file-by (~12 mo out)</div></div>
+    <div class="card"><div class="big blue" id="t-6mo">—</div><div class="note">days to 6-mo-out window</div></div>
+    <div class="card"><div class="big green" id="t-ret">—</div><div class="note">days to retirement (<span id="t-retdate">—</span>)</div></div>
+  </div>
+  <table style="margin-top:18px">
+    <tr><th>Phase</th><th>Window</th><th>Key moves</th></tr>
+    <tr><td><b>Now</b></td><td id="tl-now">—</td><td>Confirm actual rating path (70 vs 100 P&amp;T). Start nexus-letter / claim sequencing. Designate all dependents in DEERS.</td></tr>
+    <tr><td><b>~18 mo out</b></td><td id="tl-18">—</td><td>Attend TAPS. Lock relocation weights. Narrow to a metro/county. Begin clearance-friendly job search.</td></tr>
+    <tr><td><b>12 mo out</b></td><td id="tl-12">—</td><td>Initiate Ch.33 TEB transfer (with margin). SkillBridge / terminal-leave plan. Pre-approve home financing.</td></tr>
+    <tr><td><b>6 mo out</b></td><td id="tl-6">—</td><td><b>TEB approved.</b> File BDD VA claim. Finalize PPM + weigh-ticket logistics. Sign civilian offer. File residency intent.</td></tr>
+    <tr><td><b>Post-retire</b></td><td id="tl-post">—</td><td>Execute PPM move. Establish homestead + apply property-tax exemption. On P&amp;T: enroll kids' Ch.35. Confirm CRDP/Tricare.</td></tr>
+  </table>
+</section>
+
+<!-- DATA -->
+<section id="data">
+  <h2>Data &amp; sources</h2>
+  <p class="sub">Tier-1 authoritative unless flagged. Mirrors the locked verified-data file in the repo. Re-verify annually / on rating change.</p>
+  <div class="callout">Salary axis: BLS <b>metro</b> percentiles for Information Security Analysts (SOC 15-1212) were unreachable from the research environment (403-blocked). <b>National anchor (BLS OEWS May 2024): median $124,910, 90th pct $186,420.</b> Cleared TS/SCI roles run <b>~20–40% above</b> that — so the median understates this candidate's reach. Metro precision = open Tier-1 pull.</div>
+  <h3>Cleared cyber market ranking <span class="tag">[Tier-2/3 — CyberSecJobs / ClearanceJobs]</span></h3>
+  <table>
+    <tr><th>Metro</th><th>Clears $137K?</th><th>Hits $150–180K?</th><th>Note</th></tr>
+    <tr><td>NoVA / DC (VA)</td><td><span class="pill good">Yes</span></td><td><span class="pill good">Yes (&gt;$180K w/ poly)</span></td><td>densest cleared market; high COL + VA income tax</td></tr>
+    <tr><td>San Antonio (TX)</td><td><span class="pill good">Yes</span></td><td><span class="pill good">Yes</span></td><td>16th AF / NSA-TX — no income tax = best net value</td></tr>
+    <tr><td>Tampa (FL)</td><td><span class="pill good">Yes</span></td><td><span class="pill warn">Upper edge</span></td><td>MacDill CENTCOM/SOCOM; no income tax</td></tr>
+    <tr><td>Knoxville/Oak Ridge (TN)</td><td><span class="pill warn">Marginal</span></td><td><span class="pill warn">DOE niche</span></td><td>ORNL/Y-12 — TN's only real cleared node</td></tr>
+    <tr><td>Nashville/Memphis/Chatt. (TN)</td><td><span class="pill bad">Often below</span></td><td><span class="pill bad">Hard</span></td><td>commercial cyber, thin cleared density</td></tr>
+  </table>
+  <table>
+    <tr><th>Item</th><th>Value</th><th>Tier / source</th></tr>
+    <tr><td>VA comp 100% (spouse+6)</td><td>$4,864/mo</td><td class="tag">T1 — VA.gov 2026 tables; matches user calc</td></tr>
+    <tr><td>VA comp 70% (spouse+6)</td><td>$2,455/mo</td><td class="tag">T1 — VA.gov 2026 tables; matches user calc</td></tr>
+    <tr><td>Ch.35 DEA rate FY26</td><td>$1,574/mo full-time</td><td class="tag">T1 — VA.gov FY26</td></tr>
+    <tr><td>TN vet property relief cap</td><td>$175K (operative; $250K proposed, not enacted)</td><td class="tag">T1 — TN Comptroller 2025 brochure; HB1009 unconfirmed</td></tr>
+    <tr><td>FL / TX / VA vet property</td><td>Full exemption @100% P&amp;T</td><td class="tag">T1 — FL 196.081 / TX 11.131 / VA Art X §6-A</td></tr>
+    <tr><td>VA income tax top rate</td><td>5.75% (over $17K)</td><td class="tag">T1 — Code of Va §58.1-320</td></tr>
+    <tr><td>VA mil-retirement subtraction</td><td>$40K TY2026 · no age limit</td><td class="tag">T1 — Virginia Tax; age gate repealed SB651 (TY24)</td></tr>
+    <tr><td>Cost of living (US=100)</td><td>TN 90.4 · TX 98.4 · VA 101.1 · FL 103.5</td><td class="tag">T1 — BEA RPP 2023</td></tr>
+    <tr><td>Avg home insurance / yr</td><td>VA $2.7K · TN $3.0K · TX $4.5K · FL $6K+</td><td class="tag">T2 — Bankrate 2025</td></tr>
+    <tr><td>Violent crime /100K (2024)</td><td>VA 234 · FL 258 · TX 431 · TN 592</td><td class="tag">T2 — FBI via USAFacts</td></tr>
+    <tr><td>Parental-rights statutes</td><td>TX Prop 15 (2025) · FL Bill of Rights · TN fundamental-right</td><td class="tag">T1 — state statutes</td></tr>
+    <tr><td>PPM reimbursement 2026</td><td>100% of GCC</td><td class="tag">T1 — DFAS / DoD MAP 42-25(R)</td></tr>
+    <tr><td>E-8 HHG weight allowance</td><td>14,000 lb (w/ deps)</td><td class="tag">T1 — JTR 2026</td></tr>
+    <tr><td>ISA salary (national)</td><td>$124,910 median / $186,420 p90</td><td class="tag">T1 — BLS OEWS May 2024 (metro blocked)</td></tr>
+    <tr><td>State property-tax eff. rates</td><td>TN .66% · FL .91% · TX 1.68% · VA .87%</td><td class="tag">T2 — statewide avgs, verify by county</td></tr>
+  </table>
+  <p class="tag"><b>Resolved:</b> TN cap ($175K operative) · VA subtraction ($40K, no age limit). <b>Remaining open (env-blocked):</b> BLS metro ISA percentiles — needs unblocked network / BLS API key (not decision-critical; cleared premium dominates). TN $250K cap if HB1009 is later enacted.</p>
+</section>
+
+</main>
+<footer>Local planning model — not deployed, not financial/legal advice. Re-verify dated figures on rating change. Built from the repo's verified-data file.</footer>
+
+<script>
+const fmt = n => '$'+Math.round(n).toLocaleString();
+const fmtmo = n => '$'+Math.round(n).toLocaleString();
+
+// ---- core state (all editable in Setup) ----
+const DEFAULT = { rank:'E-8', tis:20.42, sys:'High-3', high3:6759, pension:3450,
+  spouse:true, kids:6, filing:'MFJ', tricare:64, sbp:278, milfed:340,
+  rating:100, pt:true, civ:150000, finState:'TX', home:450000, retDate:'2028-02-29' };
+const S = Object.assign({}, DEFAULT);
+function saveState(){ try{ localStorage.setItem('retDash', JSON.stringify(S)); }catch(e){} }
+function loadState(){ try{ const j=localStorage.getItem('retDash'); if(j) Object.assign(S, JSON.parse(j)); }catch(e){} }
+// approx monthly basic pay near retirement-eligible TIS — [Tier-3 estimate; override High-3 with your LES]
+const PAY={'E-5':3700,'E-6':4300,'E-7':5200,'E-8':6491,'E-9':7300,'W-2':6200,'W-3':6900,'W-4':7800,'W-5':9200,'O-3':7200,'O-4':8500,'O-5':10000,'O-6':12000,'O-7':14500,'O-8':16500};
+// 2026 VA comp building blocks (eff 12/1/2025): veteran+spouse+1child base & each-additional-child <18.
+// 70% & 100% [Verified – VA.gov]; 30/40/50/60/80/90 [Tier-2 computed]; spouseAmt [estimate]. Override any number in Setup.
+const SP1C={30:635.08,40:923.07,50:1298.57,60:1643.77,70:2073.98,80:2396.58,90:2687.62,100:4318.98};
+const ADDL={30:32.88,40:43.85,50:54.81,60:65.78,70:75.87,80:87.65,90:98.61,100:109.11};
+const FLAT={10:175.51,20:346.95};
+const SPOUSEAMT={30:59,40:79,50:99,60:119,70:138,80:158,90:178,100:198};
+const VERIFIED_RATINGS = {70:1, 100:1};
+function vaComp(rating, spouse, kids){
+  if(rating<30) return Math.floor(FLAT[rating]||0);       // no dependent add-ons below 30%
+  let base=SP1C[rating];
+  let c = kids>=1 ? base + (kids-1)*ADDL[rating] : base - ADDL[rating];
+  if(!spouse) c -= SPOUSEAMT[rating];
+  return Math.max(0, Math.floor(c));
+}
+function pensionCalc(){ const m=S.sys==='BRS'?0.02:0.025; return Math.round(m*S.tis*S.high3); }
+function milNet(){
+  const VAc=vaComp(S.rating,S.spouse,S.kids);
+  const baseNet=S.pension - S.tricare - S.sbp - S.milfed;  // pension net, before VA
+  if(S.rating>=50) return baseNet + VAc;                   // CRDP: pension + VA fully stack
+  const eff=S.milfed/Math.max(1,S.pension);                // <50%: VA waiver → net gain = tax saved
+  return baseNet + Math.min(VAc,S.pension)*eff + Math.max(0,VAc-S.pension);
+}
+
+const DATA={
+AL:{n:'Alabama',inc:5.0,mx:1,pr:0.40,vp:'F',vt:'Y',rpp:88.6,hm:235000,tu:11400,ins:3300,ds:8,hz:'hurricane/tornado',cr:450,hs:'Low',tl:'None',se:5,cy:8,an:'Huntsville/Redstone'},
+AK:{n:'Alaska',inc:0,mx:1,pr:0.94,vp:'P',vt:'N',rpp:102.5,hm:375000,tu:8500,ins:1385,ds:3,hz:'earthquake/winter',cr:724,hs:'None',tl:'None',se:7,cy:3,an:'JB Elmendorf'},
+AZ:{n:'Arizona',inc:2.5,mx:1,pr:0.63,vp:'P',vt:'N',rpp:100.9,hm:420000,tu:12100,ins:1950,ds:5,hz:'wildfire/flood',cr:430,hs:'Low',tl:'Light',se:3,cy:5,an:'Ft Huachuca'},
+AR:{n:'Arkansas',inc:3.7,mx:1,pr:0.56,vp:'F',vt:'Y',rpp:86.5,hm:210000,tu:9700,ins:4100,ds:8,hz:'tornado/flood',cr:579,hs:'Mod',tl:'None',se:6,cy:2,an:'none'},
+CA:{n:'California',inc:13.3,mx:0,pr:0.70,vp:'P',vt:'Y',rpp:112.6,hm:789000,tu:9600,ins:2100,ds:9,hz:'wildfire/earthquake',cr:430,hs:'Low',tl:'Heavy',se:4,cy:7,an:'SoCal/Bay/SpaceForce LA'},
+CO:{n:'Colorado',inc:4.25,mx:0,pr:0.49,vp:'P',vt:'N',rpp:103.5,hm:538000,tu:12000,ins:4310,ds:7,hz:'wildfire/hail',cr:420,hs:'Mod',tl:'Mod',se:9,cy:8,an:'Colo Springs/NORAD'},
+CT:{n:'Connecticut',inc:6.99,mx:1,pr:1.54,vp:'F',vt:'N',rpp:104.9,hm:447000,tu:15900,ins:1600,ds:4,hz:'hurricane/winter',cr:180,hs:'None',tl:'Heavy',se:8,cy:4,an:'Sub Base New London'},
+DE:{n:'Delaware',inc:6.6,mx:0,pr:0.55,vp:'P',vt:'N',rpp:99.9,hm:385000,tu:14700,ins:1365,ds:3,hz:'flood/hurricane',cr:430,hs:'Low',tl:'Heavy',se:7,cy:3,an:'Dover AFB'},
+FL:{n:'Florida',inc:0,mx:1,pr:0.74,vp:'F',vt:'Y',rpp:101.0,hm:385000,tu:6360,ins:6400,ds:10,hz:'hurricane/flood',cr:258,hs:'Mod',tl:'Heavy',se:1,cy:6,an:'Tampa/CENTCOM-SOCOM'},
+GA:{n:'Georgia',inc:5.39,mx:0,pr:0.81,vp:'P',vt:'Y',rpp:93.0,hm:319000,tu:7300,ins:2400,ds:7,hz:'hurricane/tornado',cr:390,hs:'Mod',tl:'Mod',se:5,cy:7,an:'Ft Eisenhower/Cyber CoE'},
+HI:{n:'Hawaii',inc:11.0,mx:1,pr:0.29,vp:'F',vt:'Y',rpp:108.6,hm:832000,tu:12200,ins:900,ds:6,hz:'hurricane/volcanic',cr:260,hs:'Mod',tl:'None',se:1,cy:5,an:'Pearl Harbor/NSA HI'},
+ID:{n:'Idaho',inc:5.3,mx:1,pr:0.47,vp:'P',vt:'Y',rpp:93.4,hm:443000,tu:8500,ins:1300,ds:3,hz:'wildfire/winter',cr:240,hs:'Low',tl:'None',se:8,cy:2,an:'none'},
+IL:{n:'Illinois',inc:4.95,mx:1,pr:1.95,vp:'F',vt:'Y',rpp:99.6,hm:270000,tu:15100,ins:2500,ds:6,hz:'tornado/flood',cr:440,hs:'None',tl:'Heavy',se:8,cy:3,an:'Scott AFB'},
+IN:{n:'Indiana',inc:3.05,mx:1,pr:0.76,vp:'F',vt:'Y',rpp:91.0,hm:245000,tu:9900,ins:2200,ds:6,hz:'tornado/flood',cr:300,hs:'None',tl:'Mod',se:8,cy:4,an:'Crane NSWC'},
+IA:{n:'Iowa',inc:3.8,mx:1,pr:1.33,vp:'F',vt:'N',rpp:90.6,hm:220000,tu:9500,ins:2600,ds:6,hz:'tornado/hail',cr:290,hs:'None',tl:'None',se:8,cy:2,an:'none'},
+KS:{n:'Kansas',inc:5.58,mx:1,pr:1.21,vp:'F',vt:'Y',rpp:90.5,hm:235000,tu:10200,ins:5455,ds:8,hz:'tornado/hail',cr:410,hs:'Low',tl:'Mod',se:7,cy:3,an:'Ft Leavenworth'},
+KY:{n:'Kentucky',inc:3.5,mx:0,pr:0.74,vp:'P',vt:'Y',rpp:88.7,hm:215000,tu:11500,ins:3100,ds:7,hz:'tornado/flood',cr:290,hs:'Low',tl:'Mod',se:7,cy:3,an:'Ft Campbell/Knox'},
+LA:{n:'Louisiana',inc:4.25,mx:1,pr:0.55,vp:'F',vt:'Y',rpp:91.0,hm:200000,tu:11100,ins:6274,ds:9,hz:'hurricane/flood',cr:550,hs:'Mod',tl:'Mod',se:2,cy:3,an:'Barksdale AFB'},
+ME:{n:'Maine',inc:7.15,mx:1,pr:1.24,vp:'P',vt:'Y',rpp:99.0,hm:380000,tu:10900,ins:1300,ds:3,hz:'winter/flood',cr:100,hs:'Mod',tl:'Heavy',se:8,cy:2,an:'Portsmouth NSY'},
+MD:{n:'Maryland',inc:5.75,mx:1,pr:0.99,vp:'F',vt:'Y',rpp:105.5,hm:420000,tu:10400,ins:1600,ds:4,hz:'hurricane/flood',cr:430,hs:'Mod',tl:'Heavy',se:7,cy:10,an:'Ft Meade/NSA'},
+MA:{n:'Massachusetts',inc:9.0,mx:1,pr:1.14,vp:'P',vt:'Y',rpp:107.5,hm:635000,tu:14300,ins:1900,ds:4,hz:'hurricane/winter',cr:330,hs:'High',tl:'Mod',se:8,cy:5,an:'Hanscom/MIT LL'},
+MI:{n:'Michigan',inc:4.25,mx:1,pr:1.38,vp:'F',vt:'Y',rpp:93.5,hm:245000,tu:15300,ins:1700,ds:5,hz:'winter/tornado',cr:460,hs:'None',tl:'Mod',se:9,cy:3,an:'Selfridge ANGB'},
+MN:{n:'Minnesota',inc:9.85,mx:0,pr:1.02,vp:'P',vt:'Y',rpp:97.0,hm:335000,tu:14400,ins:2600,ds:6,hz:'tornado/winter',cr:270,hs:'Mod',tl:'Light',se:9,cy:3,an:'none'},
+MS:{n:'Mississippi',inc:4.7,mx:1,pr:0.75,vp:'F',vt:'Y',rpp:87.3,hm:185000,tu:9300,ins:4200,ds:8,hz:'hurricane/tornado',cr:280,hs:'Low',tl:'None',se:3,cy:3,an:'Stennis/Keesler'},
+MO:{n:'Missouri',inc:4.7,mx:1,pr:0.91,vp:'N',vt:'Y',rpp:90.0,hm:250000,tu:10100,ins:3200,ds:7,hz:'tornado/flood',cr:490,hs:'None',tl:'Light',se:7,cy:4,an:'NGA St. Louis'},
+MT:{n:'Montana',inc:5.9,mx:0,pr:0.74,vp:'P',vt:'N',rpp:95.0,hm:468000,tu:8000,ins:2000,ds:5,hz:'wildfire/hail',cr:470,hs:'Low',tl:'None',se:8,cy:2,an:'Malmstrom AFB'},
+NE:{n:'Nebraska',inc:5.2,mx:1,pr:1.44,vp:'P',vt:'N',rpp:91.5,hm:285000,tu:9500,ins:4956,ds:8,hz:'tornado/hail',cr:330,hs:'Low',tl:'None',se:8,cy:5,an:'Offutt/STRATCOM'},
+NV:{n:'Nevada',inc:0,mx:1,pr:0.55,vp:'P',vt:'N',rpp:100.5,hm:445000,tu:8600,ins:1100,ds:4,hz:'wildfire/earthquake',cr:460,hs:'Low',tl:'Light',se:3,cy:3,an:'Nellis/Creech'},
+NH:{n:'New Hampshire',inc:0,mx:1,pr:1.61,vp:'P',vt:'Y',rpp:106.0,hm:480000,tu:17360,ins:1028,ds:3,hz:'winter/flood',cr:110,hs:'Mod',tl:'Light',se:9,cy:3,an:'Portsmouth NSY'},
+NJ:{n:'New Jersey',inc:10.75,mx:1,pr:2.23,vp:'F',vt:'Y',rpp:108.9,hm:569000,tu:15600,ins:1449,ds:5,hz:'hurricane/flood',cr:200,hs:'None',tl:'Heavy',se:7,cy:4,an:'JB MDL/Picatinny'},
+NM:{n:'New Mexico',inc:5.9,mx:0,pr:0.67,vp:'F',vt:'Y',rpp:92.0,hm:300000,tu:8300,ins:1900,ds:5,hz:'wildfire/drought',cr:717,hs:'Low',tl:'None',se:4,cy:4,an:'Kirtland/Sandia'},
+NY:{n:'New York',inc:10.9,mx:1,pr:1.54,vp:'P',vt:'Y',rpp:106.5,hm:508000,tu:8600,ins:1554,ds:6,hz:'hurricane/winter',cr:330,hs:'High',tl:'Heavy',se:8,cy:4,an:'Rome Labs/AFRL'},
+NC:{n:'North Carolina',inc:4.25,mx:1,pr:0.63,vp:'P',vt:'Y',rpp:93.5,hm:330000,tu:7400,ins:2352,ds:8,hz:'hurricane/flood',cr:370,hs:'Mod',tl:'Mod',se:5,cy:4,an:'Ft Liberty'},
+ND:{n:'North Dakota',inc:2.5,mx:1,pr:0.94,vp:'P',vt:'Y',rpp:90.0,hm:265000,tu:9400,ins:2400,ds:5,hz:'flood/winter',cr:290,hs:'Mod',tl:'None',se:9,cy:3,an:'Grand Forks/Minot'},
+OH:{n:'Ohio',inc:3.5,mx:1,pr:1.30,vp:'P',vt:'Y',rpp:90.5,hm:235000,tu:11400,ins:1500,ds:5,hz:'tornado/flood',cr:290,hs:'Mod',tl:'Heavy',se:9,cy:6,an:'Wright-Patterson'},
+OK:{n:'Oklahoma',inc:4.75,mx:1,pr:0.76,vp:'F',vt:'Y',rpp:89.5,hm:205000,tu:9600,ins:5298,ds:9,hz:'tornado/hail',cr:420,hs:'None',tl:'Heavy',se:6,cy:3,an:'Tinker AFB'},
+OR:{n:'Oregon',inc:9.9,mx:0,pr:0.86,vp:'P',vt:'N',rpp:103.5,hm:495000,tu:12100,ins:900,ds:5,hz:'wildfire/earthquake',cr:340,hs:'Mod',tl:'None',se:6,cy:2,an:'none'},
+PA:{n:'Pennsylvania',inc:3.07,mx:1,pr:1.36,vp:'F',vt:'N',rpp:98.0,hm:275000,tu:15700,ins:1712,ds:5,hz:'flood/winter',cr:310,hs:'High',tl:'Heavy',se:8,cy:4,an:'Tobyhanna/Carlisle'},
+RI:{n:'Rhode Island',inc:5.99,mx:1,pr:1.30,vp:'P',vt:'N',rpp:103.0,hm:437000,tu:14200,ins:1900,ds:4,hz:'hurricane/flood',cr:230,hs:'High',tl:'Heavy',se:8,cy:3,an:'NUWC Newport'},
+SC:{n:'South Carolina',inc:6.2,mx:1,pr:0.53,vp:'F',vt:'Y',rpp:94.0,hm:300000,tu:12900,ins:2900,ds:8,hz:'hurricane/flood',cr:437,hs:'Mod',tl:'Light',se:4,cy:5,an:'Charleston/NIWC'},
+SD:{n:'South Dakota',inc:0,mx:1,pr:1.08,vp:'P',vt:'N',rpp:88.1,hm:300000,tu:9200,ins:2900,ds:6,hz:'tornado/hail',cr:480,hs:'Mod',tl:'None',se:9,cy:2,an:'Ellsworth AFB'},
+TN:{n:'Tennessee',inc:0,mx:1,pr:0.55,vp:'P',vt:'N',rpp:91.0,hm:335000,tu:10200,ins:2800,ds:7,hz:'tornado/flood',cr:592,hs:'Low',tl:'None',se:6,cy:3,an:'Oak Ridge'},
+TX:{n:'Texas',inc:0,mx:1,pr:1.68,vp:'F',vt:'Y',rpp:97.0,hm:307000,tu:10900,ins:4915,ds:9,hz:'hurricane/hail',cr:420,hs:'None',tl:'Heavy',se:3,cy:8,an:'San Antonio/16th AF'},
+UT:{n:'Utah',inc:4.55,mx:0,pr:0.55,vp:'P',vt:'N',rpp:98.0,hm:511000,tu:7100,ins:900,ds:3,hz:'earthquake/wildfire',cr:260,hs:'Low',tl:'Light',se:7,cy:5,an:'Hill AFB/NSA Utah'},
+VT:{n:'Vermont',inc:8.75,mx:0,pr:1.71,vp:'P',vt:'N',rpp:101.5,hm:390000,tu:17490,ins:924,ds:2,hz:'winter/flood',cr:173,hs:'High',tl:'None',se:10,cy:2,an:'none'},
+VA:{n:'Virginia',inc:5.75,mx:1,pr:0.80,vp:'F',vt:'Y',rpp:102.0,hm:390000,tu:14700,ins:2100,ds:6,hz:'hurricane/flood',cr:270,hs:'Mod',tl:'Heavy',se:7,cy:10,an:'NoVA/Pentagon'},
+WA:{n:'Washington',inc:0,mx:1,pr:0.87,vp:'P',vt:'Y',rpp:106.5,hm:604000,tu:12200,ins:1400,ds:5,hz:'earthquake/wildfire',cr:370,hs:'Mod',tl:'Light',se:6,cy:5,an:'JBLM/Kitsap'},
+WV:{n:'West Virginia',inc:4.82,mx:1,pr:0.55,vp:'P',vt:'N',rpp:88.0,hm:174000,tu:9400,ins:1500,ds:4,hz:'flood/winter',cr:330,hs:'Mod',tl:'Mod',se:7,cy:4,an:'NSA/FBI CJIS'},
+WI:{n:'Wisconsin',inc:7.65,mx:1,pr:1.51,vp:'F',vt:'Y',rpp:93.0,hm:310000,tu:9500,ins:1500,ds:4,hz:'tornado/winter',cr:320,hs:'Low',tl:'None',se:9,cy:3,an:'none'},
+WY:{n:'Wyoming',inc:0,mx:1,pr:0.55,vp:'P',vt:'N',rpp:94.5,hm:350000,tu:6960,ins:1700,ds:4,hz:'wildfire/winter',cr:203,hs:'Low',tl:'None',se:8,cy:2,an:'FE Warren AFB'}
+};
+const ORDER=Object.keys(DATA);
+const _nrm=(sel,inv)=>{const vs=ORDER.map(sel);const mn=Math.min(...vs),mx=Math.max(...vs);return v=>mx===mn?5.5:((inv?(mx-v):(v-mn))/(mx-mn))*9+1;};
+const _nInc=_nrm(k=>DATA[k].inc,1),_nRpp=_nrm(k=>DATA[k].rpp,1),_nIns=_nrm(k=>DATA[k].ins,1),_nCr=_nrm(k=>DATA[k].cr,1),_nTu=_nrm(k=>DATA[k].tu,1);
+const _HS={None:10,Low:8.5,Mod:5.5,High:2},_TL={None:10,Light:7.5,Mod:5,Heavy:2},_VP={F:10,P:6,N:2};
+const _college=k=>{const d=DATA[k];return d.vt==='Y'?10:d.vt==='P'?7:1+(_nTu(d.tu)-1)/9*5;};
+const STATES={},META={};
+ORDER.forEach(k=>{const d=DATA[k];
+ STATES[k]={name:d.n,propRate:d.pr/100,incTaxEff:d.inc/100*0.85,vetProp:d.vp==='F'?'full':d.vp==='N'?'none':'partial',home:d.hm,rpp:d.rpp,ins:d.ins,tuition:d.tu,disaster:d.ds,toll:d.tl,hazard:d.hz,band:[110000+d.cy*3000,135000+d.cy*7000],metro:d.an,vt:d.vt};
+ META[k]={crimeN:d.cr,reg:d.hs,prop:d.vp==='F'?'Full':d.vp==='N'?'None':'Partial',toll:d.tl,hazard:d.hz,tuition:d.tu,vt:d.vt};
+});
+const _mkS=fn=>{const o={};ORDER.forEach(k=>o[k]=Math.round(fn(k)*10)/10);return o;};
+const CRIT=[
+ {key:'job',label:'Cleared cyber market',w:18,verified:false,basis:'TS/SCI cyber density: VA/MD=10, CO/TX/AL=8, scaled by defense-cyber presence. Tier-2.',s:_mkS(k=>DATA[k].cy)},
+ {key:'inc',label:'Low income tax',w:12,verified:true,basis:'Top state income-tax rate on wages, normalized (0% = 10).',s:_mkS(k=>_nInc(DATA[k].inc))},
+ {key:'prop',label:'Vet property tax',w:10,verified:true,basis:'Disabled-vet homestead @100% P&T: Full=10, Partial=6, None=2.',s:_mkS(k=>_VP[DATA[k].vp])},
+ {key:'col',label:'Low cost of living',w:10,verified:true,basis:'BEA RPP (US=100), normalized (cheapest=10).',s:_mkS(k=>_nRpp(DATA[k].rpp))},
+ {key:'college',label:'College affordability',w:8,verified:false,basis:'Vet-dependent tuition waiver Y=10/Partial=7; else by in-state tuition. Tier-2.',s:_mkS(_college)},
+ {key:'ins',label:'Low home insurance',w:8,verified:false,basis:'Avg homeowners premium, normalized (cheapest=10). Bankrate 2025.',s:_mkS(k=>_nIns(DATA[k].ins))},
+ {key:'dis',label:'Low disaster risk',w:8,verified:false,basis:'FEMA NRI state risk inverted (lowest=10).',s:_mkS(k=>11-DATA[k].ds)},
+ {key:'crime',label:'Safety',w:8,verified:false,basis:'Violent crime /100k, normalized (safest=10). FBI.',s:_mkS(k=>_nCr(DATA[k].cr))},
+ {key:'hs',label:'Homeschool freedom',w:8,verified:true,basis:'HSLDA: None(no-notice)=10, Low=8.5, Moderate=5.5, High=2.',s:_mkS(k=>_HS[DATA[k].hs])},
+ {key:'seasons',label:'Four seasons',w:6,verified:true,basis:'Distinct four-season climate 1-10.',s:_mkS(k=>DATA[k].se)},
+ {key:'toll',label:'Low toll burden',w:4,verified:false,basis:'Toll-road burden: None=10, Light=7.5, Moderate=5, Heavy=2.',s:_mkS(k=>_TL[DATA[k].tl])},
+];
+const AXLAB={job:'Cyber job market',inc:'Low income tax',prop:'Vet property tax',col:'Low cost of living',college:'College affordability',ins:'Low insurance',dis:'Low disaster risk',crime:'Safety',hs:'Homeschool freedom',seasons:'Four seasons',toll:'Low tolls'};
+
+// ---- countdown helpers ----
+const today = new Date();
+const daysTo = d => Math.max(0, Math.ceil((new Date(d)-today)/86400000));
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtMY = d => MONTHS[d.getMonth()]+' '+d.getFullYear();
+const retOff = m => { const d=new Date(S.retDate); d.setMonth(d.getMonth()-m); return d; };
+// 2026 JTR HHG weight allowance (lb, with dependents) by pay grade [Tier-2]
+const WEIGHT={'E-1':8000,'E-2':8000,'E-3':8000,'E-4':8000,'E-5':9000,'E-6':11000,'E-7':13000,'E-8':14000,'E-9':15000,'W-1':12000,'W-2':14000,'W-3':15000,'W-4':16000,'W-5':17000,'O-1':10000,'O-2':12500,'O-3':14500,'O-4':17000,'O-5':17500,'O-6':18000,'O-7':18000,'O-8':18000,'O-9':18000,'O-10':18000};
+
+// ---- compute ----
+
+function civNet(stateKey){
+  const st0=STATES[stateKey];
+  const fed0=civFed(S.civ), state0=S.civ*st0.incTaxEff;
+  return {gross:S.civ, fed:fed0, state:state0, net:S.civ-fed0-state0};
+}
+function _civNetOld(stateKey){
+  const st = STATES[stateKey];
+  const fed = S.civ*S.fedRate;
+  const state = S.civ*st.incTaxEff;
+  return {gross:S.civ, fed, state, net:S.civ-fed-state};
+}
+
+function matrix(){
+  const sum = CRIT.reduce((a,c)=>a+c.w,0);
+  const res = ORDER.map(k=>{
+    let tot=0; CRIT.forEach(c=> tot += c.s[k]*c.w);
+    return {k, score: tot/sum};
+  }).sort((a,b)=>b.score-a.score);
+  return {res, sum};
+}
+
+// sensitivity: find single weight change (to 0 or +20) that flips #1
+function sensitivity(){
+  const base = matrix().res;
+  const top = base[0].k, second = base[1].k;
+  for(const c of CRIT){
+    for(const test of [0, c.w+20]){
+      const old=c.w; c.w=test;
+      const r=matrix().res; c.w=old;
+      if(r[0].k!==top) return `Ranking is <b>${STATES[top].name}</b> &gt; <b>${STATES[second].name}</b>. It flips if you set <b>${c.label}</b> weight to <b>${test}</b> (→ ${STATES[r[0].k].name} leads). Closest challenger margin: ${(base[0].score-base[1].score).toFixed(2)} pts.`;
+    }
+  }
+  return `Ranking is <b>${STATES[top].name}</b> on top by ${(base[0].score-base[1].score).toFixed(2)} pts — robust to any single weight change.`;
+}
+
+// ---- render ----
+function render(){
+  document.getElementById('fedRateV').textContent = S.civ>0? Math.round(civFed(S.civ)/S.civ*100)+'% (computed)':'—';
+  document.getElementById('homeValV').textContent = fmt(S.home);
+
+  // finance cards
+  const va = vaComp(S.rating,S.spouse,S.kids);
+  const net = milNet();
+  set('fin-rlabel','('+S.rating+'%'+(S.pt?' P&T':'')+')');
+  set('fin-va', fmt(va));
+  set('fin-vatag', VERIFIED_RATINGS[S.rating]&&S.spouse&&S.kids===6?'verified':'computed est.');
+  set('fin-pension', fmt(S.pension));
+  set('fin-pnote', S.rank+' '+S.sys+' · taxable');
+  set('fin-tricare', '−'+fmt(S.tricare));
+  set('fin-sbp', '−'+fmt(S.sbp));
+  set('fin-fedtax', '−'+fmt(S.milfed));
+  set('fin-filenote', S.filing+' · on pension');
+  set('ratingVal', S.rating+'%'+(S.pt?' P&T':''));
+  const crdp=document.getElementById('crdpNote');
+  if(crdp) crdp.innerHTML = S.rating>=50
+    ? 'CRDP / concurrent receipt — full pension <b>and</b> full VA stack with no waiver offset (applies at every rating ≥50%).'
+    : '⚠️ <b>Below 50%: no CRDP.</b> VA comp triggers a retired-pay <b>waiver</b> — you receive it tax-free instead of taxable pension, so the net gain is only the tax saved, not a full stack. Net jumps sharply at 50%.';
+  set('fin-netmo', fmt(net));
+  set('fin-netyr', fmt(net*12));
+  // household
+  const cn = civNet(S.finState);
+  set('fin-civg', fmt(cn.gross/12)+'/mo');
+  set('fin-civf', '−'+fmt(cn.fed/12)+'/mo');
+  set('fin-civs', '−'+fmt(cn.state/12)+'/mo');
+  set('fin-civn', fmt(cn.net/12)+'/mo');
+  set('fin-civstate', STATES[S.finState].name);
+  const hhmo = net + cn.net/12;
+  set('fin-hhmo', fmt(hhmo));
+  set('fin-hhyr', fmt(hhmo*12)+' /yr');
+  set('fin-milshare', fmt(net));
+  set('fin-civshare', fmt(cn.net/12));
+
+  // overview
+  set('ov-milmo', fmt(net));
+  set('ov-hhmo', fmt(hhmo));
+  const m = matrix().res;
+  set('ov-state', STATES[m[0].k].name);
+  set('ov-statenote','beats '+STATES[m[1].k].name+' by '+(m[0].score-m[1].score).toFixed(2)+' pts');
+  set('ov-teb', daysTo(S.retDate));
+  set('ov-deltamo','+'+fmt(vaComp(100,S.spouse,S.kids)-vaComp(70,S.spouse,S.kids)));
+  const eduFull = S.kids*36*1574;
+  document.getElementById('ov-fork').innerHTML = S.pt
+    ? `<b>Modeling ${S.rating}%${S.rating>=100?' P&amp;T':' P&amp;T (TDIU)'}.</b> The ${S.kids}-kid Chapter 35 education lever (up to <b>${fmt(eduFull)}</b>) and the full state property exemption are <b>live</b> — both require P&amp;T. This is the single largest swing in the plan.`
+    : `<b>Modeling ${S.rating}% (not P&amp;T).</b> No Chapter 35 education benefit and no full state property exemption — both need <b>Permanent &amp; Total</b>. Checking P&amp;T (or reaching 100% P&amp;T) adds up to <b>${fmt(eduFull)}</b> in education value plus $0 property tax.`;
+
+  // fork — 70% vs 100% for THIS family
+  const kidsEdu = S.kids*36*1574;
+  const c70=vaComp(70,S.spouse,S.kids), c100=vaComp(100,S.spouse,S.kids), dlt=c100-c70;
+  set('fork-delta', '+'+fmt(dlt)+'/mo');
+  set('fork-deltayr', '≈ '+fmt(dlt*12)+'/yr tax-free, 100% vs 70%');
+  set('fork-70', fmt(c70)); set('fork-100', fmt(c100));
+  set('fork-pill', '+'+fmt(dlt)+'/mo');
+  set('fork-fam', '('+(S.spouse?'spouse + ':'')+S.kids+' kid'+(S.kids===1?'':'s')+')');
+  set('fork-ch35', S.kids?('up to '+fmt(kidsEdu)):'$0');
+  set('fork-edunote', S.kids+' kid'+(S.kids===1?'':'s'));
+  set('fork-edu', S.pt&&S.kids? fmt(kidsEdu) : '$0');
+  set('fork-life', fmt(dlt)+'/mo while kids home');
+  set('fork-total', fmt(dlt*12*10 + kidsEdu));
+
+  // reloc va tax
+  set('reloc-vatax', fmt(S.civ*0.05));
+
+  renderWeights();
+  renderRanking();
+  renderScoreTable();
+  renderProp();
+  renderFinSeg();
+
+  // education
+  renderEdu();
+  // timeline (all milestones derive from the retirement date in Setup)
+  const iso=d=>d.toISOString().slice(0,10);
+  const r18=retOff(18), r12=retOff(12), r6=retOff(6);
+  set('t-teb2', daysTo(iso(r12)));
+  set('t-6mo', daysTo(iso(r6)));
+  set('t-ret', daysTo(S.retDate));
+  set('t-retdate', fmtMY(new Date(S.retDate)));
+  set('edu-teb', daysTo(S.retDate));
+  set('edu-tebrec', daysTo(iso(r6)));
+  set('tl-now','now'); set('tl-18','≈ '+fmtMY(r18)); set('tl-12','≈ '+fmtMY(r12));
+  set('tl-6','≈ '+fmtMY(r6)); set('tl-post','after '+fmtMY(new Date(S.retDate)));
+  // ppm — weight allowance from rank
+  const wt=(WEIGHT[S.rank]||14000).toLocaleString();
+  set('ppm-allow', wt+' lb HHG allowance ('+S.rank+', w/ dependents)');
+  const pc=document.getElementById('ppm-callout'); if(pc) pc.innerHTML=`~$40K is <b>gross taxable GCC</b>, not take-home — realistic only near your <b>${wt} lb</b> cap over a long-distance move.`;
+  renderPpm();
+  renderTakehome();
+  renderSalaryLegend();
+  renderCompare();
+  renderSetup();
+  set('civVal', fmt(S.civ));
+  saveState();
+}
+
+function renderSetup(){
+  const cn=civNet(S.finState), mn=milNet();
+  set('su-pension', fmt(S.pension)+'/mo');
+  set('su-va', fmt(vaComp(S.rating,S.spouse,S.kids))+'/mo');
+  set('su-milnet', fmt(mn)+'/mo');
+  set('su-hh', fmt(mn+cn.net/12)+'/mo');
+  set('su-ret', daysTo(S.retDate));
+  const mult=S.sys==='BRS'?'2.0%':'2.5%';
+  set('pensionFormula', `auto: ${mult} × ${S.tis} yrs × ${fmt(S.high3)} High-3 = ${fmt(pensionCalc())}/mo. Type in "Retirement pay" to override.`);
+  set('hdrSub', `${S.rank} · ${S.sys} · ${S.spouse?'spouse + ':''}${S.kids} kid${S.kids===1?'':'s'}`);
+}
+
+const TOLLC={None:0,Light:250,Mod:600,Heavy:1200}; // rough annual toll burden
+function propTaxFor(st){ // annual property tax after vet exemption
+  if(!S.pt) return st.home*st.propRate;                       // <P&T: no exemption
+  if(st.vetProp==='full') return 0;
+  if(st.vetProp==='none') return st.home*st.propRate;
+  return 0.5*st.home*st.propRate;                             // partial ≈ half relief
+}
+// shared annual take-home for a state (used by take-home tab + compare)
+function takeHome(k){
+  const st=STATES[k];
+  const net=milNet()*12 + (S.civ-civFed(S.civ));
+  const stateTax=S.civ*st.incTaxEff;
+  const housing=0.8*st.home*0.06322 + propTaxFor(st) + st.ins;
+  const toll=TOLLC[st.toll]||0;
+  return net - stateTax - housing - goodsBase()*st.rpp/100 - toll;
+}
+const SCRT=(key,k)=>CRIT.find(c=>c.key===key).s[k];
+function argbest(fn,dir){let best=null,wins=[];ORDER.forEach(k=>{const v=fn(k);
+  if(best===null||(dir>0?v>best:v<best)){best=v;wins=[k];}else if(v===best)wins.push(k);});return {wins,val:best};}
+
+let compareSort={key:'score',dir:1};
+let profileState='TX';
+function sortCompare(key){ if(compareSort.key===key)compareSort.dir*=-1; else compareSort={key,dir:1}; renderCompareTable(); }
+function pickProfile(k){ profileState=k; renderProfileSeg(); renderStateProfile(); }
+
+function renderCompare(){ renderChampions(); renderCompareTable(); renderProfileSeg(); renderStateProfile(); }
+
+function renderChampions(){
+  const box=document.getElementById('champions'); if(!box) return;
+  const items=[
+   ['💼 Cyber job market', argbest(k=>SCRT('job',k),1), ()=>'densest cleared market'],
+   ['💰 Lowest income tax', argbest(k=>STATES[k].incTaxEff,-1), r=>r.val===0?'0% on wages':''],
+   ['🎓 Homeschool freedom', argbest(k=>SCRT('hs',k),1), ()=>'no-notice / lowest reg'],
+   ['🏷️ Cheapest cost of living', argbest(k=>STATES[k].rpp,-1), r=>'RPP '+r.val],
+   ['🏠 Best vet property tax', argbest(k=>SCRT('prop',k),1), ()=>'full exemption'],
+   ['🛡️ Cheapest insurance', argbest(k=>STATES[k].ins,-1), r=>fmt(r.val)+'/yr'],
+   ['🚔 Safest', argbest(k=>SCRT('crime',k),1), r=>META[r.wins[0]].crimeN+'/100k'],
+   ['🍂 Four seasons', argbest(k=>SCRT('seasons',k),1), ()=>'most distinct seasons'],
+   ['🌪️ Lowest disaster risk', argbest(k=>SCRT('dis',k),1), r=>STATES[r.wins[0]].hazard],
+   ['🎓 College (waiver/cost)', argbest(k=>SCRT('college',k),1), r=>STATES[r.wins[0]].vt==='Y'?'dependent tuition waiver':fmt(STATES[r.wins[0]].tuition)+'/yr'],
+   ['🛣️ Lowest tolls', argbest(k=>SCRT('toll',k),1), ()=>'no/low toll roads'],
+   ['🏦 Highest take-home', argbest(k=>takeHome(k),1), r=>fmt(r.val)+'/yr'],
+   ['🏘️ Cheapest homes', argbest(k=>STATES[k].home,-1), r=>fmt(r.val)],
+  ];
+  box.innerHTML=items.map(([label,res,valfn])=>{
+    const names=res.wins.map(x=>STATES[x].name).join(' / ');
+    const sub=valfn(res);
+    return `<div class="card" style="padding:12px"><div class="mini" style="color:var(--muted)">${label}</div><div style="font-weight:700;margin-top:2px">${names}</div>${sub?`<div class="mini" style="color:var(--green)">${sub}</div>`:''}</div>`;
+  }).join('');
+}
+
+function compareCols(){
+  const SM={}; matrix().res.forEach((r,i)=>SM[r.k]={score:r.score,rank:i+1});
+  return [
+   {key:'name', label:'State', disp:k=>STATES[k].name, sub:k=>STATES[k].metro},
+   {key:'score',label:'Score', disp:k=>SM[k].score.toFixed(2), val:k=>SM[k].score},
+   {key:'rank', label:'Rank', disp:k=>'#'+SM[k].rank, val:k=>-SM[k].rank},
+   {key:'job',  label:'Cyber pay band', disp:k=>fmt(STATES[k].band[0])+'–'+fmt(STATES[k].band[1]), val:k=>SCRT('job',k)},
+   {key:'inc',  label:'Income tax', disp:k=>DATA[k].inc?DATA[k].inc.toFixed(2)+'%':'none', val:k=>-DATA[k].inc},
+   {key:'hs',   label:'Homeschool', disp:k=>META[k].reg, val:k=>SCRT('hs',k)},
+   {key:'col',  label:'COL', disp:k=>STATES[k].rpp, val:k=>-STATES[k].rpp},
+   {key:'prop', label:'Vet property', disp:k=>META[k].prop, val:k=>SCRT('prop',k)},
+   {key:'college',label:'College', disp:k=>DATA[k].vt==='Y'?'waiver':DATA[k].vt==='P'?'part.waiver':fmt(STATES[k].tuition), val:k=>SCRT('college',k)},
+   {key:'ins',  label:'Insurance', disp:k=>fmt(STATES[k].ins), val:k=>-STATES[k].ins},
+   {key:'dis',  label:'Disaster', disp:k=>STATES[k].disaster+'/10', val:k=>-STATES[k].disaster},
+   {key:'crime',label:'Crime/100K', disp:k=>META[k].crimeN, val:k=>-META[k].crimeN},
+   {key:'toll', label:'Tolls', disp:k=>META[k].toll, val:k=>SCRT('toll',k)},
+   {key:'seasons',label:'Seasons', disp:k=>SCRT('seasons',k)+'/10', val:k=>SCRT('seasons',k)},
+   {key:'home', label:'Median home', disp:k=>fmt(STATES[k].home), val:k=>-STATES[k].home},
+   {key:'take', label:'Take-home', disp:k=>fmt(takeHome(k)), val:k=>takeHome(k)},
+  ];
+}
+function renderCompareTable(){
+  const t=document.getElementById('compareTable'); if(!t) return;
+  const COLS=compareCols();
+  const sortCol=COLS.find(c=>c.key===compareSort.key)||COLS[1];
+  let rows=[...ORDER];
+  if(sortCol.val) rows.sort((a,b)=> (sortCol.val(b)-sortCol.val(a)) * (compareSort.dir>0?1:-1));
+  // best value per column
+  const best={};
+  COLS.forEach(c=>{ if(c.val){ let bk=ORDER[0]; ORDER.forEach(k=>{if(c.val(k)>c.val(bk))bk=k;}); best[c.key]=c.val(bk); }});
+  let h='<tr>'+COLS.map(c=>{
+    const arrow=compareSort.key===c.key?(compareSort.dir>0?' ▼':' ▲'):'';
+    return `<th onclick="sortCompare('${c.key}')" style="cursor:pointer;white-space:nowrap">${c.label}${arrow}</th>`;
+  }).join('')+'</tr>';
+  rows.forEach(k=>{
+    h+='<tr>'+COLS.map(c=>{
+      const win=c.val && c.val(k)===best[c.key] ? ' class="num winner"' : (c.key==='name'?'':' class="num"');
+      if(c.key==='name') return `<td><b>${c.disp(k)}</b><br><span class="mini" style="color:var(--muted)">${c.sub(k)}</span></td>`;
+      return `<td${win}>${c.disp(k)}</td>`;
+    }).join('')+'</tr>';
+  });
+  t.innerHTML=h;
+}
+
+function renderProfileSeg(){
+  const seg=document.getElementById('profileSeg'); if(!seg) return;
+  seg.innerHTML=ORDER.map(k=>`<button onclick="pickProfile('${k}')" class="${k===profileState?'on':''}">${k}</button>`).join('');
+}
+function renderStateProfile(){
+  const box=document.getElementById('stateProfile'); if(!box) return;
+  const k=profileState, st=STATES[k];
+  const SM={}; matrix().res.forEach((r,i)=>SM[r.k]={score:r.score,rank:i+1});
+  const axes=CRIT.map(c=>({lab:AXLAB[c.key],s:c.s[k]})).sort((a,b)=>b.s-a.s);
+  const pros=axes.filter(a=>a.s>=7).slice(0,4);
+  const cons=axes.filter(a=>a.s<=5).reverse().slice(0,4);
+  box.innerHTML=`
+   <div class="grid g2">
+     <div>
+       <div style="font-size:18px;font-weight:700">${st.name} <span class="mini" style="color:var(--muted)">· ${st.metro}</span></div>
+       <div class="kpi" style="margin-top:8px">
+         <div><b>#${SM[k].rank}</b><span>weighted rank</span></div>
+         <div><b>${SM[k].score.toFixed(2)}</b><span>score</span></div>
+         <div><b>${fmt(takeHome(k))}</b><span>take-home/yr</span></div>
+       </div>
+       <table style="margin-top:8px">
+         <tr><td>Cyber pay band</td><td class="num">${fmt(st.band[0])}–${fmt(st.band[1])}</td></tr>
+         <tr><td>Income tax (salary)</td><td class="num">${st.incTaxEff?(st.incTaxEff*100).toFixed(1)+'%':'none'}</td></tr>
+         <tr><td>Vet property tax</td><td class="num">${META[k].prop}</td></tr>
+         <tr><td>Homeschool</td><td class="num">${META[k].reg}</td></tr>
+         <tr><td>Cost of living</td><td class="num">${st.rpp} (US=100)</td></tr>
+         <tr><td>Home insurance</td><td class="num">${fmt(st.ins)}/yr</td></tr>
+         <tr><td>Violent crime</td><td class="num">${META[k].crimeN}/100K</td></tr>
+         <tr><td>Median home</td><td class="num">${fmt(st.home)}</td></tr>
+       </table>
+     </div>
+     <div>
+       <h3 style="color:var(--green)">Pros</h3>
+       <ul class="tight">${pros.map(p=>`<li>${p.lab} <span class="mini">(${p.s}/10)</span></li>`).join('')||'<li class="mini">no standout strengths</li>'}</ul>
+       <h3 style="color:var(--red);margin-top:10px">Cons</h3>
+       <ul class="tight">${cons.map(c=>`<li>weak ${c.lab.toLowerCase()} <span class="mini">(${c.s}/10)</span></li>`).join('')||'<li class="mini">no major weaknesses</li>'}</ul>
+     </div>
+   </div>`;
+}
+
+function renderSalaryLegend(){
+  const box=document.getElementById('salaryLegend'); if(!box) return;
+  const MIN=100000, MAX=220000, span=MAX-MIN, pct=v=>(Math.max(MIN,Math.min(MAX,v))-MIN)/span*100;
+  const states=[...ORDER].sort((a,b)=>STATES[b].band[1]-STATES[a].band[1]);
+  let h='';
+  states.forEach(k=>{
+    const st=STATES[k], lo=st.band[0], hi=st.band[1];
+    let cls,label;
+    if(S.civ>hi){cls='bad';label='above market';}
+    else if(S.civ<lo){cls='v';label='below (easy)';}
+    else if(S.civ>=hi-0.2*(hi-lo)){cls='warn';label='top-end';}
+    else {cls='good';label='in band';}
+    h+=`<div style="display:grid;grid-template-columns:130px 1fr 92px;gap:10px;align-items:center;margin:7px 0">
+      <div class="mini"><b>${st.name}</b> <span style="color:var(--muted)">(${fmt(lo)}–${fmt(hi)})</span><br><span style="color:var(--muted)">${st.metro}</span></div>
+      <div style="position:relative;height:16px;background:var(--panel2);border-radius:8px">
+        <div style="position:absolute;left:${pct(lo)}%;width:${pct(hi)-pct(lo)}%;top:0;bottom:0;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:8px;opacity:.55"></div>
+        <div title="your salary" style="position:absolute;left:${pct(S.civ)}%;top:-3px;bottom:-3px;width:2px;background:#fff;box-shadow:0 0 4px #fff"></div>
+      </div>
+      <span class="pill ${cls}">${label}</span>
+    </div>`;
+  });
+  h+=`<div class="mini" style="display:flex;justify-content:space-between;color:var(--muted);margin-top:6px"><span>$100K</span><span>your salary: <b style="color:var(--green)">${fmt(S.civ)}</b></span><span>$220K</span></div>`;
+  box.innerHTML=h;
+}
+
+// federal tax on civilian salary — filing-status brackets, minus child tax credit
+const STDDED={MFJ:30000,Single:15000,HoH:22500};
+const BRACKETS={
+ MFJ:[[23850,.10],[96950,.12],[206700,.22],[394600,.24],[501050,.32],[751600,.35],[1e12,.37]],
+ Single:[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[1e12,.37]],
+ HoH:[[17000,.10],[64850,.12],[103350,.22],[197300,.24],[250500,.32],[626350,.35],[1e12,.37]]};
+function civFed(civ){
+  const std=STDDED[S.filing]||30000, taxable=Math.max(0,civ-std);
+  let t=0,prev=0;
+  for(const [cap,r] of (BRACKETS[S.filing]||BRACKETS.MFJ)){ if(taxable>prev) t+=(Math.min(taxable,cap)-prev)*r; prev=cap; if(taxable<=cap) break; }
+  return Math.max(0, t - S.kids*2000); // $2,000 child tax credit per child
+}
+const householdSize=()=>1+(S.spouse?1:0)+S.kids;
+const goodsBase=()=>7650*householdSize(); // groceries+gas+utils+healthcare+other, per-person scaled, at RPP 100
+function renderTakehome(){
+  const milYr=milNet()*12;
+  const net=milYr+(S.civ-civFed(S.civ));
+  set('th-income', fmt(net));
+  set('th-incnote', fmt(milYr)+' military + '+fmt(S.civ-civFed(S.civ))+' civilian (net fed)');
+  const rows=ORDER.map(k=>{
+    const st=STATES[k];
+    const stateTax=S.civ*st.incTaxEff;
+    const ptax=propTaxFor(st);
+    const toll=TOLLC[st.toll]||0;
+    const housing=0.8*st.home*0.06322 + ptax + st.ins;
+    const goods=goodsBase()*st.rpp/100;
+    const take=net-stateTax-housing-goods-toll;
+    return {k,stateTax,ptax,housing,goods,toll,take};
+  }).sort((a,b)=>b.take-a.take);
+  set('th-top', fmt(rows[0].take));
+  set('th-topnote', STATES[rows[0].k].name+' leads');
+  set('th-spread', fmt(rows[0].take-rows[rows.length-1].take));
+  const t=document.getElementById('thTable');
+  let h='<tr><th>#</th><th>State</th><th class="num">State tax</th><th class="num">Mortgage</th><th class="num">Prop tax</th><th class="num">Insurance</th><th class="num">Toll</th><th class="num">Living*</th><th class="num">Take-home/yr</th></tr>';
+  rows.forEach((r,i)=>{
+    h+=`<tr><td>${i+1}</td><td>${STATES[r.k].name}</td>`+
+      `<td class="num">${r.stateTax?'−'+fmt(r.stateTax):'$0'}</td>`+
+      `<td class="num">${fmt(0.8*STATES[r.k].home*0.06322)}</td>`+
+      `<td class="num">${r.ptax?fmt(r.ptax):'<span class="pill good" style="padding:0 6px">$0</span>'}</td>`+
+      `<td class="num">${fmt(STATES[r.k].ins)}</td>`+
+      `<td class="num">${r.toll?fmt(r.toll):'$0'}</td>`+
+      `<td class="num">${fmt(r.goods)}</td>`+
+      `<td class="num ${i===0?'winner':''}"><b>${fmt(r.take)}</b></td></tr>`;
+  });
+  t.innerHTML=h;
+}
+
+function set(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+
+function renderWeights(){
+  const box=document.getElementById('weights'); box.innerHTML='';
+  CRIT.forEach(c=>{
+    const row=document.createElement('div'); row.className='slider-row';
+    row.innerHTML=`<label title="${c.basis}">${c.label} ${c.verified?'<span class="pill good" style="padding:0 6px">✓</span>':'<span class="pill warn" style="padding:0 6px">~</span>'}</label>
+      <input type="range" min="0" max="40" value="${c.w}" data-k="${c.key}">
+      <span>${c.w}</span>`;
+    box.appendChild(row);
+    const inp=row.querySelector('input'), sp=row.querySelector('span');
+    inp.addEventListener('input',()=>{ c.w=+inp.value; sp.textContent=c.w; renderWeights(); renderRanking(); renderScoreTable();
+      document.getElementById('wsum').textContent='Total weight: '+CRIT.reduce((a,x)=>a+x.w,0);
+      const mm=matrix().res; set('ov-state',STATES[mm[0].k].name); set('ov-statenote','beats '+STATES[mm[1].k].name+' by '+(mm[0].score-mm[1].score).toFixed(2)+' pts');
+    });
+  });
+  document.getElementById('wsum').textContent='Total weight: '+CRIT.reduce((a,x)=>a+x.w,0)+'  ·  ✓ verified  ~ provisional';
+}
+
+function renderRanking(){
+  const {res}=matrix(); const box=document.getElementById('ranking'); box.innerHTML='';
+  const max=res[0].score;
+  res.forEach((r,i)=>{
+    const d=document.createElement('div'); d.style.margin='10px 0';
+    d.innerHTML=`<div style="display:flex;justify-content:space-between"><b>${i+1}. ${STATES[r.k].name}</b><span>${r.score.toFixed(2)}</span></div>
+      <div class="bar"><i style="width:${(r.score/10*100)}%"></i></div>`;
+    box.appendChild(d);
+  });
+  document.getElementById('sensitivity').innerHTML = sensitivity();
+}
+
+function renderScoreTable(){
+  const t=document.getElementById('scoreTable');
+  let h='<tr><th>Criterion</th><th>Wt</th>'+ORDER.map(k=>`<th class="num">${k}</th>`).join('')+'</tr>';
+  CRIT.forEach(c=>{
+    h+=`<tr><td title="${c.basis}">${c.label} ${c.verified?'<span class="tag">[verified]</span>':'<span class="tag">[provisional]</span>'}</td><td>${c.w}</td>`+
+      ORDER.map(k=>`<td class="num">${c.s[k]}</td>`).join('')+'</tr>';
+  });
+  const {res}=matrix(); const rank={}; res.forEach((r,i)=>rank[r.k]=i);
+  h+=`<tr><td><b>Weighted score</b></td><td></td>`+ORDER.map(k=>{
+    const sc=res.find(r=>r.k===k).score; const win=rank[k]===0?'class="num winner"':'class="num"';
+    return `<td ${win}><b>${sc.toFixed(2)}</b></td>`;}).join('')+'</tr>';
+  t.innerHTML=h;
+}
+
+function renderProp(){
+  const t=document.getElementById('propTable');
+  let h=`<tr><th>State</th><th class="num">@70% (no exempt)</th><th class="num">@100% P&amp;T</th></tr>`;
+  ORDER.forEach(k=>{
+    const st=STATES[k];
+    const full=S.home*st.propRate;
+    const at100 = st.vetProp==='full'?0 : st.vetProp==='none'?full : 0.5*full;
+    h+=`<tr><td>${STATES[k].name}</td><td class="num">${fmt(full)}/yr</td><td class="num">${at100===0?'<span class="pill good">$0</span>':fmt(at100)+'/yr'}</td></tr>`;
+  });
+  t.innerHTML=h;
+}
+
+function renderFinSeg(){
+  const seg=document.getElementById('finStateSeg'); if(seg.dataset.done) return;
+  ORDER.forEach(k=>{
+    const b=document.createElement('button'); b.textContent=k; if(k===S.finState)b.className='on';
+    b.onclick=()=>{ S.finState=k; [...seg.children].forEach(x=>x.className=''); b.className='on'; render(); };
+    seg.appendChild(b);
+  });
+  seg.dataset.done=1;
+}
+
+function renderEdu(){
+  const ek=document.getElementById('eduKids');
+  ek.max=S.kids; if(+ek.value>S.kids) ek.value=S.kids;
+  const kids=Math.min(+ek.value,S.kids);
+  const mo=+document.getElementById('eduMo').value;
+  document.getElementById('eduKidsV').textContent=kids;
+  document.getElementById('eduMoV').textContent=mo;
+  const months=kids*mo, total=months*1574;
+  set('edu-months', months+' mo');
+  set('edu-total', S.pt? fmt(total) : '$0 (needs 100% P&T)');
+}
+
+function renderPpm(){
+  const g=+document.getElementById('ppmGcc').value, c=+document.getElementById('ppmCost').value;
+  document.getElementById('ppmGccV').textContent=fmt(g);
+  document.getElementById('ppmCostV').textContent=fmt(c);
+  const gross=g-c, tax=g*0.22, net=gross-tax;
+  set('ppm-gross', fmt(gross));
+  set('ppm-tax','−'+fmt(tax));
+  set('ppm-net', fmt(net));
+}
+
+// ---- wiring ----
+document.getElementById('ratingSlider').addEventListener('input',e=>{
+  S.rating=+e.target.value;
+  const pc=document.getElementById('ptCheck');
+  if(S.rating===100){ pc.checked=true; S.pt=true; }       // 100% defaults to P&T
+  else if(S.rating<100){ S.pt=pc.checked; }               // P&T at <100 = TDIU (user opt-in)
+  render();
+});
+document.getElementById('ptCheck').addEventListener('change',e=>{ S.pt=e.target.checked; render(); });
+window.__set=(o)=>{ Object.assign(S,o); render(); };       // test hook
+document.getElementById('civInput').addEventListener('input',e=>{ S.civ=+e.target.value||0; const ic=document.getElementById('in-civ'); if(ic) ic.value=S.civ; render(); });
+document.getElementById('homeVal').addEventListener('input',e=>{ S.home=+e.target.value; render(); });
+['eduKids','eduMo'].forEach(id=>document.getElementById(id).addEventListener('input',renderEdu));
+['ppmGcc','ppmCost'].forEach(id=>document.getElementById(id).addEventListener('input',renderPpm));
+
+function switchTab(name){
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on', x.dataset.t===name));
+  document.querySelectorAll('main section').forEach(x=>x.classList.toggle('on', x.id===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+document.body.addEventListener('click',e=>{ const el=e.target.closest('[data-goto]'); if(el) switchTab(el.dataset.goto); });
+
+// ---- Setup inputs ----
+const RANKS=['E-1','E-2','E-3','E-4','E-5','E-6','E-7','E-8','E-9','W-1','W-2','W-3','W-4','W-5','O-1','O-2','O-3','O-4','O-5','O-6','O-7','O-8','O-9','O-10'];
+const setv=(id,v)=>{const e=document.getElementById(id); if(e&&e.value!==undefined) e.value=v;};
+function syncSetupFields(){
+  const rk=document.getElementById('in-rank');
+  if(rk) rk.innerHTML=RANKS.map(r=>`<option${r===S.rank?' selected':''}>${r}</option>`).join('');
+  setv('in-tis',S.tis); setv('in-high3',S.high3); setv('in-pension',S.pension);
+  const sy=document.getElementById('in-sys'); if(sy) sy.value=S.sys;
+  const sp=document.getElementById('in-spouse'); if(sp) sp.checked=S.spouse;
+  setv('in-kids',S.kids);
+  const fl=document.getElementById('in-filing'); if(fl) fl.value=S.filing;
+  setv('in-civ',S.civ); setv('in-tricare',S.tricare); setv('in-sbp',S.sbp); setv('in-milfed',S.milfed); setv('in-retdate',S.retDate);
+}
+function recalcPension(){ S.pension=pensionCalc(); setv('in-pension',S.pension); }
+function on(id,ev,fn){ const e=document.getElementById(id); if(e) e.addEventListener(ev,fn); }
+on('in-rank','change',e=>{ S.rank=e.target.value; if(PAY[S.rank]){S.high3=PAY[S.rank]; setv('in-high3',S.high3);} recalcPension(); render(); });
+on('in-tis','input',e=>{ S.tis=+e.target.value||0; recalcPension(); render(); });
+on('in-sys','change',e=>{ S.sys=e.target.value; recalcPension(); render(); });
+on('in-high3','input',e=>{ S.high3=+e.target.value||0; recalcPension(); render(); });
+on('in-pension','input',e=>{ S.pension=+e.target.value||0; render(); });
+on('in-spouse','change',e=>{ S.spouse=e.target.checked; render(); });
+on('in-kids','input',e=>{ S.kids=Math.max(0,+e.target.value||0); render(); });
+on('in-filing','change',e=>{ S.filing=e.target.value; render(); });
+on('in-civ','input',e=>{ S.civ=+e.target.value||0; const cs=document.getElementById('civInput'); if(cs) cs.value=Math.min(220000,Math.max(100000,S.civ)); render(); });
+on('in-tricare','input',e=>{ S.tricare=+e.target.value||0; render(); });
+on('in-sbp','input',e=>{ S.sbp=+e.target.value||0; render(); });
+on('in-milfed','input',e=>{ S.milfed=+e.target.value||0; render(); });
+on('in-retdate','change',e=>{ S.retDate=e.target.value; render(); });
+function syncHeaderControls(){
+  const cs=document.getElementById('civInput'); if(cs) cs.value=Math.min(220000,Math.max(100000,S.civ));
+  const rs=document.getElementById('ratingSlider'); if(rs) rs.value=S.rating;
+  const pc=document.getElementById('ptCheck'); if(pc) pc.checked=S.pt;
+}
+on('resetBtn','click',()=>{ try{localStorage.removeItem('retDash');}catch(e){} Object.assign(S,DEFAULT); syncSetupFields(); syncHeaderControls(); render(); });
+
+loadState();
+syncSetupFields();
+syncHeaderControls();
+render();
+</script>
+</body>
+</html>
