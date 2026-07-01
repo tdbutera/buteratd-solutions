@@ -8,13 +8,13 @@ Inc = top state income-tax % on wages · MilEx = military retirement fully exemp
 | St | Inc | MilEx | Prop% | VetProp | VetTuit | RPP | Home | Tuition | Ins | Dis | Crime | HS | Toll | Seas | Cyber |
 |----|-----|-------|-------|---------|---------|-----|------|---------|-----|-----|-------|----|----|------|-------|
 | AL | 5 | Y | 0.4 | Full | Y | 88.6 | 235k | 11.4k | 3.3k | 8 | 450 | Low | None | 5 | 8 |
-| AK | 0 | Y | 1.04 | Full | N | 102.5 | 375k | 8.5k | 1.4k | 3 | 724 | None | None | 7 | 3 |
+| AK | 0 | Y | 0.94 | Partial | N | 102.5 | 375k | 8.5k | 1.4k | 3 | 724 | None | None | 7 | 3 |
 | AZ | 2.5 | Y | 0.63 | Partial | N | 100.9 | 420k | 12.1k | 1.9k | 5 | 430 | Low | Light | 3 | 5 |
 | AR | 3.7 | Y | 0.56 | Full | Y | 86.5 | 210k | 9.7k | 4.1k | 8 | 579 | Mod | None | 6 | 2 |
 | CA | 13.3 | N | 0.7 | Partial | Y | 112.6 | 789k | 9.6k | 2.1k | 9 | 430 | Low | Heavy | 4 | 7 |
 | CO | 4.25 | N | 0.49 | Partial | N | 103.5 | 538k | 12.0k | 4.3k | 7 | 420 | Mod | Mod | 9 | 8 |
 | CT | 6.99 | Y | 1.54 | Full | N | 104.9 | 447k | 15.9k | 1.6k | 4 | 180 | None | Heavy | 8 | 4 |
-| DE | 6.6 | N | 0.53 | Full | N | 99.9 | 385k | 14.7k | 1.4k | 3 | 430 | Low | Heavy | 7 | 3 |
+| DE | 6.6 | N | 0.55 | Partial | N | 99.9 | 385k | 14.7k | 1.4k | 3 | 430 | Low | Heavy | 7 | 3 |
 | FL | 0 | Y | 0.74 | Full | Y | 101 | 385k | 6.4k | 6.4k | 10 | 258 | Mod | Heavy | 1 | 6 |
 | GA | 5.39 | N | 0.81 | Partial | Y | 93 | 319k | 7.3k | 2.4k | 7 | 390 | Mod | Mod | 5 | 7 |
 | HI | 11 | Y | 0.29 | Full | Y | 108.6 | 832k | 12.2k | 0.9k | 6 | 260 | Mod | None | 1 | 5 |
