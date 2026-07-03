@@ -1,2 +1,6 @@
 system-commandline-sentinel-files/
 *.tmp
+
+# UDM Pro provisioning outputs (secrets / device report)
+udm-pro/kco-wg-client-*.conf
+udm-pro/kco-gw01-config-report.md
